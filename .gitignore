@@ -4,3 +4,6 @@ simulate-openmm.iml
 
 # Unit tests
 tests
+
+# Resources
+resources
