@@ -1,0 +1,6 @@
+# Intellij files
+.idea
+simulate-openmm.iml
+
+# Unit tests
+tests
