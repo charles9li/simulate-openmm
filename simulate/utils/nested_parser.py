@@ -45,7 +45,7 @@ class NestedParser(object):
                     inner_parsed_lines, current_level = self._nested_parser_helper(line_deque, -1)
                     parsed_lines.append(inner_parsed_lines)
                 elif level_increment == 1:
-                    return parsed_lines, current_level
+                    break
             else:
                 parsed_lines.append(line)
 
