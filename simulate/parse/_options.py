@@ -3,11 +3,27 @@ from simulate.utils import LineDeque
 
 class _Options(object):
 
+    SECTION_NAME = '_options'
+
+    # =========================================================================
+
     def __init__(self):
         pass
 
+    # =========================================================================
+
+    OPTIONS = {}
+
     def parse(self, line_deque):
-        pass
+        self._check_is_line_deque(line_deque)
+        while len(line_deque) > 0:
+            line = line_deque.popleft()
+            option_name = self._parse_option_name(line)
+            if option_name in self.OPTIONS.keys():
+                option_value = self._parse_option_value(line, option_name)
+                self.OPTIONS[option_name](option_value, line_deque)
+            else:
+                raise ValueError("{} is not a valid option for the {} section.".format(option_name, self.SECTION_NAME))
 
     @staticmethod
     def _parse_option_name(line):

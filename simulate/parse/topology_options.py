@@ -3,22 +3,29 @@ from ._options import _Options
 
 class TopologyOptions(_Options):
 
+    SECTION_NAME = 'topology'
+
+    # =========================================================================
+
     def __init__(self):
         super(_Options, self).__init__()
         self.topFilename = None
         self.groFilename = None
         self.coordFilename = None
 
-    def parse(self, line_deque):
-        self._check_is_line_deque(line_deque)
-        while len(line_deque) > 0:
-            line = line_deque.popleft()
-            option_name = self._parse_option_name(line)
-            if option_name == 'topFilename':
-                self.topFilename = self._parse_option_value(line, option_name)
-            elif option_name == 'groFilename':
-                self.groFilename = self._parse_option_value(line, option_name)
-            elif option_name == 'coordFilename':
-                self.coordFilename = self._parse_option_value(line, option_name)
-            else:
-                raise ValueError("{} is not a valid option for the topology section.".format(option_name))
+    # =========================================================================
+
+    def _parse_top_filename(self, *args):
+        self.topFilename = args[0]
+
+    def _parse_gro_filename(self, *args):
+        self.groFilename = args[0]
+
+    def _parse_coord_filename(self, *args):
+        self.coordFilename = args[0]
+
+    # =========================================================================
+
+    OPTIONS = {'topFilename': _parse_top_filename,
+               'groFilename': _parse_gro_filename,
+               'coordFilename': _parse_coord_filename}

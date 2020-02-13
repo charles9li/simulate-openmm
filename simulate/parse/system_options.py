@@ -8,12 +8,16 @@ from ._options import _Options
 
 class SystemOptions(_Options):
 
+    SECTION_NAME = 'system'
+
     NONBONDED_METHODS = {'NoCutoff': NoCutoff,
                          'CutoffPeriodic': CutoffPeriodic,
                          'CutoffNonPeriodic': CutoffNonPeriodic,
                          'Ewald': Ewald,
                          'PME': PME,
                          'LJPME': LJPME}
+
+    # =========================================================================
 
     def __init__(self):
         super(SystemOptions, self).__init__()
@@ -23,27 +27,31 @@ class SystemOptions(_Options):
         self.dispersionCorrection = True
         self.temperature = 298.0*kelvin
 
-    def parse(self, line_deque):
-        self._check_is_line_deque(line_deque)
-        while len(line_deque) > 0:
-            line = line_deque.popleft()
-            option_name = self._parse_option_name(line)
-            if option_name == 'nonbondedMethod':
-                option_value = self._parse_option_value(line, option_name)
-                self._parse_nonbonded_method(option_value)
-            elif option_name == 'nonbondedCutoff':
-                self.nonbondedCutoff = literal_eval(self._parse_option_value(line, option_name))*nanometer
-            elif option_name == 'ewaldErrorTolerance':
-                self.ewaldErrorTolerance = literal_eval(self._parse_option_value(line, option_name))
-            elif option_name == 'dispersionCorrection':
-                self.dispersionCorrection = literal_eval(self._parse_option_value(line, option_name))
-            elif option_name == 'temperature':
-                self.temperature = literal_eval(self._parse_option_value(line, option_name))
-            else:
-                raise ValueError("{} is not a valid option for the system section.".format(option_name))
+    # =========================================================================
 
-    def _parse_nonbonded_method(self, option_value):
+    def _parse_nonbonded_method(self, *args):
+        option_value = args[0]
         try:
             self.nonbondedMethod = self.NONBONDED_METHODS[option_value]
         except KeyError:
             raise ValueError("{} is not a valid option for nonbondedMethod.".format(option_value))
+
+    def _parse_nonbonded_cutoff(self, *args):
+        self.nonbondedCutoff = literal_eval(args[0])
+
+    def _parse_ewald_error_tolerance(self, *args):
+        self.ewaldErrorTolerance = literal_eval(args[0])
+
+    def _parse_dispersion_correction(self, *args):
+        self.dispersionCorrection = literal_eval(args[0])
+
+    def _parse_temperature(self, *args):
+        self.temperature = literal_eval(args[0])
+
+    # =========================================================================
+
+    OPTIONS = {'nonbondedMethod': _parse_nonbonded_method,
+               'nonbondedCutoff': _parse_nonbonded_cutoff,
+               'ewaldErrorTolerance': _parse_ewald_error_tolerance,
+               'dispersionCorrection': _parse_dispersion_correction,
+               'temperature': _parse_temperature}

@@ -24,6 +24,7 @@ class OpenMMOptions(object):
     def __init__(self, input_filename=None):
         self.topology_options = TopologyOptions()
         self.system_options = SystemOptions()
+        self.simulation_options = []
         self.read(input_filename)
 
     # =========================================================================
@@ -71,5 +72,3 @@ class OpenMMOptions(object):
     def _remove_comment(self, line):
         """ Removes comment from line. """
         return line.split(self.COMMENT_CHAR)[0].strip()
-
-    # =========================================================================
