@@ -14,11 +14,11 @@ class LineDeque(object):
         return len(self._deque)
 
     def append(self, item):
-        if item:
+        if item != '':
             self._deque.append(item)
 
     def appendleft(self, item):
-        if item:
+        if item != '':
             self._deque.appendleft(item)
 
     def pop(self):
