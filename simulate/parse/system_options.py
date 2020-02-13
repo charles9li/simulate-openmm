@@ -24,7 +24,7 @@ class SystemOptions(_Options):
         self.nonbondedMethod = NoCutoff
         self.nonbondedCutoff = 0.9*nanometer
         self.ewaldErrorTolerance = 0.0005
-        self.dispersionCorrection = True
+        self.useDispersionCorrection = True
 
     # =========================================================================
 
@@ -41,12 +41,12 @@ class SystemOptions(_Options):
     def _parse_ewald_error_tolerance(self, *args):
         self.ewaldErrorTolerance = literal_eval(args[0])
 
-    def _parse_dispersion_correction(self, *args):
-        self.dispersionCorrection = literal_eval(args[0])
+    def _parse_use_dispersion_correction(self, *args):
+        self.useDispersionCorrection = literal_eval(args[0])
 
     # =========================================================================
 
     OPTIONS = {'nonbondedMethod': _parse_nonbonded_method,
                'nonbondedCutoff': _parse_nonbonded_cutoff,
                'ewaldErrorTolerance': _parse_ewald_error_tolerance,
-               'dispersionCorrection': _parse_dispersion_correction}
+               'useDispersionCorrection': _parse_use_dispersion_correction}
