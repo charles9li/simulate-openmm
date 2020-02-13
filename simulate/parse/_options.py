@@ -21,7 +21,7 @@ class _Options(object):
             option_name = self._parse_option_name(line)
             if option_name in self.OPTIONS.keys():
                 option_value = self._parse_option_value(line, option_name)
-                self.OPTIONS[option_name](option_value, line_deque)
+                self.OPTIONS[option_name](self, option_value, line_deque)
             else:
                 raise ValueError("{} is not a valid option for the {} section.".format(option_name, self.SECTION_NAME))
 
