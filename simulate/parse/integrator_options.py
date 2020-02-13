@@ -20,11 +20,6 @@ class _IntegratorOptions(_Options):
 
     # =========================================================================
 
-    def parse(self, line_deque):
-        pass
-
-    # =========================================================================
-
     def integrator(self):
         pass
 
@@ -85,7 +80,7 @@ class VerletIntegratorOptions(_IntegratorOptions):
     # =========================================================================
 
     def _parse_step_size(self, *args):
-        super(VerletIntegratorOptions, self)._parse_step_size(args)
+        super(VerletIntegratorOptions, self)._parse_step_size(*args)
 
     OPTIONS = {'stepSize': _parse_step_size}
 
@@ -109,7 +104,7 @@ class VelocityVerletIntegratorOptions(VerletIntegratorOptions):
     # =========================================================================
 
     def _parse_step_size(self, *args):
-        super(VelocityVerletIntegratorOptions, self)._parse_step_size(args)
+        super(VelocityVerletIntegratorOptions, self)._parse_step_size(*args)
 
     OPTIONS = {'stepSize', _parse_step_size}
 

@@ -28,7 +28,10 @@ class NestedParser(object):
     # =========================================================================
 
     def _nested_parser(self, line_deque):
-        return self._nested_parser_helper(line_deque, 0)[0]
+        parsed_lines, current_level = self._nested_parser_helper(line_deque, 0)
+        if current_level != 0:
+            raise ValueError("Enclosing character mismatch.")
+        return parsed_lines
 
     def _nested_parser_helper(self, line_deque, current_level):
         parsed_lines = LineDeque()
@@ -42,15 +45,13 @@ class NestedParser(object):
                 level_increment = self._determine_level_increment(bounding_char)
                 current_level += level_increment
                 if level_increment == -1:
-                    inner_parsed_lines, current_level = self._nested_parser_helper(line_deque, -1)
+                    inner_parsed_lines, current_level = self._nested_parser_helper(line_deque, current_level)
                     parsed_lines.append(inner_parsed_lines)
                 elif level_increment == 1:
                     break
             else:
                 parsed_lines.append(line)
 
-        if current_level != 0:
-            raise ValueError("Enclosing character mismatch.")
         return parsed_lines, current_level
 
     # =========================================================================

@@ -1,5 +1,6 @@
 from .system_options import SystemOptions
 from .topology_options import TopologyOptions
+from .simulation_options import SimulationOptions
 from simulate.utils import LineDeque, NestedParser
 
 
@@ -61,6 +62,10 @@ class OpenMMOptions(object):
                 self.topology_options.parse(parsed_lines.popleft())
             elif current_section == 'system':
                 self.system_options.parse(parsed_lines.popleft())
+            elif current_section == 'simulation':
+                simulation_options = SimulationOptions()
+                simulation_options.parse(parsed_lines.popleft())
+                self.simulation_options.append(simulation_options)
             else:
                 raise ValueError("{} is not a valid section name.".format(current_section))
             current_section = None

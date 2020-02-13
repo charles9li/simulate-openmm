@@ -45,10 +45,10 @@ class DCDReporterOptions(_ReporterOptions):
     # =========================================================================
 
     def _parse_file(self, *args):
-        super(DCDReporterOptions, self)._parse_file(args)
+        super(DCDReporterOptions, self)._parse_file(*args)
 
     def _parse_report_interval(self, *args):
-        super(DCDReporterOptions, self)._parse_report_interval(args)
+        super(DCDReporterOptions, self)._parse_report_interval(*args)
 
     def _parse_append(self, *args):
         self.append = literal_eval(args[0])
@@ -87,10 +87,10 @@ class StateDataReporterOptions(_ReporterOptions):
     # =========================================================================
 
     def _parse_file(self, *args):
-        super(StateDataReporterOptions, self)._parse_file(args)
+        super(StateDataReporterOptions, self)._parse_file(*args)
 
     def _parse_report_interval(self, *args):
-        super(StateDataReporterOptions, self)._parse_report_interval(args)
+        super(StateDataReporterOptions, self)._parse_report_interval(*args)
 
     OPTIONS = {'file': _parse_file,
                'reportInterval': _parse_report_interval}

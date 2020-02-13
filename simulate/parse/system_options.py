@@ -25,7 +25,6 @@ class SystemOptions(_Options):
         self.nonbondedCutoff = 0.9*nanometer
         self.ewaldErrorTolerance = 0.0005
         self.dispersionCorrection = True
-        self.temperature = 298.0*kelvin
 
     # =========================================================================
 
@@ -45,13 +44,9 @@ class SystemOptions(_Options):
     def _parse_dispersion_correction(self, *args):
         self.dispersionCorrection = literal_eval(args[0])
 
-    def _parse_temperature(self, *args):
-        self.temperature = literal_eval(args[0])
-
     # =========================================================================
 
     OPTIONS = {'nonbondedMethod': _parse_nonbonded_method,
                'nonbondedCutoff': _parse_nonbonded_cutoff,
                'ewaldErrorTolerance': _parse_ewald_error_tolerance,
-               'dispersionCorrection': _parse_dispersion_correction,
-               'temperature': _parse_temperature}
+               'dispersionCorrection': _parse_dispersion_correction}

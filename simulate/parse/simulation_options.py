@@ -1,5 +1,3 @@
-from ast import literal_eval
-
 from ._options import _Options
 from .integrator_options import *
 from .reporter_options import *
@@ -11,7 +9,8 @@ class SimulationOptions(_Options):
                    'VelocityVerletIntegrator': VelocityVerletIntegratorOptions,
                    'VerletIntegrator': VerletIntegratorOptions}
 
-    REPORTERS = {'DCDReporter': DCDReporterOptions}
+    REPORTERS = {'DCDReporter': DCDReporterOptions,
+                 'StateDataReporter': StateDataReporterOptions}
 
     # =========================================================================
 
@@ -28,7 +27,7 @@ class SimulationOptions(_Options):
         option_value = args[0]
         line_deque = args[1]
         integrator_options = self.INTEGRATORS[option_value]()
-        integrator_options.parse(line_deque)
+        integrator_options.parse(line_deque.popleft())
         self.integrator = integrator_options.integrator()
 
     def _parse_minimize_energy(self, *args):
@@ -38,7 +37,12 @@ class SimulationOptions(_Options):
         self.steps = literal_eval(args[0])
 
     def _parse_reporter(self, *args):
-        pass
+        option_value = args[0]
+        line_deque = args[1]
+        reporter_options = self.REPORTERS[option_value]()
+        reporter_options.parse(line_deque.popleft())
+        reporter = reporter_options.reporter()
+        self.reporters.append(reporter)
 
     OPTIONS = {'integrator': _parse_integrator,
                'minimizeEnergy': _parse_minimize_energy,

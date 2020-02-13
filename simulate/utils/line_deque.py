@@ -8,21 +8,21 @@ class LineDeque(object):
     """
 
     def __init__(self):
-        self._deque = deque()
+        self.deque = deque()
 
     def __len__(self):
-        return len(self._deque)
+        return len(self.deque)
 
     def append(self, item):
         if item != '':
-            self._deque.append(item)
+            self.deque.append(item)
 
     def appendleft(self, item):
         if item != '':
-            self._deque.appendleft(item)
+            self.deque.appendleft(item)
 
     def pop(self):
-        return self._deque.pop()
+        return self.deque.pop()
 
     def popleft(self):
-        return self._deque.popleft()
+        return self.deque.popleft()
