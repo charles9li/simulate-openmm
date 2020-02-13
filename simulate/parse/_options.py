@@ -16,7 +16,7 @@ class _Options(object):
     @staticmethod
     def _parse_option_value(line, option_name):
         try:
-            option_value = line[1].strip()
+            option_value = line.split('=')[1].strip()
         except IndexError:
             option_value = ''
         if not option_value:

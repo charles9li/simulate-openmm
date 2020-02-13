@@ -55,12 +55,14 @@ class OpenMMOptions(object):
         while len(parsed_lines) > 0:
             if current_section is None:
                 current_section = parsed_lines.popleft().strip()
+                continue
             elif current_section == 'topology':
                 self.topology_options.parse(parsed_lines.popleft())
             elif current_section == 'system':
                 self.system_options.parse(parsed_lines.popleft())
             else:
                 raise ValueError("{} is not a valid section name.".format(current_section))
+            current_section = None
 
     # =========================================================================
 
