@@ -1,7 +1,7 @@
 from ast import literal_eval
 
 from simtk.openmm.app import NoCutoff, CutoffPeriodic, CutoffNonPeriodic, Ewald, PME, LJPME
-from simtk.unit import kelvin, nanometer
+from simtk.unit import nanometer
 
 from ._options import _Options
 
@@ -36,7 +36,7 @@ class SystemOptions(_Options):
             raise ValueError("{} is not a valid option for nonbondedMethod.".format(option_value))
 
     def _parse_nonbonded_cutoff(self, *args):
-        self.nonbondedCutoff = literal_eval(args[0])
+        self.nonbondedCutoff = literal_eval(args[0])*nanometer
 
     def _parse_ewald_error_tolerance(self, *args):
         self.ewaldErrorTolerance = literal_eval(args[0])
