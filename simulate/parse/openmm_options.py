@@ -56,15 +56,15 @@ class OpenMMOptions(object):
             if current_section is None:
                 current_section = parsed_lines.popleft().strip()
             elif current_section == 'topology':
-                self.topology_options.parse(parsed_lines.pop())
+                self.topology_options.parse(parsed_lines.popleft())
             elif current_section == 'system':
-                self.system_options.parse(parsed_lines.pop())
+                self.system_options.parse(parsed_lines.popleft())
             else:
                 raise ValueError("{} is not a valid section name.".format(current_section))
 
     # =========================================================================
 
-    # Private helper methods for reading file
+    # Private helper methods for parsing file
 
     def _remove_comment(self, line):
         """ Removes comment from line. """
