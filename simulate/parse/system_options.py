@@ -1,7 +1,7 @@
 from ast import literal_eval
 
 from simtk.openmm.app import NoCutoff, CutoffPeriodic, CutoffNonPeriodic, Ewald, PME, LJPME
-from simtk.unit import nanometer
+from simtk.unit import kelvin, nanometer
 
 from ._options import _Options
 
@@ -25,6 +25,7 @@ class SystemOptions(_Options):
         self.nonbondedCutoff = 0.9*nanometer
         self.ewaldErrorTolerance = 0.0005
         self.useDispersionCorrection = True
+        self.initialVelocityTemperature = None
 
     # =========================================================================
 
@@ -44,9 +45,13 @@ class SystemOptions(_Options):
     def _parse_use_dispersion_correction(self, *args):
         self.useDispersionCorrection = literal_eval(args[0])
 
+    def _parse_initial_velocity_temperature(self, *args):
+        self.initialVelocityTemperature = literal_eval(args[0])*kelvin
+
     # =========================================================================
 
     OPTIONS = {'nonbondedMethod': _parse_nonbonded_method,
                'nonbondedCutoff': _parse_nonbonded_cutoff,
                'ewaldErrorTolerance': _parse_ewald_error_tolerance,
-               'useDispersionCorrection': _parse_use_dispersion_correction}
+               'useDispersionCorrection': _parse_use_dispersion_correction,
+               'initialVelocityTemperature': _parse_initial_velocity_temperature}
