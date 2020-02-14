@@ -106,4 +106,4 @@ class StateDataReporterOptions(_ReporterOptions):
         return StateDataReporter(self.file, self.reportInterval, step=True, time=True,
                                  potentialEnergy=True, kineticEnergy=True, totalEnergy=True,
                                  temperature=True, volume=True, density=True,
-                                 remainingTime=True, speed=True, elapsedTime=True)
+                                 speed=True, elapsedTime=True)

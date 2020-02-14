@@ -32,7 +32,6 @@ class SimulationInformation(object):
         for force in system.getForces():
             if isinstance(force, NonbondedForce):
                 force.setUseDispersionCorrection(system_options.useDispersionCorrection)
-                force.setNonbondedMethod(system_options.nonbondedMethod)
         return system
 
     def _create_simulation(self, simulation_options):

@@ -1,6 +1,6 @@
 from ast import literal_eval
 
-from simtk.openmm.app import NoCutoff, CutoffPeriodic, CutoffNonPeriodic, Ewald, PME, LJPME
+from simtk.openmm import app
 from simtk.unit import kelvin, nanometer
 
 from ._options import _Options
@@ -10,18 +10,18 @@ class SystemOptions(_Options):
 
     SECTION_NAME = 'system'
 
-    NONBONDED_METHODS = {'NoCutoff': NoCutoff,
-                         'CutoffPeriodic': CutoffPeriodic,
-                         'CutoffNonPeriodic': CutoffNonPeriodic,
-                         'Ewald': Ewald,
-                         'PME': PME,
-                         'LJPME': LJPME}
+    NONBONDED_METHODS = {'NoCutoff': app.NoCutoff,
+                         'CutoffPeriodic': app.CutoffPeriodic,
+                         'CutoffNonPeriodic': app.CutoffNonPeriodic,
+                         'Ewald': app.Ewald,
+                         'PME': app.PME,
+                         'LJPME': app.LJPME}
 
     # =========================================================================
 
     def __init__(self):
         super(SystemOptions, self).__init__()
-        self.nonbondedMethod = NoCutoff
+        self.nonbondedMethod = app.NoCutoff
         self.nonbondedCutoff = 0.9*nanometer
         self.ewaldErrorTolerance = 0.0005
         self.useDispersionCorrection = True

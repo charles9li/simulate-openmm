@@ -48,7 +48,7 @@ class LangevinIntegratorOptions(_IntegratorOptions):
         self.frictionCoeff = literal_eval(args[0])/picosecond
 
     def _parse_step_size(self, *args):
-        super(LangevinIntegratorOptions, self)._parse_step_size()
+        super(LangevinIntegratorOptions, self)._parse_step_size(*args)
 
     OPTIONS = {'temperature': _parse_temperature,
                'frictionCoeff': _parse_friction_coeff,
