@@ -1,6 +1,5 @@
 from ast import literal_eval
 
-from simtk.openmm import MonteCarloBarostat
 from simtk.unit import bar, kelvin
 
 from ._options import _Options
@@ -43,4 +42,5 @@ class MonteCarloBarostatOptions(_Options):
             self._no_option_specified_exception("temperature")
         if self.defaultPressure is None:
             self._no_option_specified_exception("pressure")
+        from simtk.openmm import MonteCarloBarostat
         return MonteCarloBarostat(self.defaultPressure, self.defaultTemperature, self.frequency)
