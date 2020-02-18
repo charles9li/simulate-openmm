@@ -190,19 +190,20 @@ class NPTOptions(NVTOptions):
         return super(NPTOptions, self).simulation(topology, system)
 
 
-class RNEMDOptions(NVTOptions):
+class RNEMDOptions(_EnsembleOptions):
 
     SECTION_NAME = 'RNEMD'
 
     def __init__(self):
         super(RNEMDOptions, self).__init__()
+        self.thermostat = None
         self.numSlabs = None
         self.swapFrequency = None
 
     # =========================================================================
 
     def _check_for_incomplete_input(self):
-        super(super(RNEMDOptions, self), self)._check_for_incomplete_input()
+        super(RNEMDOptions, self)._check_for_incomplete_input()
         if self.numSlabs is None:
             self._incomplete_error('numSlabs')
         if self.swapFrequency is None:
@@ -210,8 +211,13 @@ class RNEMDOptions(NVTOptions):
 
     # =========================================================================
 
+    INTEGRATOR_OPTIONS = copy(NVTOptions.INTEGRATOR_OPTIONS)
+
     # TODO: add RNEMDReporter option when done
     REPORTER_OPTIONS = copy(NVEOptions.REPORTER_OPTIONS)
+
+    def _parse_thermostat(self, *args):
+        pass
 
     def _parse_num_slabs(self, *args):
         self.numSlabs = literal_eval(args[0])
@@ -220,6 +226,7 @@ class RNEMDOptions(NVTOptions):
         self.swapFrequency = literal_eval(args[0])
 
     OPTIONS = copy(_EnsembleOptions.OPTIONS)
+    OPTIONS['thermostat'] = _parse_thermostat
     OPTIONS['numSlabs'] = _parse_num_slabs
     OPTIONS['swapFrequency'] = _parse_swap_frequency
 
@@ -228,6 +235,6 @@ class RNEMDOptions(NVTOptions):
     def simulation(self, topology, system):
         if self.thermostat is not None:
             system.addForce(self.thermostat)
-        simulation = super(super(RNEMDOptions, self), self).simulation(topology, system)
+        simulation = super(RNEMDOptions, self).simulation(topology, system)
         simulation.context.totalMomentumExchanged = 0.0*amu*nanometer/picosecond
         return simulation
