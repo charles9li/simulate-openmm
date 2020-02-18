@@ -211,7 +211,7 @@ class RNEMDOptions(NVTOptions):
     # =========================================================================
 
     # TODO: add RNEMDReporter option when done
-    REPORTER_OPTIONS = copy(NVEOptions.OPTIONS)
+    REPORTER_OPTIONS = copy(NVEOptions.REPORTER_OPTIONS)
 
     def _parse_num_slabs(self, *args):
         self.numSlabs = literal_eval(args[0])
