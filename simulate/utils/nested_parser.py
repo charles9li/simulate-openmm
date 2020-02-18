@@ -1,4 +1,4 @@
-from .line_deque import LineDeque
+from simulate.utils.line_deque import LineDeque
 
 
 class NestedParser(object):
