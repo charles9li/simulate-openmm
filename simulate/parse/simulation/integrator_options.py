@@ -1,6 +1,10 @@
+from __future__ import absolute_import
+__author__ = "Charles Li"
+__version__ = "1.0"
+
 from ast import literal_eval
 
-from simtk.unit import femtosecond, picosecond
+from simtk.unit import femtosecond, kelvin, picosecond
 
 from simulate.parse._options import _Options
 
@@ -18,53 +22,12 @@ class _IntegratorOptions(_Options):
     def _parse_step_size(self, *args):
         self.stepSize = literal_eval(args[0])*femtosecond
 
+    OPTIONS = {'stepSize': _parse_step_size}
+
     # =========================================================================
 
     def integrator(self):
         pass
-
-    # =========================================================================
-
-    def _no_option_specified_exception(self, option_name):
-        raise ValueError("No {} specified for {}".format(option_name, self.SECTION_NAME))
-
-
-class LangevinIntegratorOptions(_IntegratorOptions):
-
-    SECTION_NAME = "LangevinIntegrator"
-
-    def __init__(self):
-        super(LangevinIntegratorOptions, self).__init__()
-        self.temperature = None
-        self.frictionCoeff = None
-        self.stepSize = None
-
-    # =========================================================================
-
-    def _parse_temperature(self, *args):
-        self.temperature = literal_eval(args[0])
-
-    def _parse_friction_coeff(self, *args):
-        self.frictionCoeff = literal_eval(args[0])/picosecond
-
-    def _parse_step_size(self, *args):
-        super(LangevinIntegratorOptions, self)._parse_step_size(*args)
-
-    OPTIONS = {'temperature': _parse_temperature,
-               'frictionCoeff': _parse_friction_coeff,
-               'stepSize': _parse_step_size}
-
-    # =========================================================================
-
-    def integrator(self):
-        if self.temperature is None:
-            self._no_option_specified_exception("temperature")
-        if self.frictionCoeff is None:
-            self._no_option_specified_exception("friction coefficient")
-        if self.stepSize is None:
-            self._no_option_specified_exception("step size")
-        from simtk.openmm import LangevinIntegrator
-        return LangevinIntegrator(self.temperature, self.frictionCoeff, self.stepSize)
 
 
 class VerletIntegratorOptions(_IntegratorOptions):
@@ -79,16 +42,13 @@ class VerletIntegratorOptions(_IntegratorOptions):
 
     # =========================================================================
 
-    def _parse_step_size(self, *args):
-        super(VerletIntegratorOptions, self)._parse_step_size(*args)
-
-    OPTIONS = {'stepSize': _parse_step_size}
+    def _check_for_incomplete_input(self):
+        if self.stepSize is None:
+            self._incomplete_error('stepSize')
 
     # =========================================================================
 
     def integrator(self):
-        if self.stepSize is None:
-            self._no_option_specified_exception("step size")
         from simtk.openmm import VerletIntegrator
         return VerletIntegrator(self.stepSize)
 
@@ -103,13 +63,48 @@ class VelocityVerletIntegratorOptions(VerletIntegratorOptions):
 
     # =========================================================================
 
-    def _parse_step_size(self, *args):
-        super(VelocityVerletIntegratorOptions, self)._parse_step_size(*args)
+    def integrator(self):
+        from openmmtools.integrators import VelocityVerletIntegrator
+        return VelocityVerletIntegrator(self.stepSize)
 
-    OPTIONS = {'stepSize', _parse_step_size}
+
+class LangevinIntegratorOptions(_IntegratorOptions):
+
+    SECTION_NAME = "LangevinIntegrator"
+
+    def __init__(self):
+        super(LangevinIntegratorOptions, self).__init__()
+        self.temperature = None
+        self.frictionCoeff = None
+        self.stepSize = None
+
+    # =========================================================================
+
+    def _check_for_incomplete_input(self):
+        if self.temperature is None:
+            self._incomplete_error('temperature')
+        if self.frictionCoeff is None:
+            self._incomplete_error('frictionCoeff')
+        if self.stepSize is None:
+            self._incomplete_error('stepSize')
+
+    # =========================================================================
+
+    def _parse_temperature(self, *args):
+        self.temperature = literal_eval(args[0])*kelvin
+
+    def _parse_friction_coeff(self, *args):
+        self.frictionCoeff = literal_eval(args[0])/picosecond
+
+    def _parse_step_size(self, *args):
+        super(LangevinIntegratorOptions, self)._parse_step_size(*args)
+
+    OPTIONS = {'temperature': _parse_temperature,
+               'frictionCoeff': _parse_friction_coeff,
+               'stepSize': _parse_step_size}
 
     # =========================================================================
 
     def integrator(self):
-        from openmmtools.integrators import VelocityVerletIntegrator
-        return VelocityVerletIntegrator(self.stepSize)
+        from simtk.openmm import LangevinIntegrator
+        return LangevinIntegrator(self.temperature, self.frictionCoeff, self.stepSize)

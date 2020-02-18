@@ -14,6 +14,14 @@ class _ReporterOptions(_Options):
 
     # =========================================================================
 
+    def _check_for_incomplete_input(self):
+        if self.file is None:
+            self._incomplete_error('file')
+        if self.reportInterval is None:
+            self._incomplete_error('reportInterval')
+
+    # =========================================================================
+
     def _parse_file(self, *args):
         self.file = args[0]
 
@@ -24,11 +32,6 @@ class _ReporterOptions(_Options):
 
     def reporter(self):
         pass
-
-    # =========================================================================
-
-    def _no_option_specified_exception(self, option_name):
-        raise ValueError("No {} specified for {}".format(option_name, self.SECTION_NAME))
 
 
 class DCDReporterOptions(_ReporterOptions):
@@ -64,10 +67,6 @@ class DCDReporterOptions(_ReporterOptions):
     # =========================================================================
 
     def reporter(self):
-        if self.file is None:
-            self._no_option_specified_exception('file')
-        if self.reportInterval is None:
-            self._no_option_specified_exception('report interval')
         from simtk.openmm.app import DCDReporter
         return DCDReporter(self.file, self.reportInterval,
                            append=self.append, enforcePeriodicBox=self.enforcePeriodicBox)
@@ -98,10 +97,6 @@ class StateDataReporterOptions(_ReporterOptions):
     # =========================================================================
 
     def reporter(self):
-        if self.file is None:
-            self._no_option_specified_exception('file')
-        if self.reportInterval is None:
-            self._no_option_specified_exception('report interval')
         from simtk.openmm.app import StateDataReporter
         return StateDataReporter(self.file, self.reportInterval, step=True, time=True,
                                  potentialEnergy=True, kineticEnergy=True, totalEnergy=True,
