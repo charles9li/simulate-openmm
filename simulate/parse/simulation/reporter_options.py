@@ -1,6 +1,6 @@
 from ast import literal_eval
 
-from ._options import _Options
+from simulate.parse._options import _Options
 
 
 class _ReporterOptions(_Options):

@@ -3,7 +3,7 @@ from ast import literal_eval
 from simtk.openmm import app
 from simtk.unit import kelvin, nanometer
 
-from ._options import _Options
+from simulate.parse._options import _Options
 
 
 class SystemOptions(_Options):

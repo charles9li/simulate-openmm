@@ -1,4 +1,4 @@
-from .system_options import SystemOptions
+from simulate.parse.system.systemoptions import SystemOptions
 from .topology_options import TopologyOptions
 from .simulation_options import SimulationOptions
 from simulate.utils import LineDeque, NestedParser
@@ -63,6 +63,10 @@ class OpenMMOptions(object):
             elif current_section == 'system':
                 self.system_options.parse(parsed_lines.popleft())
             elif current_section == 'simulation':
+                simulation_options = SimulationOptions()
+                simulation_options.parse(parsed_lines.popleft())
+                self.simulation_options.append(simulation_options)
+            elif current_section == 'simulation_rnemd':
                 simulation_options = SimulationOptions()
                 simulation_options.parse(parsed_lines.popleft())
                 self.simulation_options.append(simulation_options)

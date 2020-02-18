@@ -1,4 +1,4 @@
-from ._options import _Options
+from simulate.parse._options import _Options
 
 
 class TopologyOptions(_Options):
