@@ -38,7 +38,8 @@ class _EnsembleOptions(_Options):
     INTEGRATOR_OPTIONS = {'VerletIntegrator': VerletIntegratorOptions,
                           'VelocityVerletIntegrator': VelocityVerletIntegratorOptions}
     REPORTER_OPTIONS = {'DCDReporter': DCDReporterOptions,
-                        'StateDataReporter': StateDataReporterOptions}
+                        'StateDataReporter': StateDataReporterOptions,
+                        'CheckpointReporter': CheckpointReporterOptions}
 
     def _parse_integrator(self, *args):
         integrator_name = args[0]

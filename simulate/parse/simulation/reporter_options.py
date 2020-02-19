@@ -114,7 +114,7 @@ class RNEMDReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __int__(self):
+    def __init__(self):
         super(RNEMDReporterOptions, self).__init__()
         self.file = None
         self.reportInterval = None
@@ -143,7 +143,7 @@ class RNEMDVelocityReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __int__(self):
+    def __init__(self):
         super(RNEMDVelocityReporterOptions, self).__init__()
         self.file = None
         self.reportInterval = None
@@ -169,3 +169,19 @@ class RNEMDVelocityReporterOptions(_ReporterOptions):
     def reporter(self):
         from simulate.reporters import RNEMDVelocityReporter
         return RNEMDVelocityReporter(self.file, self.reportInterval, self.numSlabs, step=True)
+
+
+class CheckpointReporterOptions(_ReporterOptions):
+
+    SECTION_NAME = "CheckPointReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(CheckpointReporterOptions, self).__init__()
+
+    # =========================================================================
+
+    def reporter(self):
+        from simtk.openmm.app import CheckpointReporter
+        return CheckpointReporter(self.file, self.reportInterval)
