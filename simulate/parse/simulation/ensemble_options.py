@@ -213,8 +213,9 @@ class RNEMDOptions(_EnsembleOptions):
 
     INTEGRATOR_OPTIONS = copy(NVTOptions.INTEGRATOR_OPTIONS)
 
-    # TODO: add RNEMDReporter option when done
     REPORTER_OPTIONS = copy(NVEOptions.REPORTER_OPTIONS)
+    REPORTER_OPTIONS['RNEMDReporter'] = RNEMDReporterOptions
+    REPORTER_OPTIONS['RNEMDVelocityReporter'] = RNEMDVelocityReporterOptions
 
     def _parse_thermostat(self, *args):
         pass

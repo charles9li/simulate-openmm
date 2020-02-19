@@ -1,5 +1,5 @@
 """
-rnemdvelocityreporter.py: Outputs x-component velocity profile in z-direction
+rnemdreporter.py: Outputs total exchanged momentum as a function of time
 
 Used for reporting velocity profiles when using the reverse
 nonequilibrium molecular dynamics (RNEMD) technique to compute viscosity.
@@ -20,21 +20,18 @@ from __future__ import print_function
 __author__ = "Charles Li"
 __version__ = "1.0"
 
-import simtk.openmm as mm
-import simtk.unit as unit
-
-import numpy as np
+from simtk import unit
 
 
-class RNEMDVelocityReporter(object):
-    """RNEMDVelocityReporter outputs the x-component velocity profile, averaged
-    in each slab, in the z direction to a csv file.
+class RNEMDReporter(object):
+    """RNEMDReporter outputs the total exchanged momentum and momentum flux
+    used to compute viscosities in the RNMED method.
 
-    To use it, create a RNEMDVelocityReporter, then add it to the Simulation's
-    list of reporters. The number of slabs, M, can be specified in the constructor.
+    To use it, create a RNMEDReporter, then add it to the Simulation's list of
+    reporters. The number of slabs, M, can be specified in the constructor.
     """
 
-    def __init__(self, file, reporterInterval, numSlabs, step=False):
+    def __init__(self, file, reporterInterval, step=False):
         """Create a RNEMDVelocityReporter.
 
         Parameters
@@ -43,8 +40,8 @@ class RNEMDVelocityReporter(object):
             The file to write to, specified as a file name or file object
         reporterInterval : int
             The interval (in time steps) at which to write frames
-        numSlabs : int
-            The number of slabs to divide the box into. Must be an even number
+        step : bool
+            True if also outputting current step
         """
         self._reportInterval = reporterInterval
         self._openedFile = isinstance(file, str)
@@ -52,11 +49,6 @@ class RNEMDVelocityReporter(object):
             self._out = open(file, 'w')
         else:
             self._out = file
-        if not isinstance(numSlabs, int):
-            raise TypeError("The number of slabs must be an integer.")
-        if numSlabs % 2 != 0:
-            raise ValueError("The number of slabs must be an even integer.")
-        self._num_slabs = numSlabs
         self._step = step
         self._separator = ','
         self._hasInitialized = False
@@ -78,7 +70,7 @@ class RNEMDVelocityReporter(object):
             energies respectively.
         """
         steps = self._reportInterval - simulation.currentStep % self._reportInterval
-        return (steps, True, True, False, False)
+        return (steps, False, False, False, False)
 
     def report(self, simulation, state):
         """Generate a report.
@@ -130,40 +122,33 @@ class RNEMDVelocityReporter(object):
         if self._step:
             values.append(simulation.currentStep)
 
-        # Get values from State
-        Lz = state.getPeriodicBoxVectors()[2][2].value_in_unit(unit.nanometer)
-        positions = state.getPositions(asNumpy=True)
-        velocities = state.getVelocities(asNumpy=True)
+        # Get values from simulation
+        elapsed_ps = state.getTime().value_in_unit(unit.picosecond)
+        Lx = state.getPeriodicBoxVectors()[0][0].value_in_unit(unit.nanometer)
+        Ly = state.getPeriodicBoxVectors()[1][1].value_in_unit(unit.nanometer)
+        total_momentum_exchanged = simulation.context.totalMomentumExchanged.value_in_unit(unit.amu*unit.nanometer/unit.picosecond)
 
-        # Get z coordinates and x component velocities
-        z_coordinates = [pos[2].value_in_unit(unit.nanometer) for pos in positions]
-        x_velocities = [vel[0].value_in_unit(unit.nanometer/unit.picosecond) for vel in velocities]
+        # Compute flux
+        momentum_flux = total_momentum_exchanged/(2*Lx*Ly*elapsed_ps)
 
-        # Append del z
-        values.append(Lz/self._num_slabs)
-
-        # Compute average vx for each slab
-        x_velocities_by_slab = [[] for _ in range(self._num_slabs)]
-        for i in range(len(z_coordinates)):
-            z = z_coordinates[i]
-            slab_num = int(z*self._num_slabs/Lz) % self._num_slabs
-            x_velocities_by_slab[slab_num].append(x_velocities[i])
-        for vx_list in x_velocities_by_slab:
-            values.append(np.mean(vx_list))
+        # Add values
+        values.append(elapsed_ps)
+        values.append(total_momentum_exchanged)
+        values.append(momentum_flux)
 
         return values
 
     def _constructHeaders(self):
-        """Construct the headers for the CSV output
+        """Construct the headers for the CSV output.
 
         Returns: a list of strings giving the title of each observable being reported on.
         """
         headers = []
         if self._step:
             headers.append('Step')
-        headers.append('del z (nm)')
-        for i in range(self._num_slabs):
-            headers.append('vx{} (nm/ps)'.format(i + 1))
+        headers.append('Time (ps)')
+        headers.append('Total Exchanged Momentum (amu*nm/ps)')
+        headers.append('Momentum Flux (amu/nm*ps^2)')
         return headers
 
     def __del__(self):

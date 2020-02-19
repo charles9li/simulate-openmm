@@ -1,4 +1,5 @@
 from ast import literal_eval
+from copy import copy
 
 from simulate.parse._options import _Options
 
@@ -27,6 +28,9 @@ class _ReporterOptions(_Options):
 
     def _parse_report_interval(self, *args):
         self.reportInterval = literal_eval(args[0])
+
+    OPTIONS = {'file': _parse_file,
+               'reportInterval': _parse_report_interval}
 
     # =========================================================================
 
@@ -102,3 +106,66 @@ class StateDataReporterOptions(_ReporterOptions):
                                  potentialEnergy=True, kineticEnergy=True, totalEnergy=True,
                                  temperature=True, volume=True, density=True,
                                  speed=True, elapsedTime=True)
+
+
+class RNEMDReporterOptions(_ReporterOptions):
+
+    SECTION_NAME = "RNEMDReporter"
+
+    # =========================================================================
+
+    def __int__(self):
+        super(RNEMDReporterOptions, self).__init__()
+        self.file = None
+        self.reportInterval = None
+
+    # =========================================================================
+
+    def _parse_file(self, *args):
+        super(RNEMDReporterOptions, self)._parse_file(*args)
+
+    def _parse_report_interval(self, *args):
+        super(RNEMDReporterOptions, self)._parse_report_interval(*args)
+
+    OPTIONS = {'file': _parse_file,
+               'reportInterval': _parse_report_interval}
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import RNEMDReporter
+        return RNEMDReporter(self.file, self.reportInterval, step=True)
+
+
+class RNEMDVelocityReporterOptions(_ReporterOptions):
+
+    SECTION_NAME = "RNEMDVelocityReporter"
+
+    # =========================================================================
+
+    def __int__(self):
+        super(RNEMDVelocityReporterOptions, self).__init__()
+        self.file = None
+        self.reportInterval = None
+        self.numSlabs = None
+
+    # =========================================================================
+    
+    def _check_for_incomplete_input(self):
+        super(RNEMDVelocityReporterOptions, self)._check_for_incomplete_input()
+        if self.numSlabs is None:
+            self._incomplete_error('numSlabs')
+
+    # =========================================================================
+
+    def _parse_num_slabs(self, *args):
+        self.numSlabs = literal_eval(args[0])
+
+    OPTIONS = copy(_ReporterOptions.OPTIONS)
+    OPTIONS['numSlabs'] = _parse_num_slabs
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import RNEMDVelocityReporter
+        return RNEMDVelocityReporter(self.file, self.reportInterval, self.numSlabs, step=True)
