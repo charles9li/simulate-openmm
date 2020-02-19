@@ -5,7 +5,7 @@ import numpy as np
 class StatisticalInformation(object):
 
     def __init__(self, data, warmup=True):
-        self.data = data
+        self.data = np.array(data)
         self.warmup_data = np.empty([0])
         if warmup:
             self._detect_warmup_mser_5()
