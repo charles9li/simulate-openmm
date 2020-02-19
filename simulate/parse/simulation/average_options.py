@@ -8,6 +8,8 @@ from simulate.parse._options import _Options
 
 
 class AverageOptions(_Options):
+
+    SECTION_NAME = "AverageOptions"
     
     def __init__(self):
         super(AverageOptions, self).__init__()
@@ -19,3 +21,6 @@ class AverageOptions(_Options):
 
     def _parse_energy(self, *args):
         self.energy = literal_eval(args[0])
+
+    OPTIONS = {'volume': _parse_volume,
+               'energy': _parse_energy}
