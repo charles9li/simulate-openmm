@@ -53,7 +53,7 @@ class RNEMDReporter(object):
             self._out = file
         if not isinstance(num_slabs, int):
             raise TypeError("The number of slabs must be an integer.")
-        if num_slabs%2 != 0:
+        if num_slabs % 2 != 0:
             raise ValueError("The number of slabs must be an even integer.")
         self._num_slabs = num_slabs
         self._step = step
@@ -160,3 +160,7 @@ class RNEMDReporter(object):
         for i in range(self._num_slabs):
             headers.append('vx{} (nm/ps)'.format(i + 1))
         return headers
+
+    def __del__(self):
+        if self._openedFile:
+            self._out.close()
