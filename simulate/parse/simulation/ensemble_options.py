@@ -21,6 +21,7 @@ class _EnsembleOptions(_Options):
 
     def __init__(self):
         super(_EnsembleOptions, self).__init__()
+        self.integrator_options = None
         self.integrator = None
         self.reporters = []
         self.minimize_energy_options = None
@@ -44,7 +45,8 @@ class _EnsembleOptions(_Options):
         line_deque = args[1]
         integrator_options = self.INTEGRATOR_OPTIONS[integrator_name]()
         integrator_options.parse(line_deque.popleft())
-        self.integrator = integrator_options.integrator()
+        self.integrator_options = integrator_options
+        self.integrator = integrator_options.createIntegrator()
 
     def _parse_reporters(self, *args):
         line_deque = args[1].popleft()
@@ -71,11 +73,14 @@ class _EnsembleOptions(_Options):
 
     # =========================================================================
 
-    def simulation(self, topology, system):
+    def createSimulation(self, topology, system):
         simulation = Simulation(topology, system, self.integrator)
         for reporter in self.reporters:
             simulation.reporters.append(reporter)
         return simulation
+
+    def createIntegrator(self):
+        return self.integrator_options.createIntegrator()
 
 
 class NVEOptions(_EnsembleOptions):
@@ -148,10 +153,10 @@ class NVTOptions(NVEOptions):
 
     # =========================================================================
 
-    def simulation(self, topology, system):
+    def createSimulation(self, topology, system):
         if self.thermostat is not None:
             system.addForce(self.thermostat)
-        return super(NVTOptions, self).simulation(topology, system)
+        return super(NVTOptions, self).createSimulation(topology, system)
 
 
 class NPTOptions(NVTOptions):
@@ -185,9 +190,9 @@ class NPTOptions(NVTOptions):
 
     # =========================================================================
     
-    def simulation(self, topology, system):
+    def createSimulation(self, topology, system):
         system.addForce(self.barostat)
-        return super(NPTOptions, self).simulation(topology, system)
+        return super(NPTOptions, self).createSimulation(topology, system)
 
 
 class RNEMDOptions(_EnsembleOptions):
@@ -233,9 +238,9 @@ class RNEMDOptions(_EnsembleOptions):
 
     # =========================================================================
 
-    def simulation(self, topology, system):
+    def createSimulation(self, topology, system):
         if self.thermostat is not None:
             system.addForce(self.thermostat)
-        simulation = super(RNEMDOptions, self).simulation(topology, system)
+        simulation = super(RNEMDOptions, self).createSimulation(topology, system)
         simulation.context.totalMomentumExchanged = 0.0*amu*nanometer/picosecond
         return simulation

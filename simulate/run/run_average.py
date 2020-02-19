@@ -50,7 +50,7 @@ def run_average(topology, system, simulation, ensemble_options):
             volume_curr = simulation.context.getState().getPeriodicBoxVolume().value_in_unit(nanometer**3)
             if np.abs((volume_curr - volume_mean)/volume_mean) < tol:
                 break
-        simulation = _remove_barostat_from_simulation(topology, system, simulation)
+        simulation = _remove_barostat_from_simulation(topology, system, simulation, ensemble_options)
     if average_options.energy:
         energy_stats = StatisticalInformation(average_data['volume'])
         energy_mean = energy_stats.mean
@@ -65,13 +65,13 @@ def run_average(topology, system, simulation, ensemble_options):
     return simulation
 
 
-def _remove_barostat_from_simulation(topology, system, simulation):
+def _remove_barostat_from_simulation(topology, system, simulation, ensemble_options):
     _remove_barostat_from_system(system)
     state = simulation.context.getState(getPositions=True, getVelocities=True)
     positions = state.getPositions(asNumpy=True)
     velocities = state.getVelocities(asNumpy=True)
     periodic_box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
-    integrator = simulation.context.getIntegrator()
+    integrator = ensemble_options.createIntegrator()
     system.setDefaultPeriodicBoxVectors(*periodic_box_vectors)
     simulation = Simulation(topology, system, integrator)
     simulation.context.setPositions(positions)

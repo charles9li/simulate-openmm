@@ -26,7 +26,7 @@ class _IntegratorOptions(_Options):
 
     # =========================================================================
 
-    def integrator(self):
+    def createIntegrator(self):
         pass
 
 
@@ -48,7 +48,7 @@ class VerletIntegratorOptions(_IntegratorOptions):
 
     # =========================================================================
 
-    def integrator(self):
+    def createIntegrator(self):
         from simtk.openmm import VerletIntegrator
         return VerletIntegrator(self.stepSize)
 
@@ -63,7 +63,7 @@ class VelocityVerletIntegratorOptions(VerletIntegratorOptions):
 
     # =========================================================================
 
-    def integrator(self):
+    def createIntegrator(self):
         from openmmtools.integrators import VelocityVerletIntegrator
         return VelocityVerletIntegrator(self.stepSize)
 
@@ -105,6 +105,6 @@ class LangevinIntegratorOptions(_IntegratorOptions):
 
     # =========================================================================
 
-    def integrator(self):
+    def createIntegrator(self):
         from simtk.openmm import LangevinIntegrator
         return LangevinIntegrator(self.temperature, self.frictionCoeff, self.stepSize)
