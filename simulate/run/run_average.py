@@ -52,7 +52,7 @@ def run_average(topology, system, simulation, ensemble_options):
                 break
         simulation = _remove_barostat_from_simulation(topology, system, simulation, ensemble_options)
     if average_options.energy:
-        energy_stats = StatisticalInformation(average_data['volume'])
+        energy_stats = StatisticalInformation(average_data['energy'])
         energy_mean = energy_stats.mean
         while True:
             simulation.step(check_frequency)
