@@ -1,3 +1,28 @@
+""" _options.py: A base class for other classes that store user options for
+each section in the input script.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+"""
 from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
@@ -10,21 +35,24 @@ class _Options(object):
 
     This class is inherited by classes that contain options for each section.
     The __init__, _parse_options, and _parse_sections methods are overridden by
-    classes that inherit this class.
+    classes that inherit this class."""
 
-    """
-
-    # Name of the section. Overridden by child classes
+    # Name of the section. Used for error messages. Overridden by child classes
     SECTION_NAME = '_options'
 
     # =========================================================================
 
     def __init__(self):
-        """ Creates an _Options instance. """
+        """Creates an _Options instance.
+
+        Options are parsed by calling the parse method().
+        """
         pass
 
     # =========================================================================
 
+    # Contains option/section name, private _parse method pairs. Used in the
+    # parse() method to determine values for parameters.
     OPTIONS = {}
     SECTIONS = {}
 
