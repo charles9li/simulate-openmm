@@ -53,7 +53,7 @@ class RunSimulation(object):
                 simulation.minimizeEnergy(tolerance=tolerance, maxIterations=max_iterations)
 
             # run simulation
-            simulation = self._decide_run_type(simulation, ensemble_options)
+            simulation = self._decide_run_type(topology, system, simulation, ensemble_options)
 
             # store positions and velocities for next ensemble
             state = simulation.context.getState(getPositions=True, getVelocities=True)
@@ -62,12 +62,12 @@ class RunSimulation(object):
             self.periodic_box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
 
     @staticmethod
-    def _decide_run_type(simulation, ensemble_options):
+    def _decide_run_type(topology, system, simulation, ensemble_options):
         if isinstance(ensemble_options, RNEMDOptions):
             run_rnemd(simulation, ensemble_options)
         else:
             if ensemble_options.average_options is None:
                 simulation.step(ensemble_options.steps)
             else:
-                simulation = run_average(simulation, ensemble_options)
+                simulation = run_average(topology, system, simulation, ensemble_options)
         return simulation

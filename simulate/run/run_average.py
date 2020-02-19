@@ -10,7 +10,7 @@ from simtk.unit import kilojoule_per_mole, nanometer
 from simulate.utils.statistics import StatisticalInformation
 
 
-def run_average(simulation, ensemble_options):
+def run_average(topology, system, simulation, ensemble_options):
     average_options = ensemble_options.average_options
 
     # initialize data
@@ -50,8 +50,8 @@ def run_average(simulation, ensemble_options):
             volume_curr = simulation.context.getState().getPeriodicBoxVolume().value_in_unit(nanometer**3)
             if np.abs((volume_curr - volume_mean)/volume_mean) < tol:
                 break
-        simulation = _remove_barostat_from_simulation(simulation)
-    if average_options.volume:
+        simulation = _remove_barostat_from_simulation(topology, system, simulation)
+    if average_options.energy:
         energy_stats = StatisticalInformation(average_data['volume'])
         energy_mean = energy_stats.mean
         while True:
@@ -65,10 +65,17 @@ def run_average(simulation, ensemble_options):
     return simulation
 
 
-def _remove_barostat_from_simulation(simulation):
-    system = simulation.system
-    _remove_barostat_from_simulation(system)
-    simulation.context.reinitialize(preserveState=True)
+def _remove_barostat_from_simulation(topology, system, simulation):
+    _remove_barostat_from_system(system)
+    state = simulation.context.getState(getPositions=True, getVelocities=True)
+    positions = state.getPositions(asNumpy=True)
+    velocities = state.getVelocities(asNumpy=True)
+    periodic_box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+    integrator = simulation.context.getIntegrator()
+    system.setDefaultPeriodicBoxVectors(*periodic_box_vectors)
+    simulation = Simulation(topology, system, integrator)
+    simulation.context.setPositions(positions)
+    simulation.context.setVelocities(velocities)
     return simulation
 
 
