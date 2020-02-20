@@ -5,7 +5,7 @@ simulate-openmm.iml
 # Unit tests
 tests
 
-# Resources
+# Test resources
 resources
 
 # .pyc files
