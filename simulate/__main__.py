@@ -31,5 +31,6 @@ if __name__ == '__main__':
     parser.add_argument('parameter_file')
     command_line_args = parser.parse_args()
 
+    # create simulation and run
     simulation_information = RunSimulation(command_line_args.parameter_file)
     simulation_information.run()
