@@ -172,4 +172,18 @@
     <Proper type1="O(ether)" type2="CH2(ether)" type3="CH2" type4="CH3" c0="6.983067719" c1="17.73616222" c2="0.8869868721" c3="-25.60621681" c4="0" c5="0"/>
     <Proper type1="O(ether)" type2="CH2(ether)" type3="CH2" type4="CH2" c0="6.983067719" c1="17.73616222" c2="0.8869868721" c3="-25.60621681" c4="0" c5="0"/>
   </RBTorsionForce>
+  <NonbondedForce coulomb14scale="0.5" lj14scale="0">
+    <Atom type="CH3" charge="0" sigma="0.3750" epsilon="0.814817336564"/>
+    <Atom type="CH2" charge="0" sigma="0.3950" epsilon="0.382465280428"/>
+    <Atom type="CH" charge="0" sigma="0.4680" epsilon="0.08314462618"/>
+    <Atom type="C" charge="0" sigma="0.6400" epsilon="0.004157231309"/>
+    <Atom type="CH3(ether)" charge="0.25" sigma="0.3750" epsilon="0.814817336564"/>
+    <Atom type="CH2(ether)" charge="0.25" sigma="0.3950" epsilon="0.382465280428"/>
+    <Atom type="CH2(sp2)" charge="0" sigma="0.3675" epsilon="0.706729322530"/>
+    <Atom type="O(ether)" charge="-0.25" sigma="0.2800" epsilon="0.457295443990"/>
+    <Atom type="C(carbonyl)" charge="0.40" sigma="0.3820" epsilon="0.332578504720"/>
+    <Atom type="O(carbonyl)" charge="-0.40" sigma="0.3050" epsilon="0.656842546820"/>
+    <Atom type="CH(sp2)" charge="0" sigma="0.3710" epsilon="0.432352056130"/>
+    <Atom type="C(sp2)" charge="0" sigma="0.3850" epsilon="0.182918177590"/>
+  </NonbondedForce>
 </ForceField>
