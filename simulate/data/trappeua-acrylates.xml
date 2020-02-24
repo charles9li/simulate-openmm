@@ -15,7 +15,8 @@
   </AtomTypes>
   <Residues>
     <Residue name="nC12">
-      <Atom name="C1" type="CH3"/>
+      <Atom name="C" type="CH3"/>
+      <Atom name="C1" type="CH2"/>
       <Atom name="C2" type="CH2"/>
       <Atom name="C3" type="CH2"/>
       <Atom name="C4" type="CH2"/>
@@ -25,8 +26,8 @@
       <Atom name="C8" type="CH2"/>
       <Atom name="C9" type="CH2"/>
       <Atom name="C10" type="CH2"/>
-      <Atom name="C11" type="CH2"/>
-      <Atom name="C12" type="CH3"/>
+      <Atom name="C11" type="CH3"/>
+      <Bond atomName1="C" atomName2="C1"/>
       <Bond atomName1="C1" atomName2="C2"/>
       <Bond atomName1="C2" atomName2="C3"/>
       <Bond atomName1="C3" atomName2="C4"/>
@@ -37,56 +38,46 @@
       <Bond atomName1="C8" atomName2="C9"/>
       <Bond atomName1="C9" atomName2="C10"/>
       <Bond atomName1="C10" atomName2="C11"/>
-      <Bond atomName1="C11" atomName2="C12"/>
     </Residue>
-    <Residue name="ACR">
-      <Atom name="C1" type="CH2"/>
-      <Atom name="C2" type="CH"/>
-      <Atom name="C3" type="CH(sp2)"/>
-      <Atom name="C4" type="C(carbonyl)"/>
-      <Atom name="O1" type="O(carbonyl)"/>
-      <Atom name="O2" type="O(ether)"/>
+    <Residue name="n4ACR">
+      <AllowPatch name="ACR monomer"/>
+      <Atom name="C" type="CH2"/>
+      <Atom name="C1" type="CH"/>
+      <Atom name="C2" type="C(carbonyl)"/>
+      <Atom name="O" type="O(carbonyl)"/>
+      <Atom name="O1" type="O(ether)"/>
+      <Atom name="C3" type="CH2(ether)"/>
+      <Atom name="C4" type="CH2"/>
+      <Atom name="C5" type="CH2"/>
+      <Atom name="C6" type="CH3"/>
+      <Bond atomName1="C" atomName2="C1"/>
       <Bond atomName1="C1" atomName2="C2"/>
-      <Bond atomName1="C2" atomName2="C3"/>
+      <Bond atomName1="C2" atomName2="O"/>
+      <Bond atomName1="C2" atomName2="O1"/>
+      <Bond atomName1="O1" atomName2="C3"/>
       <Bond atomName1="C3" atomName2="C4"/>
-      <Bond atomName1="C4" atomName2="O1"/>
-      <Bond atomName1="C4" atomName2="O2"/>
+      <Bond atomName1="C4" atomName2="C5"/>
+      <Bond atomName1="C5" atomName2="C6"/>
+      <ExeternalBond atomName="C"/>
       <ExeternalBond atomName="C1"/>
-      <ExeternalBond atomName="C2"/>
     </Residue>
   </Residues>
   <Patches>
-    <Patch name="methacrylate">
-      <ApplyToResidue name="ACR"/>
-      <ChangeAtom name="C2" type="C"/>
-      <AddAtom name="Cm" type="CH3"/>
-      <AddBond atomName1="C2" atomName2="Cm"/>
-    </Patch>
-    <Patch name="n-butyl acrylate">
-      <ApplyToResidue name="ACR"/>
-      <AddAtom name="C5" type="CH2(ether)"/>
-      <AddAtom name="C6" type="CH2"/>
-      <AddAtom name="C7" type="CH2"/>
-      <AddAtom name="C8" type="CH3"/>
-      <AddBond atomName1="O2" atomName2="C5"/>
-      <AddBond atomName1="C5" atomName2="C6"/>
-      <AddBond atomName1="C6" atomName2="C7"/>
-      <AddBond atomName1="C7" atomName2="C8"/>
+    <Patch name="ACR monomer">
+      <ChangeAtom name="C" type="CH2(sp2)"/>
+      <ChangeAtom name="C1" type="CH(sp2)"/>
+      <RemoveExternalBond atomName="C"/>
+      <RemoveExternalBond atomName="C1"/>
     </Patch>
     <Patch name="ACRLEFTTER">
       <ApplyToResidue name="ACR"/>
-      <RemoveExternalBond atomName="C1"/>
-      <ChangeAtom name="C1" type="CH2"/>
+      <RemoveExternalBond atomName="C"/>
+      <ChangeAtom name="C" type="CH2"/>
     </Patch>
     <Patch name="ACRRIGHTTER">
       <ApplyToResidue name="ACR"/>
-      <RemoveExternalBond atomName="C2"/>
-      <ChangeAtom name="C2" type="CH2"/>
-    </Patch>
-    <Patch name="ACRRIGHTTERmethyl">
-      <ApplyToResidue name="ACR"/>
-      <RemoveExternalBond atomName="C2"/>
-      <ChangeAtom name="C2" type="CH"/>
+      <RemoveExternalBond atomName="C1"/>
+      <ChangeAtom name="C1" type="CH2"/>
     </Patch>
   </Patches>
   <HarmonicBondForce>
