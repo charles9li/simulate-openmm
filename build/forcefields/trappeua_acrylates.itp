@@ -46,7 +46,7 @@ CH3         C(sp2)      CH2         1       119.7   585.504457560
 CH3         C(sp2)      C(carbonyl) 1       119.7   585.504457560
 CH2         C(sp2)      CH2         1       119.7   585.504457560
 CH3(ether)  O(ether)    C(carbonyl) 1       115.0   519.653913625
-CH2         O(ether)    C(carbonyl) 1       115.0   519.653913625
+CH2(ether)  O(ether)    C(carbonyl) 1       115.0   519.653913625
 O(ether)    C(carbonyl) O(carbonyl) 1       123.0   335.072843505
 O(ether)    CH2         CH3         1       111.0   293.500530415
 O(ether)    CH2         CH2         1       111.0   293.500530415
