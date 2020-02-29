@@ -2,6 +2,8 @@ from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
+from simtk.openmm.app import PDBFile
+
 from simulate.parse import InputOptions
 from simulate.parse.simulation.ensemble_options import RNEMDOptions
 from simulate.run.run_rnemd import run_rnemd
@@ -51,6 +53,10 @@ class RunSimulation(object):
                 tolerance = minimize_energy_options.tolerance
                 max_iterations = minimize_energy_options.maxIterations
                 simulation.minimizeEnergy(tolerance=tolerance, maxIterations=max_iterations)
+                print(minimize_energy_options.PDBFile)
+                if minimize_energy_options.PDBFile is not None:
+                    positions = simulation.context.getState(getPositions=True).getPositions()
+                    PDBFile.writeFile(topology, positions, file=open(minimize_energy_options.PDBFile, 'w'))
 
             # run simulation
             simulation = self._decide_run_type(topology, system, simulation, ensemble_options)

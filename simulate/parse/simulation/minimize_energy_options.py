@@ -15,6 +15,7 @@ class MinimizeEnergyOptions(_Options):
         super(MinimizeEnergyOptions, self).__init__()
         self.tolerance = 10*kilojoule_per_mole
         self.maxIterations = 0
+        self.PDBFile = None
 
     def _parse_tolerance(self, *args):
         self.tolerance = literal_eval(args[0])*kilojoule_per_mole
@@ -22,5 +23,9 @@ class MinimizeEnergyOptions(_Options):
     def _parse_max_iterations(self, *args):
         self.maxIterations = literal_eval(args[0])
 
+    def _parse_PDB_file(self, *args):
+        self.PDBFile = args[0]
+
     OPTIONS = {'tolerance': _parse_tolerance,
-               'maxIterations': _parse_max_iterations}
+               'maxIterations': _parse_max_iterations,
+               'PDBFile': _parse_PDB_file}

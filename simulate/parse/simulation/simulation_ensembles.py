@@ -3,7 +3,7 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from simulate.parse._options import _Options
-from .position_options import FileOptions
+from .position_options import FileOptions, SubrandomParticlePositions
 from .velocity_options import SetVelocitiesToTemperatureOptions
 from .ensemble_options import NVEOptions, NVTOptions, NPTOptions, RNEMDOptions
 
@@ -28,7 +28,8 @@ class SimulationEnsembles(_Options):
 
     # =========================================================================
 
-    POSITION_METHODS = {'File': FileOptions}
+    POSITION_METHODS = {'File': FileOptions,
+                        'SubrandomParticlePositions': SubrandomParticlePositions}
 
     VELOCITY_METHODS = {'SetVelocitiesToTemperature': SetVelocitiesToTemperatureOptions}
 

@@ -147,7 +147,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             if self.box_vectors is not None:
                 topology.setPeriodicBoxVectors(self.box_vectors)
             for chain_option in self.chains:
-                chain_option.add_chain_to_topology(topology)
+                chain_option._add_chain_to_topology(topology)
             self._topology = topology
         return self._topology
 
