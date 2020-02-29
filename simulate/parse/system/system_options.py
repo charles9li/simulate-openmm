@@ -8,7 +8,7 @@ from simtk.openmm import app, NonbondedForce
 from simtk.unit import nanometer
 
 from simulate.parse._options import _Options
-from simulate.parse.system.topology_options import GromacsTopologyOptions
+from simulate.parse.system.topology_options import GromacsTopologyOptions, DodecaneAcrylateTopologyOptions
 
 
 class SystemOptions(_Options):
@@ -46,7 +46,8 @@ class SystemOptions(_Options):
                          'Ewald': app.Ewald,
                          'PME': app.PME,
                          'LJPME': app.LJPME}
-    TOPOLOGY_METHODS = {'GromacsTopology': GromacsTopologyOptions}
+    TOPOLOGY_METHODS = {'GromacsTopology': GromacsTopologyOptions,
+                        'DodecaneAcrylateTopology': DodecaneAcrylateTopologyOptions}
 
     def _parse_topology(self, *args):
         option_value = args[0]
