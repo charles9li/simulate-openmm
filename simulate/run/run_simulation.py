@@ -47,6 +47,10 @@ class RunSimulation(object):
             else:
                 simulation.context.setVelocities(self.velocities)
 
+            # load save state if specified
+            if ensemble_options.loadState is not None:
+                simulation.loadState(ensemble_options.loadState)
+
             # minimize energy
             minimize_energy_options = ensemble_options.minimize_energy_options
             if minimize_energy_options is not None:
@@ -66,6 +70,10 @@ class RunSimulation(object):
             self.positions = state.getPositions(asNumpy=True)
             self.velocities = state.getVelocities(asNumpy=True)
             self.periodic_box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+
+            # save state if specified
+            if ensemble_options.saveState is not None:
+                simulation.saveState(ensemble_options.saveState)
 
     @staticmethod
     def _decide_run_type(topology, system, simulation, ensemble_options):

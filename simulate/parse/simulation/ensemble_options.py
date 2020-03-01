@@ -26,6 +26,8 @@ class _EnsembleOptions(_Options):
         self.reporters = []
         self.minimize_energy_options = None
         self.steps = 0
+        self.saveState = None
+        self.loadState = None
 
     # =========================================================================
 
@@ -66,8 +68,16 @@ class _EnsembleOptions(_Options):
     def _parse_steps(self, *args):
         self.steps = literal_eval(args[0])
 
+    def _parse_save_state(self, *args):
+        self.saveState = args[0]
+
+    def _parse_load_state(self, *args):
+        self.loadState = args[0]
+
     OPTIONS = {'integrator': _parse_integrator,
-               'steps': _parse_steps}
+               'steps': _parse_steps,
+               'saveState': _parse_save_state,
+               'loadState': _parse_load_state}
 
     SECTIONS = {'reporters': _parse_reporters,
                 'minimizeEnergy': _parse_minimize_energy}
