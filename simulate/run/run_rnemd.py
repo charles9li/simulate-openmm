@@ -33,6 +33,7 @@ def _exchange_momentum(simulation, M):
     if lower_molecule_indices is not None and upper_molecule_indices is not None:
         # _set_momentum(px_upper, lower_molecule_indices, velocities, system)
         # _set_momentum(px_lower, upper_molecule_indices, velocities, system)
+        _swap_velocities(lower_molecule_indices, upper_molecule_indices, velocities)
         del_px = px_upper - px_lower
         simulation.context.setVelocities(velocities)
     return del_px
