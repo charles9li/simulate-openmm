@@ -49,9 +49,9 @@ def _swap_velocities(lower_molecule_indices, upper_molecule_indices, velocities)
     for i in range(len(lower_molecule_indices)):
         lower_atom_index = lower_molecule_indices[i]
         upper_atom_index = upper_molecule_indices[i]
-        vel_temp = velocities[lower_atom_index]
-        velocities[lower_atom_index] = velocities[upper_atom_index]
-        velocities[upper_atom_index] = vel_temp
+        vel_temp = velocities[lower_atom_index][0]
+        velocities[lower_atom_index][0] = velocities[upper_atom_index][0]
+        velocities[upper_atom_index][0] = vel_temp
 
 
 def _separate_particles(molecules, system, positions, M):
