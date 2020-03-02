@@ -31,8 +31,6 @@ def _exchange_momentum(simulation, M):
     upper_molecule_indices, px_upper = _find_most_positive_px(upper_particles, system, velocities)
     del_px = 0.0*amu*nanometer/picosecond
     if lower_molecule_indices is not None and upper_molecule_indices is not None:
-        px_lower = _compute_molecule_px(lower_molecule_indices, system, velocities)
-        px_upper = _compute_molecule_px(upper_molecule_indices, system, velocities)
         _set_momentum(px_upper, lower_molecule_indices, velocities, system)
         _set_momentum(px_lower, upper_molecule_indices, velocities, system)
         del_px = px_upper - px_lower
