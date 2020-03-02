@@ -31,18 +31,26 @@ def _exchange_momentum(simulation, M):
     upper_molecule_indices, px_upper = _find_most_positive_px(upper_particles, system, velocities)
     del_px = 0.0*amu*nanometer/picosecond
     if lower_molecule_indices is not None and upper_molecule_indices is not None:
-        _set_momentum(px_upper, lower_molecule_indices, velocities, system)
-        _set_momentum(px_lower, upper_molecule_indices, velocities, system)
+        # _set_momentum(px_upper, lower_molecule_indices, velocities, system)
+        # _set_momentum(px_lower, upper_molecule_indices, velocities, system)
         del_px = px_upper - px_lower
         simulation.context.setVelocities(velocities)
     return del_px
 
 
-def _set_momentum(px_target, atom_indices, velocities, system):
-    mass = _compute_molecule_mass(atom_indices, system)
-    vx = px_target/mass
-    for atom in atom_indices:
-        velocities[atom] = vx
+# def _set_momentum(px_target, atom_indices, velocities, system):
+#     mass = _compute_molecule_mass(atom_indices, system)
+#     vx = px_target/mass
+#     for atom in atom_indices:
+#         velocities[atom] = vx
+
+def _swap_velocities(lower_molecule_indices, upper_molecule_indices, velocities):
+    for i in range(len(lower_molecule_indices)):
+        lower_atom_index = lower_molecule_indices[i]
+        upper_atom_index = upper_molecule_indices[i]
+        vel_temp = velocities[lower_atom_index]
+        velocities[lower_atom_index] = velocities[upper_atom_index]
+        velocities[upper_atom_index] = vel_temp
 
 
 def _separate_particles(molecules, system, positions, M):
