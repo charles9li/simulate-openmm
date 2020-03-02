@@ -10,3 +10,6 @@ resources
 
 # .pyc files
 *.pyc
+
+# Plot folder
+plots
