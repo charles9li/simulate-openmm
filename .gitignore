@@ -13,3 +13,6 @@ resources
 
 # Plot folder
 plots
+
+# Build folder
+build

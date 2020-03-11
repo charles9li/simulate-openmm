@@ -48,6 +48,10 @@ class SystemOptions(_Options):
                          'LJPME': app.LJPME}
     TOPOLOGY_METHODS = {'GromacsTopology': GromacsTopologyOptions,
                         'DodecaneAcrylateTopology': DodecaneAcrylateTopologyOptions}
+    CONSTRAINTS = {'None': None,
+                   'HBonds': app.HBonds,
+                   'AllBonds': app.AllBonds,
+                   'HAngles': app.HAngles}
 
     def _parse_topology(self, *args):
         option_value = args[0]
@@ -66,6 +70,9 @@ class SystemOptions(_Options):
     def _parse_nonbonded_cutoff(self, *args):
         self.nonbondedCutoff = literal_eval(args[0])*nanometer
 
+    def _parse_constraints(self, *args):
+        self.constraints = self.CONSTRAINTS[args[0]]
+
     def _parse_ewald_error_tolerance(self, *args):
         self.ewaldErrorTolerance = literal_eval(args[0])
 
@@ -75,6 +82,7 @@ class SystemOptions(_Options):
     OPTIONS = {'topology': _parse_topology,
                'nonbondedMethod': _parse_nonbonded_method,
                'nonbondedCutoff': _parse_nonbonded_cutoff,
+               'constraints': _parse_constraints,
                'ewaldErrorTolerance': _parse_ewald_error_tolerance,
                'useDispersionCorrection': _parse_use_dispersion_correction}
 
