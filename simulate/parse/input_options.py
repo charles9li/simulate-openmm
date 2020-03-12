@@ -26,8 +26,8 @@ from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
-from simulate.parse.simulation import SimulationEnsembles
-from simulate.parse.system import SystemOptions
+from .simulations_options import SimulationEnsembles
+from .system_options import SystemOptions
 from simulate.utils import LineDeque, NestedParser
 
 
