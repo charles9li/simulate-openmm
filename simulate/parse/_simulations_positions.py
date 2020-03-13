@@ -103,3 +103,18 @@ class SubrandomParticlePositions(_PositionOptions):
         box_vectors = system.getDefaultPeriodicBoxVectors()
         positions = subrandom_particle_positions(num_residues, box_vectors, method=self.method)
         simulation.context.setPositions(positions)
+
+
+class DodecaneAcrylatePositions(_PositionOptions):
+
+    _SECTION_NAME = "DodecaneAcrylatePositions"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(DodecaneAcrylatePositions, self).__init__()
+
+    # =========================================================================
+
+    def set_positions(self, simulation):
+        pass
