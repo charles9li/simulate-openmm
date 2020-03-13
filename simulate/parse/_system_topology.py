@@ -1,19 +1,48 @@
+"""
+_system_topology.py: Parses topology information for a system.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
-from ast import literal_eval
+import os
 
 import numpy as np
 from simtk.openmm.app import ForceField, NoCutoff, Topology
 from simtk.unit import nanometer
 from parmed import gromacs
 
-from simulate.parse._options import _Options
-from simulate.parse.system.chain_options import *
+from ._options import _Options
+from ._system_topology_chain import *
 
 
 class _TopologyOptions(_Options):
+
+    # =========================================================================
+
+    _SECTION_NAME = '_TopologyOptions'
+
+    # =========================================================================
 
     def __init__(self):
         super(_TopologyOptions, self).__init__()
@@ -34,24 +63,29 @@ class _TopologyOptions(_Options):
 
 class AmberTopologyOptions(_TopologyOptions):
 
-    SECTION_NAME = 'AmberTopologyOptions'
+    _SECTION_NAME = 'AmberTopologyOptions'
 
     def __init__(self):
         super(AmberTopologyOptions, self).__init__()
-        raise NotImplementedError("'{}' is not supported yet.".format(self.SECTION_NAME))
+        raise NotImplementedError("'{}' is not supported yet.".format(self._SECTION_NAME))
 
 
 class GromacsTopologyOptions(_TopologyOptions):
 
-    SECTION_NAME = 'GromacsTopologyOptions'
+    _SECTION_NAME = 'GromacsTopologyOptions'
 
     # =========================================================================
 
     def __init__(self):
-        super(_Options, self).__init__()
+        super(GromacsTopologyOptions, self).__init__()
         self.topFilename = None
         self.groFilename = None
         self._gromacs_topology = None
+
+    def _create_options(self):
+        super(GromacsTopologyOptions, self)._create_options()
+        self._OPTIONS['topFilename'] = self._parse_top_filename
+        self._OPTIONS['groFilename'] = self._parse_gro_filename
 
     # =========================================================================
 
@@ -68,9 +102,6 @@ class GromacsTopologyOptions(_TopologyOptions):
 
     def _parse_gro_filename(self, *args):
         self.groFilename = args[0]
-
-    OPTIONS = {'topFilename': _parse_top_filename,
-               'groFilename': _parse_gro_filename}
 
     # =========================================================================
 
@@ -100,9 +131,19 @@ class GromacsTopologyOptions(_TopologyOptions):
             
 class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
-    SECTION_NAME = "DodecaneAcrylateTopologyOptions"
+    # =========================================================================
 
-    TRAPPEUA_FF_PATH = "/home/charlesli/lab/shell/simulate-openmm/simulate/data/trappeua-acrylates.xml"
+    _SECTION_NAME = "DodecaneAcrylateTopologyOptions"
+
+    # =========================================================================
+
+    # Paths to forcefield files
+
+    _data_directory = os.path.join(os.path.dirname(__file__), 'data')
+
+    TRAPPEUA_FF_PATH = os.path.join(_data_directory, "trappeua-acrylates.xml")
+
+    # =========================================================================
     
     def __init__(self):
         super(DodecaneAcrylateTopologyOptions, self).__init__()
@@ -110,6 +151,15 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self.numDodecane = 0
         self.box_vectors = None
         self.chains = []
+
+    def _create_options(self):
+        super(DodecaneAcrylateTopologyOptions, self)._create_options()
+        self._OPTIONS['numDodecane'] = self._parse_num_dodecane
+        self._OPTIONS['box'] = self._parse_box
+
+    def _create_sections(self):
+        super(DodecaneAcrylateTopologyOptions, self)._create_sections()
+        self._SECTIONS['chains'] = self._parse_chains
 
     # =========================================================================
 
@@ -133,11 +183,6 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             chain_options = self.CHAIN_METHODS[chain_name]()
             chain_options.parse(line_deque.popleft())
             self.chains.append(chain_options)
-
-    OPTIONS = {'numDodecane': _parse_num_dodecane,
-               'box': _parse_box}
-
-    SECTIONS = {'chains': _parse_chains}
 
     # =========================================================================
 

@@ -5,7 +5,7 @@ __version__ = "1.0"
 from simtk.openmm.app import PDBFile
 
 from simulate.parse import InputOptions
-from simulate.parse.simulation.ensemble_options import RNEMDOptions
+from simulate.parse._ensemble import RNEMDOptions
 from simulate.run.run_rnemd import run_rnemd
 from simulate.run.run_average import run_average
 

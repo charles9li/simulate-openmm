@@ -1,26 +1,51 @@
+"""
+_ensemble.py: Parses ensemble options.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
-
-from copy import copy
 
 from simtk.openmm.app import Simulation
 from simtk.openmm import VerletIntegrator, LangevinIntegrator
 from simtk.unit import amu, nanometer, picosecond
 from openmmtools.integrators import VelocityVerletIntegrator, NoseHooverChainVelocityVerletIntegrator
 
-from simulate.parse._options import _Options
-from simulate.parse.simulation.integrator_options import *
-from simulate.parse.simulation.barostat_options import *
-from simulate.parse.simulation.reporter_options import *
-from simulate.parse.simulation.minimize_energy_options import *
-from simulate.parse.simulation.average_options import *
+from ._options import _Options
+from ._ensemble_integrator import *
+from ._ensemble_barostat import *
+from ._ensemble_reporter import *
+from ._ensemble_minimizeenergy import *
+from ._ensemble_average import *
 
 
 class _EnsembleOptions(_Options):
 
+    # =========================================================================
+
     def __init__(self):
         super(_EnsembleOptions, self).__init__()
+        self._create_integrator_options()
+        self._create_reporter_options()
         self.integrator_options = None
         self.integrator = None
         self.reporters = []
@@ -28,6 +53,27 @@ class _EnsembleOptions(_Options):
         self.steps = 0
         self.saveState = None
         self.loadState = None
+
+    def _create_options(self):
+        super(_EnsembleOptions, self)._create_options()
+        self._OPTIONS['integrator'] = self._parse_integrator
+        self._OPTIONS['steps'] = self._parse_steps
+        self._OPTIONS['saveState'] = self._parse_save_state
+        self._OPTIONS['loadState'] = self._parse_load_state
+
+    def _create_sections(self):
+        super(_EnsembleOptions, self)._create_sections()
+        self._SECTIONS['reporters'] = self._parse_reporters
+        self._SECTIONS['minimizeEnergy'] = self._parse_minimize_energy
+
+    def _create_integrator_options(self):
+        self._INTEGRATOR_OPTIONS = {'VerletIntegrator': VerletIntegratorOptions,
+                                    'VelocityVerletIntegrator': VelocityVerletIntegratorOptions}
+
+    def _create_reporter_options(self):
+        self._REPORTER_OPTIONS = {'DCDReporter': DCDReporterOptions,
+                                  'StateDataReporter': StateDataReporterOptions,
+                                  'CheckpointReporter': CheckpointReporterOptions}
 
     # =========================================================================
 
@@ -37,16 +83,10 @@ class _EnsembleOptions(_Options):
 
     # =========================================================================
 
-    INTEGRATOR_OPTIONS = {'VerletIntegrator': VerletIntegratorOptions,
-                          'VelocityVerletIntegrator': VelocityVerletIntegratorOptions}
-    REPORTER_OPTIONS = {'DCDReporter': DCDReporterOptions,
-                        'StateDataReporter': StateDataReporterOptions,
-                        'CheckpointReporter': CheckpointReporterOptions}
-
     def _parse_integrator(self, *args):
         integrator_name = args[0]
         line_deque = args[1]
-        integrator_options = self.INTEGRATOR_OPTIONS[integrator_name]()
+        integrator_options = self._INTEGRATOR_OPTIONS[integrator_name]()
         integrator_options.parse(line_deque.popleft())
         self.integrator_options = integrator_options
         self.integrator = integrator_options.createIntegrator()
@@ -55,7 +95,7 @@ class _EnsembleOptions(_Options):
         line_deque = args[1].popleft()
         while len(line_deque) > 0:
             reporter_name = line_deque.popleft()
-            reporter_options = self.REPORTER_OPTIONS[reporter_name]()
+            reporter_options = self._REPORTER_OPTIONS[reporter_name]()
             reporter_options.parse(line_deque.popleft())
             self.reporters.append(reporter_options.reporter())
 
@@ -74,14 +114,6 @@ class _EnsembleOptions(_Options):
     def _parse_load_state(self, *args):
         self.loadState = args[0]
 
-    OPTIONS = {'integrator': _parse_integrator,
-               'steps': _parse_steps,
-               'saveState': _parse_save_state,
-               'loadState': _parse_load_state}
-
-    SECTIONS = {'reporters': _parse_reporters,
-                'minimizeEnergy': _parse_minimize_energy}
-
     # =========================================================================
 
     def createSimulation(self, topology, system):
@@ -96,11 +128,17 @@ class _EnsembleOptions(_Options):
 
 class NVEOptions(_EnsembleOptions):
 
-    SECTION_NAME = 'NVE'
+    _SECTION_NAME = 'NVE'
+
+    # =========================================================================
 
     def __init__(self):
         super(NVEOptions, self).__init__()
         self.average_options = None
+
+    def _create_sections(self):
+        super(NVEOptions, self)._create_sections()
+        self._SECTIONS['average'] = self._parse_average
 
     # =========================================================================
 
@@ -115,17 +153,25 @@ class NVEOptions(_EnsembleOptions):
         average_options.parse(line_deque)
         self.average_options = average_options
 
-    SECTIONS = copy(_EnsembleOptions.SECTIONS)
-    SECTIONS['average'] = _parse_average
-
 
 class NVTOptions(NVEOptions):
 
-    SECTION_NAME = 'NVT'
+    _SECTION_NAME = 'NVT'
 
     def __init__(self):
         super(NVTOptions, self).__init__()
         self.thermostat = None
+
+    def _create_options(self):
+        super(NVTOptions, self)._create_options()
+        self._OPTIONS['thermostat'] = self._parse_thermostat
+
+    def _create_integrator_options(self):
+        super(NVTOptions, self)._create_integrator_options()
+        self._INTEGRATOR_OPTIONS['LangevinIntegrator'] = LangevinIntegratorOptions
+
+    def _create_thermostat_options(self):
+        self._THERMOSTAT_OPTIONS = {}
 
     # =========================================================================
 
@@ -139,28 +185,20 @@ class NVTOptions(NVEOptions):
         if isinstance(self.integrator, self.INTEGRATORS_NO_THERMOSTAT):
             if self.thermostat is None:
                 raise ValueError("Thermostat must be used with the specified "
-                                 "integrator in the {} ensemble".format(self.SECTION_NAME))
+                                 "integrator in the {} ensemble".format(self._SECTION_NAME))
         if isinstance(self.integrator, self.INTEGRATORS_WITH_THERMOSTAT):
             if self.thermostat is not None:
                 raise ValueError("A thermostat does not need to be used with specified "
-                                 "integrator in the {} ensemble".format(self.SECTION_NAME))
+                                 "integrator in the {} ensemble".format(self._SECTION_NAME))
 
     # =========================================================================
-
-    INTEGRATOR_OPTIONS = copy(NVEOptions.INTEGRATOR_OPTIONS)
-    INTEGRATOR_OPTIONS['LangevinIntegrator'] = LangevinIntegratorOptions
-
-    THERMOSTAT_OPTIONS = {}
 
     def _parse_thermostat(self, *args):
         thermostat_name = args[0]
         line_deque = args[1]
-        thermostat_options = self.THERMOSTAT_OPTIONS[thermostat_name]()
+        thermostat_options = self._THERMOSTAT_OPTIONS[thermostat_name]()
         thermostat_options.parse(line_deque.popleft())
         self.thermostat = thermostat_options.thermostat()
-
-    OPTIONS = copy(NVEOptions.OPTIONS)
-    OPTIONS['thermostat'] = _parse_thermostat
 
     # =========================================================================
 
@@ -172,11 +210,15 @@ class NVTOptions(NVEOptions):
 
 class NPTOptions(NVTOptions):
 
-    SECTION_NAME = 'NPT'
+    _SECTION_NAME = 'NPT'
 
     def __init__(self):
         super(NPTOptions, self).__init__()
         self.barostat = None
+
+    def _create_options(self):
+        super(NPTOptions, self)._create_options()
+        self._OPTIONS['barostat'] = self._parse_barostat
 
     # =========================================================================
 
@@ -196,9 +238,6 @@ class NPTOptions(NVTOptions):
         barostat_options.parse(line_deque.popleft())
         self.barostat = barostat_options.barostat()
 
-    OPTIONS = copy(NVTOptions.OPTIONS)
-    OPTIONS['barostat'] = _parse_barostat
-
     # =========================================================================
     
     def createSimulation(self, topology, system):
@@ -208,13 +247,28 @@ class NPTOptions(NVTOptions):
 
 class RNEMDOptions(_EnsembleOptions):
 
-    SECTION_NAME = 'RNEMD'
+    _SECTION_NAME = 'RNEMD'
 
     def __init__(self):
         super(RNEMDOptions, self).__init__()
         self.thermostat = None
         self.numSlabs = None
         self.swapFrequency = None
+
+    def _create_options(self):
+        super(RNEMDOptions, self)._create_options()
+        self._OPTIONS['thermostat'] = self._parse_thermostat
+        self._OPTIONS['numSlabs'] = self._parse_num_slabs
+        self._OPTIONS['swapFrequency'] = self._parse_swap_frequency
+
+    def _create_integrator_options(self):
+        super(RNEMDOptions, self)._create_integrator_options()
+        self._INTEGRATOR_OPTIONS['LangevinIntegrator'] = LangevinIntegratorOptions
+
+    def _create_reporter_options(self):
+        super(RNEMDOptions, self)._create_reporter_options()
+        self._REPORTER_OPTIONS['RNEMDReporter'] = RNEMDReporterOptions
+        self._REPORTER_OPTIONS['RNEMDVelocityReporter'] = RNEMDVelocityReporterOptions
 
     # =========================================================================
 
@@ -227,12 +281,6 @@ class RNEMDOptions(_EnsembleOptions):
 
     # =========================================================================
 
-    INTEGRATOR_OPTIONS = copy(NVTOptions.INTEGRATOR_OPTIONS)
-
-    REPORTER_OPTIONS = copy(NVEOptions.REPORTER_OPTIONS)
-    REPORTER_OPTIONS['RNEMDReporter'] = RNEMDReporterOptions
-    REPORTER_OPTIONS['RNEMDVelocityReporter'] = RNEMDVelocityReporterOptions
-
     def _parse_thermostat(self, *args):
         pass
 
@@ -241,11 +289,6 @@ class RNEMDOptions(_EnsembleOptions):
 
     def _parse_swap_frequency(self, *args):
         self.swapFrequency = literal_eval(args[0])
-
-    OPTIONS = copy(_EnsembleOptions.OPTIONS)
-    OPTIONS['thermostat'] = _parse_thermostat
-    OPTIONS['numSlabs'] = _parse_num_slabs
-    OPTIONS['swapFrequency'] = _parse_swap_frequency
 
     # =========================================================================
 

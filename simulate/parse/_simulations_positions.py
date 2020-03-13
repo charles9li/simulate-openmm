@@ -1,14 +1,36 @@
+"""
+_simulations_options.py: Parses position initialization options for simulations.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
 
-from simtk.openmm.app import Simulation
 from openmmtools.testsystems import subrandom_particle_positions
 import mdtraj as md
 
-from simulate.parse._options import _Options
+from ._options import _Options
 
 
 class _PositionOptions(_Options):
@@ -27,6 +49,11 @@ class FileOptions(_PositionOptions):
         self.file = None
         self.frame = 0
 
+    def _create_options(self):
+        super(FileOptions, self)._create_options()
+        self._OPTIONS['file'] = self._parse_file
+        self._OPTIONS['frame'] = self._parse_frame
+
     # =========================================================================
 
     def _check_for_incomplete_input(self):
@@ -41,9 +68,6 @@ class FileOptions(_PositionOptions):
     def _parse_frame(self, *args):
         self.frame = literal_eval(args[0])
 
-    OPTIONS = {'file': _parse_file,
-               'frame': _parse_frame}
-
     # =========================================================================
 
     def set_positions(self, simulation):
@@ -53,11 +77,7 @@ class FileOptions(_PositionOptions):
 
 class SubrandomParticlePositions(_PositionOptions):
 
-    SECTION_NAME = "SubrandomParticlePositions"
-
-    DATA_PATH = "../../data/"
-
-    COMPOUNDS = {'A4': DATA_PATH + "A4.pdb"}
+    _SECTION_NAME = "SubrandomParticlePositions"
 
     # =========================================================================
 
@@ -65,12 +85,14 @@ class SubrandomParticlePositions(_PositionOptions):
         super(SubrandomParticlePositions, self).__init__()
         self.method = 'sobol'
 
+    def _create_options(self):
+        super(SubrandomParticlePositions, self)._create_options()
+        self._OPTIONS['method'] = self._parse_method
+
     # =========================================================================
 
     def _parse_method(self, *args):
         self.method = args[0]
-
-    OPTIONS = {'method': _parse_method}
 
     # =========================================================================
 
@@ -80,5 +102,4 @@ class SubrandomParticlePositions(_PositionOptions):
         num_residues = topology.getNumAtoms()
         box_vectors = system.getDefaultPeriodicBoxVectors()
         positions = subrandom_particle_positions(num_residues, box_vectors, method=self.method)
-        print(type(positions))
         simulation.context.setPositions(positions)

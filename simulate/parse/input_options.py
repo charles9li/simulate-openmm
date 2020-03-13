@@ -26,8 +26,8 @@ from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
-from .simulations_options import SimulationEnsembles
-from .system_options import SystemOptions
+from ._simulations import SimulationsOptions
+from ._system import SystemOptions
 from simulate.utils import LineDeque, NestedParser
 
 
@@ -51,7 +51,7 @@ class InputOptions(object):
             The name of the file to be read
         """
         self.system_options = SystemOptions()
-        self.simulation_ensembles = SimulationEnsembles()
+        self.simulation_ensembles = SimulationsOptions()
         self.read(input_filename)
 
     # =========================================================================
@@ -90,7 +90,6 @@ class InputOptions(object):
                 self.system_options.parse(parsed_lines.popleft())
             elif current_section == 'simulations':
                 self.simulation_ensembles.parse(parsed_lines.popleft())
-                pass
             else:
                 raise ValueError("{} is not a valid section name.".format(current_section))
             current_section = None

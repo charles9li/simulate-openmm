@@ -1,8 +1,36 @@
+"""
+_system_topology_chain.py: Parses chain options for the DodecaneAcrylateTopology
+section.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+from __future__ import absolute_import
+__author__ = "Charles Li"
+__version__ = "1.0"
+
 from ast import literal_eval
 
 from simtk.openmm.app import Element
 
-from simulate.parse._options import _Options
+from ._options import _Options
 
 
 class _ChainOptions(_Options):
@@ -10,6 +38,8 @@ class _ChainOptions(_Options):
     CARBON = Element.getBySymbol('C')
     NITROGEN = Element.getBySymbol('N')
     OXYGEN = Element.getBySymbol('O')
+
+    # =========================================================================
 
     def __init__(self):
         super(_ChainOptions, self).__init__()
@@ -20,11 +50,21 @@ class _ChainOptions(_Options):
 
 class HomopolymerOptions(_ChainOptions):
 
+    _SECTION_NAME = "Homopolymer"
+
+    # =========================================================================
+
     def __init__(self):
         super(HomopolymerOptions, self).__init__()
         self.num = 0
         self.monomer = 'A1'
         self.N = 1
+
+    def _create_options(self):
+        super(HomopolymerOptions, self)._create_options()
+        self._OPTIONS['num'] = self._parse_num
+        self._OPTIONS['monomer'] = self._parse_monomer
+        self._OPTIONS['N'] = self._parse_N
 
     # =========================================================================
 
@@ -42,10 +82,6 @@ class HomopolymerOptions(_ChainOptions):
 
     def _parse_N(self, *args):
         self.N = literal_eval(args[0])
-
-    OPTIONS = {'num': _parse_num,
-               'monomer': _parse_monomer,
-               'N': _parse_N}
 
     # =========================================================================
 
