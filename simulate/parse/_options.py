@@ -1,5 +1,6 @@
-""" _options.py: A base class for other classes that store user options for
-each section in the input script.
+"""
+_options.py: A base class for other classes that store user options for each
+section in the input script.
 
 Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
 
@@ -20,8 +21,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-
 """
 from __future__ import absolute_import
 __author__ = "Charles Li"
@@ -31,57 +30,69 @@ from simulate.utils import LineDeque
 
 
 class _Options(object):
-    """ Base class for parsing options for an OpenMM simulation.
+    """Base class for parsing options for an OpenMM simulation.
 
     This class is inherited by classes that contain options for each section.
     The __init__, _parse_options, and _parse_sections methods are overridden by
     classes that inherit this class."""
 
+    # =========================================================================
+
     # Name of the section. Used for error messages. Overridden by child classes
-    SECTION_NAME = '_options'
+    _SECTION_NAME = '_options'
 
     # =========================================================================
 
     def __init__(self):
         """Creates an _Options instance.
 
-        Options are parsed by calling the parse method().
+        Options are parsed by calling the parse() method.
         """
-        pass
+        self._create_options()
+        self._create_sections()
+
+    def _create_options(self):
+        """Creates a dictionary that maps an option name to its parsing
+        function.
+        """
+        self._OPTIONS = {}
+
+    def _create_sections(self):
+        """Creates a dictionary that maps."""
+        self._SECTIONS = {}
 
     # =========================================================================
 
-    # Contains option/section name, private _parse method pairs. Used in the
-    # parse() method to determine values for parameters.
-    OPTIONS = {}
-    SECTIONS = {}
+    # Method for parsing LineDeque that was produced after parsing input file
 
     def parse(self, line_deque):
         """ Parses the line_deque into options and subsections for this
         section.
-
         """
         self._check_is_line_deque(line_deque)
         while len(line_deque) > 0:
             line = line_deque.popleft()
             name = self._parse_option_name(line)
             if self._is_option(line):
-                if name in self.OPTIONS.keys():
+                if name in self._OPTIONS.keys():
                     option_value = self._parse_option_value(line, name)
-                    self.OPTIONS[name](self, option_value, line_deque)
+                    self._OPTIONS[name](option_value, line_deque)
                 else:
                     self._invalid_option_error(name)
             else:
-                if name in self.SECTIONS.keys():
-                    self.SECTIONS[name](self, name, line_deque)
+                if name in self._SECTIONS.keys():
+                    self._SECTIONS[name](name, line_deque)
                 else:
                     self._invalid_section_error(name)
         self._check_for_incomplete_input()
 
+    # =========================================================================
+
+    # Method that throws errors when necessary input is not specified
+
     def _check_for_incomplete_input(self):
         """ Checks to see if any crucial information is missing after user
         input is parsed.
-
         """
         pass
 
@@ -115,7 +126,6 @@ class _Options(object):
     def _is_option(line):
         """ Returns True if line contains a option, False if it is section
         name.
-
         """
         return '=' in line
 
@@ -125,7 +135,7 @@ class _Options(object):
 
     def _invalid_option_error(self, option_name):
         """ Throws ValueError if the option is not valid for this section. """
-        msg = "'{}' is not a valid option for the '{}' section.".format(option_name, self.SECTION_NAME)
+        msg = "'{}' is not a valid option for the '{}' section.".format(option_name, self._SECTION_NAME)
         raise ValueError(msg)
 
     def _invalid_section_error(self, section_name):
@@ -133,10 +143,10 @@ class _Options(object):
         this section.
 
         """
-        msg = "'{}' is not a subsection for the '{}' section.".format(section_name, self.SECTION_NAME)
+        msg = "'{}' is not a subsection for the '{}' section.".format(section_name, self._SECTION_NAME)
         raise ValueError(msg)
 
     def _incomplete_error(self, option_name):
         """ Throws ValueError if input is missing. """
-        msg = "'{}' must be specified for the '{}' section.".format(option_name, self.SECTION_NAME)
+        msg = "'{}' must be specified for the '{}' section.".format(option_name, self._SECTION_NAME)
         raise ValueError(msg)
