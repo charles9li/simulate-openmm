@@ -38,24 +38,34 @@ class _StructureParser(object):
     def __init__(self, structure_string):
         self._structure_string = "".join(structure_string.split())
         self._index = 0
-        self._tokenized_string = []
-        self._parse_structure_string()
+        tokenized_string = self._parse_structure_string(0)
         self._chain_sequence = []
-        self._parse_tokenized_string()
+        self._parse_tokenized_string(tokenized_string)
 
-    # TODO: make parse_structure_string return list so that it can properly deal with parentheses
+    def get_chain_sequence(self):
+        return self._chain_sequence
 
-    def _parse_structure_string(self):
+    def _parse_structure_string(self, level):
+        tokenized_string = []
         while self._index < len(self._structure_string):
             char = self._structure_string[self._index]
             if char.isdigit():
-                self._parse_multiplier()
+                tokenized_string.append(self._parse_multiplier())
             elif char == 'm' or char == 'A':
-                self._parse_monomer()
+                tokenized_string.append(self._parse_monomer())
             elif char == '+':
                 self._index += 1
+            elif char == '(':
+                self._index += 1
+                tokenized_string.append(self._parse_structure_string(1))
+            elif char == ')':
+                level -= 1
+                break
             else:
                 raise ValueError("Invalid structure.")
+        if level != 0:
+            raise ValueError("Mismatched parentheses.")
+        return tokenized_string
 
     def _parse_multiplier(self):
         multiplier_str = ""
@@ -65,9 +75,9 @@ class _StructureParser(object):
                 multiplier_str += char
                 self._index += 1
             elif char == '*':
-                self._tokenized_string.append(literal_eval(multiplier_str))
+                multiplier = literal_eval(multiplier_str)
                 self._index += 1
-                break
+                return multiplier
             else:
                 raise ValueError("Invalid structure.")
 
@@ -91,12 +101,25 @@ class _StructureParser(object):
                 monomer_str += char
                 self._index += 1
             else:
-                break
+                return monomer_str
 
-        self._tokenized_string.append(monomer_str)
-
-    def _parse_tokenized_string(self):
-        pass
+    def _parse_tokenized_string(self, tokenized_string):
+        if isinstance(tokenized_string, str):
+            self._chain_sequence.append(tokenized_string)
+        elif isinstance(tokenized_string, list):
+            i = 0
+            multiplier = 1
+            while i < len(tokenized_string):
+                token = tokenized_string[i]
+                i += 1
+                if isinstance(token, int):
+                    multiplier *= token
+                elif isinstance(token, str) or isinstance(token, str):
+                    for _ in range(multiplier):
+                        self._parse_tokenized_string(token)
+                    multiplier = 1
+                else:
+                    raise ValueError("Invalid sequence.")
 
 
 class ChainOptions(_Options):
@@ -114,14 +137,19 @@ class ChainOptions(_Options):
     def __init__(self):
         super(ChainOptions, self).__init__()
         self.num = None
-        self.structure = None
+        self.sequence = None
+
+    def _create_options(self):
+        super(ChainOptions, self)._create_options()
+        self._OPTIONS['num'] = self._parse_num
+        self._OPTIONS['sequence'] = self._parse_sequence
 
     # =========================================================================
 
     def _check_for_incomplete_input(self):
         if self.num is None:
             self._incomplete_error('num')
-        if self.structure is None:
+        if self.sequence is None:
             self._incomplete_error('structure')
 
     # =========================================================================
@@ -129,46 +157,8 @@ class ChainOptions(_Options):
     def _parse_num(self, *args):
         self.num = literal_eval(args[0])
 
-    # =========================================================================
-
-    def add_chain_to_topology(self, topology):
-        pass
-
-
-class HomopolymerOptions(ChainOptions):
-
-    _SECTION_NAME = "Homopolymer"
-
-    # =========================================================================
-
-    def __init__(self):
-        super(HomopolymerOptions, self).__init__()
-        self.num = 0
-        self.monomer = 'A1'
-        self.N = 1
-
-    def _create_options(self):
-        super(HomopolymerOptions, self)._create_options()
-        self._OPTIONS['num'] = self._parse_num
-        self._OPTIONS['monomer'] = self._parse_monomer
-        self._OPTIONS['N'] = self._parse_N
-
-    # =========================================================================
-
-    def _parse_num(self, *args):
-        self.num = literal_eval(args[0])
-
-    def _parse_monomer(self, *args):
-        self.monomer = args[0]
-        if self.monomer.startswith('mA'):
-            monomer_type = 'mA'
-            self.methyl = True
-        else:
-            monomer_type = 'A'
-        self.end_chain_length = literal_eval(self.monomer.replace(monomer_type, ''))
-
-    def _parse_N(self, *args):
-        self.N = literal_eval(args[0])
+    def _parse_sequence(self, *args):
+        self.sequence = _StructureParser(args[0]).get_chain_sequence()
 
     # =========================================================================
 
