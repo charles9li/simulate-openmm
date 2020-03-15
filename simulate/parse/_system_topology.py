@@ -26,6 +26,7 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 import os
+from ast import literal_eval
 
 import numpy as np
 from simtk.openmm.app import ForceField, NoCutoff, Topology
@@ -33,7 +34,7 @@ from simtk.unit import nanometer
 from parmed import gromacs
 
 from ._options import _Options
-from ._system_topology_chain import *
+from ._system_topology_chain import ChainOptions
 
 
 class _TopologyOptions(_Options):
@@ -159,11 +160,9 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     def _create_sections(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_sections()
-        self._SECTIONS['chains'] = self._parse_chains
+        self._SECTIONS['chain'] = self._parse_chain
 
     # =========================================================================
-
-    CHAIN_METHODS = {'Homopolymer': HomopolymerOptions}
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
@@ -174,15 +173,11 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
                                      [0.0, literal_eval(b), 0.0],
                                      [0.0, 0.0, literal_eval(c)]])*nanometer
 
-    def _parse_chains(self, *args):
-        line_deque = args[1].popleft()
-        while len(line_deque) > 0:
-            line = line_deque.popleft()
-            chain_name = self._parse_option_name(line)
-            chain_name = self._parse_option_value(line, chain_name)
-            chain_options = self.CHAIN_METHODS[chain_name]()
-            chain_options.parse(line_deque.popleft())
-            self.chains.append(chain_options)
+    def _parse_chain(self, *args):
+        line_deque = args[1]
+        chain_options = ChainOptions()
+        chain_options.parse(line_deque)
+        self.chains.append(chain_options)
 
     # =========================================================================
 
@@ -192,7 +187,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             if self.box_vectors is not None:
                 topology.setPeriodicBoxVectors(self.box_vectors)
             for chain_option in self.chains:
-                chain_option._add_chain_to_topology(topology)
+                chain_option.add_chain_to_topology(topology)
             self._topology = topology
         return self._topology
 

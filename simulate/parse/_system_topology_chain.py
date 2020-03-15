@@ -33,7 +33,77 @@ from simtk.openmm.app import Element
 from ._options import _Options
 
 
-class _ChainOptions(_Options):
+class _StructureParser(object):
+
+    def __init__(self, structure_string):
+        self._structure_string = "".join(structure_string.split())
+        self._index = 0
+        self._tokenized_string = []
+        self._parse_structure_string()
+        self._chain_sequence = []
+        self._parse_tokenized_string()
+
+    # TODO: make parse_structure_string return list so that it can properly deal with parentheses
+
+    def _parse_structure_string(self):
+        while self._index < len(self._structure_string):
+            char = self._structure_string[self._index]
+            if char.isdigit():
+                self._parse_multiplier()
+            elif char == 'm' or char == 'A':
+                self._parse_monomer()
+            elif char == '+':
+                self._index += 1
+            else:
+                raise ValueError("Invalid structure.")
+
+    def _parse_multiplier(self):
+        multiplier_str = ""
+        while self._index < len(self._structure_string):
+            char = self._structure_string[self._index]
+            if char.isdigit():
+                multiplier_str += char
+                self._index += 1
+            elif char == '*':
+                self._tokenized_string.append(literal_eval(multiplier_str))
+                self._index += 1
+                break
+            else:
+                raise ValueError("Invalid structure.")
+
+    def _parse_monomer(self):
+
+        # Parse monomer type
+        monomer_str = ""
+        if self._structure_string[self._index] == 'A':
+            monomer_str += self._structure_string[self._index]
+            self._index += 1
+        elif self._structure_string[self._index:self._index + 2] == 'mA':
+            monomer_str += self._structure_string[self._index:self._index + 2]
+            self._index += 2
+        else:
+            raise ValueError("Invalid structure.")
+
+        # Parse end chain length
+        while self._index < len(self._structure_string):
+            char = self._structure_string[self._index]
+            if char.isdigit():
+                monomer_str += char
+                self._index += 1
+            else:
+                break
+
+        self._tokenized_string.append(monomer_str)
+
+    def _parse_tokenized_string(self):
+        pass
+
+
+class ChainOptions(_Options):
+
+    _SECTION_NAME = "Chain"
+
+    # =========================================================================
 
     CARBON = Element.getBySymbol('C')
     NITROGEN = Element.getBySymbol('N')
@@ -42,13 +112,30 @@ class _ChainOptions(_Options):
     # =========================================================================
 
     def __init__(self):
-        super(_ChainOptions, self).__init__()
+        super(ChainOptions, self).__init__()
+        self.num = None
+        self.structure = None
 
-    def _add_chain_to_topology(self, topology):
+    # =========================================================================
+
+    def _check_for_incomplete_input(self):
+        if self.num is None:
+            self._incomplete_error('num')
+        if self.structure is None:
+            self._incomplete_error('structure')
+
+    # =========================================================================
+
+    def _parse_num(self, *args):
+        self.num = literal_eval(args[0])
+
+    # =========================================================================
+
+    def add_chain_to_topology(self, topology):
         pass
 
 
-class HomopolymerOptions(_ChainOptions):
+class HomopolymerOptions(ChainOptions):
 
     _SECTION_NAME = "Homopolymer"
 
@@ -85,7 +172,7 @@ class HomopolymerOptions(_ChainOptions):
 
     # =========================================================================
 
-    def _add_chain_to_topology(self, topology):
+    def add_chain_to_topology(self, topology):
         for _ in range(self.num):
             chain = topology.addChain()
             prev_residue_atom = None
