@@ -52,13 +52,13 @@ class InputOptions(object):
         """
         self.system_options = SystemOptions()
         self.simulation_ensembles = SimulationsOptions()
-        self.read(input_filename)
+        self._read(input_filename)
 
     # =========================================================================
 
     # Read input file
 
-    def read(self, input_filename):
+    def _read(self, input_filename):
         """ Reads the input file and parses each section.
 
         Parameters
