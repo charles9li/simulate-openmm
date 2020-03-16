@@ -89,7 +89,7 @@ class _EnsembleOptions(_Options):
         integrator_options = self._INTEGRATOR_OPTIONS[integrator_name]()
         integrator_options.parse(line_deque.popleft())
         self.integrator_options = integrator_options
-        self.integrator = integrator_options.createIntegrator()
+        self.integrator = integrator_options.integrator()
 
     def _parse_reporters(self, *args):
         line_deque = args[1].popleft()
@@ -123,7 +123,7 @@ class _EnsembleOptions(_Options):
         return simulation
 
     def createIntegrator(self):
-        return self.integrator_options.createIntegrator()
+        return self.integrator_options.integrator()
 
 
 class NVEOptions(_EnsembleOptions):
