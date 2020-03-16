@@ -39,15 +39,20 @@ class _IntegratorOptions(_Options):
     def __init__(self):
         super(_IntegratorOptions, self).__init__()
         self.stepSize = None
+        self.constraintTolerance = 1.0e-5
 
     def _create_options(self):
         super(_IntegratorOptions, self)._create_options()
         self._OPTIONS['stepSize'] = self._parse_step_size
+        self._OPTIONS['constraintTolerance'] = self._parse_constraint_tolerance
 
     # =========================================================================
 
     def _parse_step_size(self, *args):
         self.stepSize = literal_eval(args[0])*femtosecond
+
+    def _parse_constraint_tolerance(self, *args):
+        self.constraintTolerance = literal_eval(args[0])
 
     # =========================================================================
 
