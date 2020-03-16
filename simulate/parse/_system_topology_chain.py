@@ -94,14 +94,15 @@ class _StructureParser(object):
         else:
             raise ValueError("Invalid structure.")
 
-        # Parse end chain length
+        # Parse end chareadin length
         while self._index < len(self._structure_string):
             char = self._structure_string[self._index]
             if char.isdigit():
                 monomer_str += char
                 self._index += 1
             else:
-                return monomer_str
+                break
+        return monomer_str
 
     def _parse_tokenized_string(self, tokenized_string):
         if isinstance(tokenized_string, str):
@@ -166,49 +167,64 @@ class ChainOptions(_Options):
         for _ in range(self.num):
             chain = topology.addChain()
             prev_residue_atom = None
-            for i in range(self.N):
+            for i in range(len(self.sequence)):
+                monomer = self.sequence[i]
                 left_ter = False
                 right_ter = False
                 if i == 0:
                     left_ter = True
-                if i == self.N - 1:
+                if i == len(self.sequence) - 1:
                     right_ter = True
-                prev_residue_atom = self._add_residue_to_chain(topology, chain, prev_residue_atom, left_ter, right_ter)
+                prev_residue_atom = self._add_residue_to_chain(topology, chain, prev_residue_atom, monomer,
+                                                               left_ter, right_ter)
 
-    def _add_residue_to_chain(self, topology, chain, prev_residue_atom, left_ter=False, right_ter=False):
+    def _add_residue_to_chain(self, topology, chain, prev_residue_atom, monomer, left_ter=False, right_ter=False):
+
+        # Determine monomer type and end chain length
+        is_methyl = False
+        if monomer.startswith('mA'):
+            monomer_type = 'mA'
+            is_methyl = True
+        else:
+            monomer_type = 'A'
+        end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
+
         if left_ter:
             residue_id = "TER0"
         elif right_ter:
             residue_id = "TER1"
         else:
             residue_id = None
-        residue = topology.addResidue(self.monomer, chain, id=residue_id)
+        residue = topology.addResidue(monomer, chain, id=residue_id)
 
         if left_ter:
-            C = topology.addAtom('C', self.NITROGEN, residue)
+            carbon = topology.addAtom('C', self.NITROGEN, residue)
         else:
-            C = topology.addAtom('C', self.CARBON, residue)
+            carbon = topology.addAtom('C', self.CARBON, residue)
         if right_ter:
-            C1 = topology.addAtom('C1', self.NITROGEN, residue)
+            carbon_1 = topology.addAtom('C1', self.NITROGEN, residue)
         else:
-            C1 = topology.addAtom('C1', self.CARBON, residue)
+            carbon_1 = topology.addAtom('C1', self.CARBON, residue)
         if prev_residue_atom is not None:
-            topology.addBond(C, prev_residue_atom)
-        topology.addBond(C, C1)
+            topology.addBond(carbon, prev_residue_atom)
+        topology.addBond(carbon, carbon_1)
 
-        # TODO: add option if methacrylate
+        # If methacrylate monomer
+        if is_methyl:
+            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
+            topology.addBond(carbon_1, carbon_methyl)
 
-        C2 = topology.addAtom('C2', self.CARBON, residue)
-        topology.addBond(C1, C2)
-        O = topology.addAtom('O', self.OXYGEN, residue)
-        topology.addBond(C2, O)
-        O1 = topology.addAtom('O1', self.OXYGEN, residue)
-        topology.addBond(C2, O1)
+        carbon_2 = topology.addAtom('C2', self.CARBON, residue)
+        topology.addBond(carbon_1, carbon_2)
+        oxygen_carbonyl = topology.addAtom('O', self.OXYGEN, residue)
+        topology.addBond(carbon_2, oxygen_carbonyl)
+        oxygen_ether = topology.addAtom('O1', self.OXYGEN, residue)
+        topology.addBond(carbon_2, oxygen_ether)
 
-        prev = O1
-        for i in range(self.end_chain_length):
+        prev = oxygen_ether
+        for i in range(end_chain_length):
             curr = topology.addAtom('C{}'.format(i + 3), self.CARBON, residue)
             topology.addBond(prev, curr)
             prev = curr
 
-        return C1
+        return carbon_1

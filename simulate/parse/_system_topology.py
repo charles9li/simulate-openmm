@@ -110,6 +110,12 @@ class GromacsTopologyOptions(_TopologyOptions):
         self._create_gromacs_topology()
         return self._gromacs_topology.topology
 
+    def _create_gromacs_topology(self):
+        if self._gromacs_topology is None:
+            gro = gromacs.GromacsGroFile.parse(self.groFilename)
+            self._gromacs_topology = gromacs.GromacsTopologyFile(self.topFilename)
+            self._gromacs_topology.box = gro.box
+
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
                       constraints=None, rigidWater=True, implicitSolvent=None,
                       soluteDielectric=1.0, solventDielectric=78.5,
@@ -122,12 +128,6 @@ class GromacsTopologyOptions(_TopologyOptions):
                                                    soluteDielectric=soluteDielectric, solventDielectric=solventDielectric,
                                                    ewaldErrorTolerance=ewaldErrorTolerance, removeCMMotion=removeCMMotion,
                                                    hydrogenMass=hydrogenMass)
-
-    def _create_gromacs_topology(self):
-        if self._gromacs_topology is None:
-            gro = gromacs.GromacsGroFile.parse(self.groFilename)
-            self._gromacs_topology = gromacs.GromacsTopologyFile(self.topFilename)
-            self._gromacs_topology.box = gro.box
             
             
 class DodecaneAcrylateTopologyOptions(_TopologyOptions):
@@ -176,12 +176,16 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
     def _parse_chain(self, *args):
         line_deque = args[1]
         chain_options = ChainOptions()
-        chain_options.parse(line_deque)
+        chain_options.parse(line_deque.popleft())
         self.chains.append(chain_options)
 
     # =========================================================================
 
     def topology(self):
+        self._create_dodecane_acrylate_topology()
+        return self._topology
+
+    def _create_dodecane_acrylate_topology(self):
         if self._topology is None:
             topology = Topology()
             if self.box_vectors is not None:
@@ -189,13 +193,13 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             for chain_option in self.chains:
                 chain_option.add_chain_to_topology(topology)
             self._topology = topology
-        return self._topology
 
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
                       constraints=None, rigidWater=True, implicitSolvent=None,
                       soluteDielectric=1.0, solventDielectric=78.5,
                       ewaldErrorTolerance=0.0005, removeCMMotion=True,
                       hydrogenMass=None):
+        self._create_dodecane_acrylate_topology()
         return self.force_field.createSystem(self._topology, nonbondedMethod=nonbondedMethod,
                                              nonbondedCutoff=nonbondedCutoff,
                                              constraints=constraints, rigidWater=rigidWater,
