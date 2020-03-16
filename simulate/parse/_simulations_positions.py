@@ -105,16 +105,17 @@ class SubrandomParticlePositions(_PositionOptions):
         simulation.context.setPositions(positions)
 
 
-class DodecaneAcrylatePositions(_PositionOptions):
+class DodecaneAcrylatePositionOptions(_PositionOptions):
 
-    _SECTION_NAME = "DodecaneAcrylatePositions"
+    _SECTION_NAME = "DodecaneAcrylatePosition"
 
     # =========================================================================
 
     def __init__(self):
-        super(DodecaneAcrylatePositions, self).__init__()
+        super(DodecaneAcrylatePositionOptions, self).__init__()
 
     # =========================================================================
 
     def set_positions(self, simulation):
-        pass
+        topology = simulation.topology
+
