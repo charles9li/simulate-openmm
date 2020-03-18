@@ -26,9 +26,13 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
+import os
 
+from simtk.openmm.app import PDBFile, Topology
 from openmmtools.testsystems import subrandom_particle_positions
 import mdtraj as md
+import numpy as np
+from scipy.optimize import fsolve
 
 from ._options import _Options
 
@@ -38,7 +42,7 @@ class _PositionOptions(_Options):
     def __init__(self):
         super(_PositionOptions, self).__init__()
 
-    def set_positions(self, simulation):
+    def set_positions(self, simulation, *args):
         pass
 
 
@@ -70,7 +74,7 @@ class FileOptions(_PositionOptions):
 
     # =========================================================================
 
-    def set_positions(self, simulation):
+    def set_positions(self, simulation, *args):
         t = md.load(self.file)
         simulation.context.setPositions(t.xyz[self.frame])
 
@@ -96,7 +100,7 @@ class SubrandomParticlePositions(_PositionOptions):
 
     # =========================================================================
 
-    def set_positions(self, simulation):
+    def set_positions(self, simulation, *args):
         topology = simulation.topology
         system = simulation.system
         num_residues = topology.getNumAtoms()
@@ -116,6 +120,31 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
 
     # =========================================================================
 
-    def set_positions(self, simulation):
-        topology = simulation.topology
+    _CHAIN_TO_PDB = {}
+    _CHAIN_TO_NUM = {}
 
+    def set_positions(self, simulation, *args):
+
+        # Get topology and its user options
+        topology = simulation.topology
+        topology_options = args[0]
+        id_to_sequence = topology_options.id_to_sequence
+
+        # Create dictionary
+        sequence_to_pdb = {}
+
+        # Create PDB files
+        sequences = []
+        num = []
+        index = -1
+        prev_sequence = None
+        for chain in topology:
+            sequence = id_to_sequence[chain.id]
+            if sequence != prev_sequence:
+                sequences.append(sequence)
+                index += 1
+                num.append(1)
+            else:
+                num[index] += 1
+
+    # TODO: call mdapackmol to produce initial positions

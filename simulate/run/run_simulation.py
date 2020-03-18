@@ -15,6 +15,7 @@ class RunSimulation(object):
     def __init__(self, input_file):
         self.input_options = InputOptions(input_file)
         self.system_options = self.input_options.system_options
+        self.topology_options = self.system_options.topology_options
         self.simulation_ensembles = self.input_options.simulation_ensembles
         self.ensembles = self.simulation_ensembles.ensembles
         self.positions = None
@@ -37,7 +38,7 @@ class RunSimulation(object):
 
             # initialize positions
             if self.positions is None:
-                self.simulation_ensembles.set_positions(simulation)
+                self.simulation_ensembles.set_positions(simulation, self.topology_options)
             else:
                 simulation.context.setPositions(self.positions)
 

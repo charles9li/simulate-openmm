@@ -152,6 +152,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self.numDodecane = 0
         self.box_vectors = None
         self.chains = []
+        self.id_to_sequence = {}
 
     def _create_options(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_options()
@@ -191,7 +192,8 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             if self.box_vectors is not None:
                 topology.setPeriodicBoxVectors(self.box_vectors)
             for chain_option in self.chains:
-                chain_option.add_chain_to_topology(topology)
+                id_to_sequence = chain_option.add_chain_to_topology(topology)
+                self.id_to_sequence.update(id_to_sequence)
             self._topology = topology
 
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
