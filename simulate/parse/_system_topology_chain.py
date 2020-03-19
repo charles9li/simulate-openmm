@@ -205,78 +205,7 @@ class ChainOptions(_Options):
                                                                left_ter, right_ter)
             if self.create_pdb:
                 self._create_chain_pdb(chain)
-
         return id_to_sequence
-
-    def _create_chain_pdb(self, chain):
-        dirname = os.path.dirname(__file__)
-        file_path = os.path.join(dirname, "data/{}.pdb".format(self._sequence_str))
-        if not os.path.isfile(file_path):
-            chain_positions = None
-            prev_residue_positions = None
-            for residue in chain.residues():
-                residue_file_path = os.path.join(dirname, "data/{}.pdb".format(residue.name))
-                residue_positions = md.load(residue_file_path).xyz[0]*10
-                if prev_residue_positions is not None:
-                    residue_positions = self._translated_residue_positions(residue_positions, prev_residue_positions)
-                if chain_positions is None:
-                    chain_positions = residue_positions
-                else:
-                    chain_positions = np.concatenate((chain_positions, residue_positions), axis=0)
-                prev_residue_positions = residue_positions
-            topology = Topology()
-            topology._chains.append(chain)
-            PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
-
-    def _translated_residue_positions(self, residue_positions, prev_residue_positions):
-        a0 = prev_residue_positions[0]
-        a1 = prev_residue_positions[1]
-        a2 = prev_residue_positions[2]
-        b0 = residue_positions[0]
-        b1 = residue_positions[1]
-        b2 = residue_positions[2]
-
-        def func(x):
-            # Rotate and translate matrices
-            c0 = self._rotate(self._translate(b0, *x[3:]), *x[0:3])
-            c1 = self._rotate(self._translate(b1, *x[3:]), *x[0:3])
-            c2 = self._rotate(self._translate(b2, *x[3:]), *x[0:3])
-
-            # Objectives
-            obj_1 = 1.54 - np.linalg.norm(a1-c0)
-            obj_2 = np.cos(2*np.pi*109.5/360) - np.dot(a0-a1, c0-a1)/(np.linalg.norm(a0-a1)*np.linalg.norm(c0-a1))
-            obj_3 = np.cos(2*np.pi*109.5/360) - np.dot(a1-c0, c1-c0)/(np.linalg.norm(a1-c0)*np.linalg.norm(c1-c0))
-            obj_4 = np.dot(a1-a0, c1-c0) - np.linalg.norm(a1-a0)*np.linalg.norm(c1-c0)
-            obj_5 = np.dot(np.cross(a1-a0, c1-a0), c0-a0)
-            obj_6 = np.dot(a2-a1, c2-c1) - np.linalg.norm(a2-a1)*np.linalg.norm(c2-c1)
-
-            return obj_1, obj_2, obj_3, obj_4, obj_5, obj_6
-
-        sol = fsolve(func, np.array([0, 0, 0, 1, 1, 1]))
-        return self._rotate_positions(self._translate_positions(residue_positions, *sol[3:]), *sol[0:3])
-
-    def _rotate_positions(self, positions, alpha, beta, gamma):
-        return np.array([self._rotate(position, alpha, beta, gamma) for position in positions])
-
-    @staticmethod
-    def _rotate(position, alpha, beta, gamma):
-        rotate_x = np.array([[1, 0, 0],
-                             [0, np.cos(alpha), np.sin(alpha)],
-                             [0, -np.sin(alpha), np.cos(alpha)]])
-        rotate_y = np.array([[np.cos(beta), 0, -np.sin(beta)],
-                             [0, 1, 0],
-                             [np.sin(beta), 0, np.cos(beta)]])
-        rotate_z = np.array([[np.cos(gamma), np.sin(gamma), 0],
-                             [-np.sin(gamma), np.cos(gamma), 0],
-                             [0, 0, 1]])
-        return np.dot(rotate_z, np.dot(rotate_y, np.dot(rotate_x, position)))
-
-    def _translate_positions(self, positions, del_x, del_y, del_z):
-        return np.array([self._translate(position, del_x, del_y, del_z) for position in positions])
-
-    @staticmethod
-    def _translate(position, del_x, del_y, del_z):
-        return position + np.array([del_x, del_y, del_z])
 
     def _add_residue_to_chain(self, topology, chain, prev_residue_atom, monomer, left_ter=False, right_ter=False):
 
@@ -326,5 +255,141 @@ class ChainOptions(_Options):
         if is_methyl:
             carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
             topology.addBond(carbon_1, carbon_methyl)
-
         return carbon_1
+
+    def _create_chain_pdb(self, chain):
+        dirname = os.path.dirname(__file__)
+        file_path = os.path.join(dirname, "data/{}.pdb".format(self._sequence_str))
+        if not os.path.isfile(file_path):
+            chain_positions = None
+            initial_position = np.array([0, 0, 0])
+            for residue in chain.residues():
+                residue_positions = self._create_residue_positions(residue.name, initial_position)
+
+                if chain_positions is None:
+                    chain_positions = residue_positions
+                else:
+                    chain_positions = np.concatenate((chain_positions, residue_positions), axis=0)
+                prev_residue_positions = residue_positions
+            topology = Topology()
+            topology._chains.append(chain)
+            PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
+
+    def _create_residue_positions(self, monomer, initial_position):
+
+        # Determine monomer type and end chain length
+        is_methyl = False
+        if monomer.startswith('mA'):
+            monomer_type = 'mA'
+            is_methyl = True
+        else:
+            monomer_type = 'A'
+        end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
+
+        # Create positions
+        positions = []
+        c0_pos = initial_position + 1.54*np.array([np.cos(np.pi/6), np.sin(np.pi/6), 0])
+        positions.append(c0_pos)
+        c1_pos = c0_pos + 1.54*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
+        positions.append(c1_pos)
+        c2_pos = c1_pos + 1.52*np.array([0, -1, 0])
+        positions.append(c2_pos)
+        o_pos = c2_pos + 1.20*np.array([-np.cos(np.pi/6), -np.sin(np.pi/6), 0])
+        positions.append(o_pos)
+        o1_pos = c2_pos + 1.344*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
+        positions.append(o1_pos)
+
+        prev_pos = o1_pos
+        angle = 109.5/2*2*np.pi/360
+        for i in range(end_chain_length):
+            if i == 0:
+                bond_length = 1.41
+            else:
+                bond_length = 1.54
+            curr_pos = prev_pos + bond_length*np.array([(-1)**(i+1)*np.cos(angle), -np.sin(angle), 0])
+            positions.append(curr_pos)
+            prev_pos = curr_pos
+
+        # TODO: add methyl option (point straight up)
+
+        return np.array(positions)
+
+    # def _create_chain_pdb(self, chain):
+    #     dirname = os.path.dirname(__file__)
+    #     file_path = os.path.join(dirname, "data/{}.pdb".format(self._sequence_str))
+    #     if not os.path.isfile(file_path):
+    #         chain_positions = None
+    #         prev_residue_positions = None
+    #         for residue in chain.residues():
+    #             residue_file_path = os.path.join(dirname, "data/{}.pdb".format(residue.name))
+    #             residue_positions = md.load(residue_file_path).xyz[0]*10
+    #             if prev_residue_positions is not None:
+    #                 residue_positions = self._translated_residue_positions(residue_positions, prev_residue_positions)
+    #             if chain_positions is None:
+    #                 chain_positions = residue_positions
+    #             else:
+    #                 chain_positions = np.concatenate((chain_positions, residue_positions), axis=0)
+    #             prev_residue_positions = residue_positions
+    #         topology = Topology()
+    #         topology._chains.append(chain)
+    #         PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
+    #
+    # def _translated_residue_positions(self, residue_positions, prev_residue_positions):
+    #     a0 = prev_residue_positions[0]
+    #     a1 = prev_residue_positions[1]
+    #     a2 = prev_residue_positions[2]
+    #     b0 = residue_positions[0]
+    #     b1 = residue_positions[1]
+    #     b2 = residue_positions[2]
+    #
+    #     # def func(x):
+    #     #     # Rotate and translate matrices
+    #     #     c0 = self._rotate(self._translate(b0, *x[3:]), *x[0:3])
+    #     #     c1 = self._rotate(self._translate(b1, *x[3:]), *x[0:3])
+    #     #     c2 = self._rotate(self._translate(b2, *x[3:]), *x[0:3])
+    #     #     # Objectives
+    #     #     obj_1 = 1.54 - np.linalg.norm(a1-c0)
+    #     #     obj_2 = np.cos(2*np.pi*109.5/360) - np.dot(a0-a1, c0-a1)/(np.linalg.norm(a0-a1)*np.linalg.norm(c0-a1))
+    #     #     obj_3 = np.cos(2*np.pi*109.5/360) - np.dot(a1-c0, c1-c0)/(np.linalg.norm(a1-c0)*np.linalg.norm(c1-c0))
+    #     #     obj_4 = np.dot(a1-a0, c1-c0) - np.linalg.norm(a1-a0)*np.linalg.norm(c1-c0)
+    #     #     obj_5 = np.dot(np.cross(a1-a0, c1-a0), c0-a0)
+    #     #     obj_6 = np.dot(a2-a1, c2-c1) - np.linalg.norm(a2-a1)*np.linalg.norm(c2-c1)
+    #     #     return obj_1, obj_2, obj_3, obj_4, obj_5, obj_6
+    #     # sol = fsolve(func, np.array([0, 0, 0, 1, 1, 1]))
+    #     # return self._rotate_positions(self._translate_positions(residue_positions, *sol[3:]), *sol[0:3])
+    #
+    #     def func(x):
+    #         # Translate matrices
+    #         c0 = self._translate(b0, *x)
+    #         c1 = self._translate(b1, *x)
+    #         # Objectives
+    #         obj_1 = 1.54 - np.linalg.norm(a1-c0)
+    #         obj_2 = np.cos(2*np.pi*109.5/360) - np.dot(a0-a1, c0-a1)/(np.linalg.norm(a0-a1)*np.linalg.norm(c0-a1))
+    #         obj_3 = np.cos(2*np.pi*109.5/360) - np.dot(a1-c0, c1-c0)/(np.linalg.norm(a1-c0)*np.linalg.norm(c1-c0))
+    #         return obj_1, obj_2, obj_3
+    #     sol = fsolve(func, a0-b0)
+    #     return self._translate_positions(residue_positions, *sol)
+    #
+    # def _rotate_positions(self, positions, alpha, beta, gamma):
+    #     return np.array([self._rotate(position, alpha, beta, gamma) for position in positions])
+    #
+    # @staticmethod
+    # def _rotate(position, alpha, beta, gamma):
+    #     rotate_x = np.array([[1, 0, 0],
+    #                          [0, np.cos(alpha), np.sin(alpha)],
+    #                          [0, -np.sin(alpha), np.cos(alpha)]])
+    #     rotate_y = np.array([[np.cos(beta), 0, -np.sin(beta)],
+    #                          [0, 1, 0],
+    #                          [np.sin(beta), 0, np.cos(beta)]])
+    #     rotate_z = np.array([[np.cos(gamma), np.sin(gamma), 0],
+    #                          [-np.sin(gamma), np.cos(gamma), 0],
+    #                          [0, 0, 1]])
+    #     return np.dot(rotate_z, np.dot(rotate_y, np.dot(rotate_x, position)))
+    #
+    # def _translate_positions(self, positions, del_x, del_y, del_z):
+    #     return np.array([self._translate(position, del_x, del_y, del_z) for position in positions])
+    #
+    # @staticmethod
+    # def _translate(position, del_x, del_y, del_z):
+    #     return position + np.array([del_x, del_y, del_z])
+    #
