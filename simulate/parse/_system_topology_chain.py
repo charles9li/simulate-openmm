@@ -30,10 +30,7 @@ from ast import literal_eval
 import os
 
 import numpy as np
-from scipy.optimize import fsolve
 from simtk.openmm.app import Element, PDBFile, Topology
-from simtk.unit import nanometer
-import mdtraj as md
 
 from ._options import _Options
 
@@ -149,6 +146,7 @@ class ChainOptions(_Options):
         self.num = None
         self.sequence = None
         self.create_pdb = True
+        self.overwrite_pdb = False
         self._sequence_str = None
 
     def _create_options(self):
@@ -157,6 +155,7 @@ class ChainOptions(_Options):
         self._OPTIONS['num'] = self._parse_num
         self._OPTIONS['sequence'] = self._parse_sequence
         self._OPTIONS['createPDB'] = self._parse_create_pdb
+        self._OPTIONS['overwritePDB'] = self._parse_overwrite_pdb
 
     # =========================================================================
 
@@ -181,6 +180,9 @@ class ChainOptions(_Options):
 
     def _parse_create_pdb(self, *args):
         self.create_pdb = literal_eval(args[0])
+
+    def _parse_overwrite_pdb(self, *args):
+        self.overwrite_pdb = literal_eval(args[0])
 
     # =========================================================================
 
@@ -260,22 +262,26 @@ class ChainOptions(_Options):
     def _create_chain_pdb(self, chain):
         dirname = os.path.dirname(__file__)
         file_path = os.path.join(dirname, "data/{}.pdb".format(self._sequence_str))
-        if not os.path.isfile(file_path):
+        if not os.path.isfile(file_path) or self.overwrite_pdb:
+            self.overwrite_pdb = False
             chain_positions = None
             initial_position = np.array([0, 0, 0])
             for residue in chain.residues():
                 residue_positions = self._create_residue_positions(residue.name, initial_position)
-
+                initial_position = residue_positions[1]
                 if chain_positions is None:
                     chain_positions = residue_positions
                 else:
                     chain_positions = np.concatenate((chain_positions, residue_positions), axis=0)
-                prev_residue_positions = residue_positions
             topology = Topology()
             topology._chains.append(chain)
             PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
 
-    def _create_residue_positions(self, monomer, initial_position):
+    @staticmethod
+    def _create_residue_positions(monomer, initial_position):
+
+        # Tetrahedral angle in radians
+        tetra_angle = 109.5 / 2 * 2 * np.pi / 360
 
         # Determine monomer type and end chain length
         is_methyl = False
@@ -296,21 +302,23 @@ class ChainOptions(_Options):
         positions.append(c2_pos)
         o_pos = c2_pos + 1.20*np.array([-np.cos(np.pi/6), -np.sin(np.pi/6), 0])
         positions.append(o_pos)
-        o1_pos = c2_pos + 1.344*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
+        o1_pos = c2_pos + 1.344*np.array([np.cos(tetra_angle), -np.sin(tetra_angle), 0])
         positions.append(o1_pos)
 
         prev_pos = o1_pos
-        angle = 109.5/2*2*np.pi/360
         for i in range(end_chain_length):
             if i == 0:
                 bond_length = 1.41
             else:
                 bond_length = 1.54
-            curr_pos = prev_pos + bond_length*np.array([(-1)**(i+1)*np.cos(angle), -np.sin(angle), 0])
+            curr_pos = prev_pos + bond_length*np.array([(-1) ** (i+1) * np.cos(tetra_angle), -np.sin(tetra_angle), 0])
             positions.append(curr_pos)
             prev_pos = curr_pos
 
-        # TODO: add methyl option (point straight up)
+        # If methacrylate
+        if is_methyl:
+            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
+            positions.append(cm_pos)
 
         return np.array(positions)
 
