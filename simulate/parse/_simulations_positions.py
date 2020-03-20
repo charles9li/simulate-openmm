@@ -26,15 +26,14 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
-import os
 
-from simtk.openmm.app import PDBFile, Topology
+from simtk.unit import angstrom
 from openmmtools.testsystems import subrandom_particle_positions
+import MDAnalysis as mda
 import mdtraj as md
-import numpy as np
-from scipy.optimize import fsolve
 
 from ._options import _Options
+import mdapackmol
 
 
 class _PositionOptions(_Options):
@@ -120,18 +119,12 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
 
     # =========================================================================
 
-    _CHAIN_TO_PDB = {}
-    _CHAIN_TO_NUM = {}
-
     def set_positions(self, simulation, *args):
 
         # Get topology and its user options
         topology = simulation.topology
         topology_options = args[0]
         id_to_sequence = topology_options.id_to_sequence
-
-        # Create dictionary
-        sequence_to_pdb = {}
 
         # Create PDB files
         sequences = []
@@ -142,9 +135,30 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
             sequence = id_to_sequence[chain.id]
             if sequence != prev_sequence:
                 sequences.append(sequence)
-                index += 1
                 num.append(1)
+                index += 1
             else:
                 num[index] += 1
 
-    # TODO: call mdapackmol to produce initial positions
+        # TODO: call mdapackmol to produce initial positions
+        box_vectors = simulation.context.getState().getPeriodicBoxVectors()
+        a = box_vectors[0][0].value_in_unit(angstrom)
+        b = box_vectors[1][1].value_in_unit(angstrom)
+        c = box_vectors[2][2].value_in_unit(angstrom)
+        instructions = ["inside box 0. 0. 0. {:.1f} {:.1f} {.1f}".format(a, b, c)]
+
+        # Create mdapackmol input
+        mdapackmol_input = []
+        for i in range(len(sequences)):
+            molecule = mda.Universe("{}.pdb".format(sequences[i]))
+            packmol_structure = mdapackmol.PackmolStructure(
+                molecule, number=num[i],
+                instructions=instructions
+            )
+            mdapackmol_input.append(packmol_structure)
+
+        # Call Packmol
+        system = mdapackmol.packmol(mdapackmol_input)
+
+        # Write to PDB file
+        system.atoms.write("output.pdb")
