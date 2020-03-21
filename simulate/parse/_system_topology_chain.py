@@ -274,7 +274,7 @@ class ChainOptions(_Options):
                 else:
                     chain_positions = np.concatenate((chain_positions, residue_positions), axis=0)
             topology = Topology()
-            topology._chains.append(chain)
+            topology._chains.append(chain)  # TODO: make this more elegant
             PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
 
     @staticmethod
