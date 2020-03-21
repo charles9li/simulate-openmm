@@ -97,8 +97,8 @@ class SimulationsOptions(_Options):
 
     # =========================================================================
 
-    def set_positions(self, simulation):
-        self.position_options.set_positions(simulation)
+    def set_positions(self, simulation, *args):
+        self.position_options.set_positions(simulation, *args)
 
     def set_velocities(self, simulation):
         if self.velocity_options is not None:
