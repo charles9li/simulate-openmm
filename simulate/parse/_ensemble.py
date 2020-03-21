@@ -72,6 +72,7 @@ class _EnsembleOptions(_Options):
 
     def _create_reporter_options(self):
         self._REPORTER_OPTIONS = {'DCDReporter': DCDReporterOptions,
+                                  'PDBReporter': PDBReporterOptions,
                                   'StateDataReporter': StateDataReporterOptions,
                                   'CheckpointReporter': CheckpointReporterOptions}
 

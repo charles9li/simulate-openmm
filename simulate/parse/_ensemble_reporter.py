@@ -66,7 +66,33 @@ class _ReporterOptions(_Options):
         pass
 
 
-class DCDReporterOptions(_ReporterOptions):
+class PDBReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "PDBReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(PDBReporterOptions, self).__init__()
+        self.enforcePeriodicBox = None
+
+    def _create_options(self):
+        super(PDBReporterOptions, self)._create_options()
+        self._OPTIONS['enforcePeriodicBox'] = self._parse_enforce_periodic_box
+
+    # =========================================================================
+
+    def _parse_enforce_periodic_box(self, *args):
+        self.enforcePeriodicBox = literal_eval(args[0])
+
+    # =========================================================================
+
+    def reporter(self):
+        from simtk.openmm.app import PDBReporter
+        return PDBReporter(self.file, self.reportInterval, enforcePeriodicBox=self.enforcePeriodicBox)
+
+
+class DCDReporterOptions(PDBReporterOptions):
 
     _SECTION_NAME = "DCDReporter"
 
@@ -75,20 +101,15 @@ class DCDReporterOptions(_ReporterOptions):
     def __init__(self):
         super(DCDReporterOptions, self).__init__()
         self.append = False
-        self.enforcePeriodicBox = None
 
     def _create_options(self):
         super(DCDReporterOptions, self)._create_options()
         self._OPTIONS['append'] = self._parse_append
-        self._OPTIONS['enforcePeriodicBox'] = self._parse_enforce_periodic_box
 
     # =========================================================================
 
     def _parse_append(self, *args):
         self.append = literal_eval(args[0])
-
-    def _parse_enforce_periodic_box(self, *args):
-        self.enforcePeriodicBox = args[0]
 
     # =========================================================================
 
