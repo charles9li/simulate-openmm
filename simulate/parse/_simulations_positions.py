@@ -26,7 +26,9 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
+import os
 
+from simtk.openmm.app import PDBReporter
 from simtk.unit import angstrom
 from openmmtools.testsystems import subrandom_particle_positions
 import MDAnalysis as mda
@@ -116,6 +118,16 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
 
     def __init__(self):
         super(DodecaneAcrylatePositionOptions, self).__init__()
+        self.file = None
+
+    def _create_options(self):
+        super(DodecaneAcrylatePositionOptions, self)._create_options()
+        self._OPTIONS['file'] = self._parse_file
+
+    # =========================================================================
+
+    def _parse_file(self, *args):
+        self.file = args[0]
 
     # =========================================================================
 
@@ -131,7 +143,7 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
         num = []
         index = -1
         prev_sequence = None
-        for chain in topology:
+        for chain in topology.chains():
             sequence = id_to_sequence[chain.id]
             if sequence != prev_sequence:
                 sequences.append(sequence)
@@ -140,17 +152,16 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
             else:
                 num[index] += 1
 
-        # TODO: call mdapackmol to produce initial positions
         box_vectors = simulation.context.getState().getPeriodicBoxVectors()
         a = box_vectors[0][0].value_in_unit(angstrom)
         b = box_vectors[1][1].value_in_unit(angstrom)
         c = box_vectors[2][2].value_in_unit(angstrom)
-        instructions = ["inside box 0. 0. 0. {:.1f} {:.1f} {.1f}".format(a, b, c)]
+        instructions = ["inside box 0. 0. 0. {:.1f} {:.1f} {:.1f}".format(a, b, c)]
 
         # Create mdapackmol input
         mdapackmol_input = []
         for i in range(len(sequences)):
-            molecule = mda.Universe("{}.pdb".format(sequences[i]))
+            molecule = mda.Universe(os.path.join(os.path.dirname(__file__), "data/{}.pdb".format(sequences[i])))
             packmol_structure = mdapackmol.PackmolStructure(
                 molecule, number=num[i],
                 instructions=instructions
@@ -160,5 +171,8 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
         # Call Packmol
         system = mdapackmol.packmol(mdapackmol_input)
 
-        # Write to PDB file
-        system.atoms.write("output.pdb")
+        # Set positions to simulation
+        simulation.context.setPositions(system.coord.positions)
+
+        # Save to PDB file
+        PDBReporter(self.file, 1).report(simulation, simulation.context.getState(getPositions=True))
