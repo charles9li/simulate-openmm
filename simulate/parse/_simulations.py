@@ -65,7 +65,7 @@ class SimulationsOptions(_Options):
 
     POSITION_OPTIONS = {'File': FileOptions,
                         'SubrandomParticlePositions': SubrandomParticlePositions,
-                        'DodecaneAcrylate': DodecaneAcrylatePositionOptions}
+                        'DodecaneAcrylatePositions': DodecaneAcrylatePositionOptions}
 
     VELOCITY_OPTIONS = {'SetVelocitiesToTemperature': SetVelocitiesToTemperatureOptions}
 
