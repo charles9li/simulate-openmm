@@ -151,6 +151,7 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
                 index += 1
             else:
                 num[index] += 1
+            prev_sequence = sequence
 
         box_vectors = simulation.context.getState().getPeriodicBoxVectors()
         a = box_vectors[0][0].value_in_unit(angstrom)
@@ -172,7 +173,9 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
         system = mdapackmol.packmol(mdapackmol_input)
 
         # Set positions to simulation
-        simulation.context.setPositions(system.coord.positions)
+        positions = system.coord.positions/10.0
+        simulation.context.setPositions(positions)
 
         # Save to PDB file
-        PDBReporter(self.file, 1).report(simulation, simulation.context.getState(getPositions=True))
+        if self.file is not None:
+            PDBReporter(self.file, 1).report(simulation, simulation.context.getState(getPositions=True))
