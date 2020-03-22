@@ -189,10 +189,10 @@ class ChainOptions(_Options):
     def add_chain_to_topology(self, topology):
         id_to_sequence = {}
         for _ in range(self.num):
-            if self.id is None:
+            if self.id is not None:
                 chain = topology.addChain("{}-{}".format(topology.getNumChains() + 1, self.id))
             else:
-                chain = topology.addChain()
+                chain = topology.addChain("{}-{}".format(topology.getNumChains() + 1, self._sequence_str))
             id_to_sequence[chain.id] = self._sequence_str
             prev_residue_atom = None
             for j in range(len(self.sequence)):
