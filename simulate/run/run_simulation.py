@@ -5,7 +5,7 @@ __version__ = "1.0"
 from simtk.openmm.app import PDBFile
 
 from simulate.parse import InputOptions
-from simulate.parse.simulation.ensemble_options import RNEMDOptions
+from simulate.parse import RNEMDOptions
 from simulate.run.run_rnemd import run_rnemd
 from simulate.run.run_average import run_average
 
@@ -15,6 +15,7 @@ class RunSimulation(object):
     def __init__(self, input_file):
         self.input_options = InputOptions(input_file)
         self.system_options = self.input_options.system_options
+        self.topology_options = self.system_options.topology_options
         self.simulation_ensembles = self.input_options.simulation_ensembles
         self.ensembles = self.simulation_ensembles.ensembles
         self.positions = None
@@ -37,7 +38,7 @@ class RunSimulation(object):
 
             # initialize positions
             if self.positions is None:
-                self.simulation_ensembles.set_positions(simulation)
+                self.simulation_ensembles.set_positions(simulation, self.topology_options)
             else:
                 simulation.context.setPositions(self.positions)
 
@@ -57,10 +58,9 @@ class RunSimulation(object):
                 tolerance = minimize_energy_options.tolerance
                 max_iterations = minimize_energy_options.maxIterations
                 simulation.minimizeEnergy(tolerance=tolerance, maxIterations=max_iterations)
-                print(minimize_energy_options.PDBFile)
-                if minimize_energy_options.PDBFile is not None:
+                if minimize_energy_options.file is not None:
                     positions = simulation.context.getState(getPositions=True).getPositions()
-                    PDBFile.writeFile(topology, positions, file=open(minimize_energy_options.PDBFile, 'w'))
+                    PDBFile.writeFile(topology, positions, file=open(minimize_energy_options.file, 'w'))
 
             # run simulation
             simulation = self._decide_run_type(topology, system, simulation, ensemble_options)

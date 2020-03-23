@@ -78,14 +78,13 @@
     <Bond class1="Csp2" class2="Csp2" length="0.1330" k="376562.01196922"/>
     <Bond class1="C(carbonyl)" class2="O(carbonyl)" length="0.1200" k="376562.01196922"/>
     <Bond class1="C(carbonyl)" class2="O(ether)" length="0.1344" k="376562.01196922"/>
+    <Bond class1="C(carbonyl)" class2="Csp3" length="0.1520" k="376562.01196922"/>
     <Bond class1="C(carbonyl)" class2="Csp2" length="0.1520" k="376562.01196922"/>
     <Bond class1="Csp3(ether)" class2="O(ether)" length="0.1410" k="376562.01196922"/>
   </HarmonicBondForce>
   <HarmonicAngleForce>
     <Angle type1="CH3" type2="CH2" type3="CH3" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH2" type3="CH2" angle="1.9896753472735356" k="519.653913625"/>
-    <Angle type1="CH3" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
-    <Angle type1="CH2" type2="CH2" type3="CH2" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH3" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH2" angle="1.9547687622336491" k="519.653913625"/>

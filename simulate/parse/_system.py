@@ -1,3 +1,26 @@
+"""
+_system.py: Parses options for the system.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
@@ -7,13 +30,13 @@ from ast import literal_eval
 from simtk.openmm import app, NonbondedForce
 from simtk.unit import nanometer
 
-from simulate.parse._options import _Options
-from simulate.parse.system.topology_options import GromacsTopologyOptions, DodecaneAcrylateTopologyOptions
+from ._options import _Options
+from ._system_topology import GromacsTopologyOptions, DodecaneAcrylateTopologyOptions
 
 
 class SystemOptions(_Options):
 
-    SECTION_NAME = 'system'
+    _SECTION_NAME = 'system'
 
     # =========================================================================
 
@@ -32,6 +55,15 @@ class SystemOptions(_Options):
         self.hydrogenMass = None
         self.useDispersionCorrection = True
 
+    def _create_options(self):
+        super(SystemOptions, self)._create_options()
+        self._OPTIONS['topology'] = self._parse_topology
+        self._OPTIONS['nonbondedMethod'] = self._parse_nonbonded_method
+        self._OPTIONS['nonbondedCutoff'] = self._parse_nonbonded_cutoff
+        self._OPTIONS['constraints'] = self._parse_constraints
+        self._OPTIONS['ewaldErrorTolerance'] = self._parse_ewald_error_tolerance
+        self._OPTIONS['useDispersionCorrection'] = self._parse_use_dispersion_correction
+
     # =========================================================================
 
     def _check_for_incomplete_input(self):
@@ -46,7 +78,7 @@ class SystemOptions(_Options):
                          'Ewald': app.Ewald,
                          'PME': app.PME,
                          'LJPME': app.LJPME}
-    TOPOLOGY_METHODS = {'GromacsTopology': GromacsTopologyOptions,
+    TOPOLOGY_OPTIONS = {'GromacsTopology': GromacsTopologyOptions,
                         'DodecaneAcrylateTopology': DodecaneAcrylateTopologyOptions}
     CONSTRAINTS = {'None': None,
                    'HBonds': app.HBonds,
@@ -56,7 +88,7 @@ class SystemOptions(_Options):
     def _parse_topology(self, *args):
         option_value = args[0]
         line_deque = args[1]
-        topology_options = self.TOPOLOGY_METHODS[option_value]()
+        topology_options = self.TOPOLOGY_OPTIONS[option_value]()
         topology_options.parse(line_deque.popleft())
         self.topology_options = topology_options
 
@@ -78,13 +110,6 @@ class SystemOptions(_Options):
 
     def _parse_use_dispersion_correction(self, *args):
         self.useDispersionCorrection = literal_eval(args[0])
-
-    OPTIONS = {'topology': _parse_topology,
-               'nonbondedMethod': _parse_nonbonded_method,
-               'nonbondedCutoff': _parse_nonbonded_cutoff,
-               'constraints': _parse_constraints,
-               'ewaldErrorTolerance': _parse_ewald_error_tolerance,
-               'useDispersionCorrection': _parse_use_dispersion_correction}
 
     # =========================================================================
 

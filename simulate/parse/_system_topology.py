@@ -1,19 +1,49 @@
+"""
+_system_topology.py: Parses topology information for a system.
+
+Copyright (c) 2020 Charles Li // UCSB, Department of Chemical Engineering
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
+import os
 from ast import literal_eval
 
 import numpy as np
-from simtk.openmm.app import ForceField, NoCutoff, Topology
+from simtk.openmm.app import Element, ForceField, NoCutoff, Topology
 from simtk.unit import nanometer
 from parmed import gromacs
 
-from simulate.parse._options import _Options
-from simulate.parse.system.chain_options import *
+from ._options import _Options
+from ._system_topology_chain import ChainOptions
 
 
 class _TopologyOptions(_Options):
+
+    # =========================================================================
+
+    _SECTION_NAME = '_TopologyOptions'
+
+    # =========================================================================
 
     def __init__(self):
         super(_TopologyOptions, self).__init__()
@@ -34,24 +64,29 @@ class _TopologyOptions(_Options):
 
 class AmberTopologyOptions(_TopologyOptions):
 
-    SECTION_NAME = 'AmberTopologyOptions'
+    _SECTION_NAME = 'AmberTopologyOptions'
 
     def __init__(self):
         super(AmberTopologyOptions, self).__init__()
-        raise NotImplementedError("'{}' is not supported yet.".format(self.SECTION_NAME))
+        raise NotImplementedError("'{}' is not supported yet.".format(self._SECTION_NAME))
 
 
 class GromacsTopologyOptions(_TopologyOptions):
 
-    SECTION_NAME = 'GromacsTopologyOptions'
+    _SECTION_NAME = 'GromacsTopologyOptions'
 
     # =========================================================================
 
     def __init__(self):
-        super(_Options, self).__init__()
+        super(GromacsTopologyOptions, self).__init__()
         self.topFilename = None
         self.groFilename = None
         self._gromacs_topology = None
+
+    def _create_options(self):
+        super(GromacsTopologyOptions, self)._create_options()
+        self._OPTIONS['topFilename'] = self._parse_top_filename
+        self._OPTIONS['groFilename'] = self._parse_gro_filename
 
     # =========================================================================
 
@@ -69,14 +104,17 @@ class GromacsTopologyOptions(_TopologyOptions):
     def _parse_gro_filename(self, *args):
         self.groFilename = args[0]
 
-    OPTIONS = {'topFilename': _parse_top_filename,
-               'groFilename': _parse_gro_filename}
-
     # =========================================================================
 
     def topology(self):
         self._create_gromacs_topology()
         return self._gromacs_topology.topology
+
+    def _create_gromacs_topology(self):
+        if self._gromacs_topology is None:
+            gro = gromacs.GromacsGroFile.parse(self.groFilename)
+            self._gromacs_topology = gromacs.GromacsTopologyFile(self.topFilename)
+            self._gromacs_topology.box = gro.box
 
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
                       constraints=None, rigidWater=True, implicitSolvent=None,
@@ -90,19 +128,23 @@ class GromacsTopologyOptions(_TopologyOptions):
                                                    soluteDielectric=soluteDielectric, solventDielectric=solventDielectric,
                                                    ewaldErrorTolerance=ewaldErrorTolerance, removeCMMotion=removeCMMotion,
                                                    hydrogenMass=hydrogenMass)
-
-    def _create_gromacs_topology(self):
-        if self._gromacs_topology is None:
-            gro = gromacs.GromacsGroFile.parse(self.groFilename)
-            self._gromacs_topology = gromacs.GromacsTopologyFile(self.topFilename)
-            self._gromacs_topology.box = gro.box
             
             
 class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
-    SECTION_NAME = "DodecaneAcrylateTopologyOptions"
+    # =========================================================================
 
-    TRAPPEUA_FF_PATH = "/home/charlesli/lab/shell/simulate-openmm/simulate/data/trappeua-acrylates.xml"
+    _SECTION_NAME = "DodecaneAcrylateTopologyOptions"
+
+    # =========================================================================
+
+    # Paths to forcefield files
+
+    _data_directory = os.path.join(os.path.dirname(__file__), 'data')
+
+    TRAPPEUA_FF_PATH = os.path.join(_data_directory, "trappeua-acrylates.xml")
+
+    # =========================================================================
     
     def __init__(self):
         super(DodecaneAcrylateTopologyOptions, self).__init__()
@@ -110,10 +152,18 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self.numDodecane = 0
         self.box_vectors = None
         self.chains = []
+        self.id_to_sequence = {}
+
+    def _create_options(self):
+        super(DodecaneAcrylateTopologyOptions, self)._create_options()
+        self._OPTIONS['numDodecane'] = self._parse_num_dodecane
+        self._OPTIONS['box'] = self._parse_box
+
+    def _create_sections(self):
+        super(DodecaneAcrylateTopologyOptions, self)._create_sections()
+        self._SECTIONS['chain'] = self._parse_chain
 
     # =========================================================================
-
-    CHAIN_METHODS = {'Homopolymer': HomopolymerOptions}
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
@@ -124,38 +174,52 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
                                      [0.0, literal_eval(b), 0.0],
                                      [0.0, 0.0, literal_eval(c)]])*nanometer
 
-    def _parse_chains(self, *args):
-        line_deque = args[1].popleft()
-        while len(line_deque) > 0:
-            line = line_deque.popleft()
-            chain_name = self._parse_option_name(line)
-            chain_name = self._parse_option_value(line, chain_name)
-            chain_options = self.CHAIN_METHODS[chain_name]()
-            chain_options.parse(line_deque.popleft())
-            self.chains.append(chain_options)
-
-    OPTIONS = {'numDodecane': _parse_num_dodecane,
-               'box': _parse_box}
-
-    SECTIONS = {'chains': _parse_chains}
+    def _parse_chain(self, *args):
+        line_deque = args[1]
+        chain_options = ChainOptions()
+        chain_options.parse(line_deque.popleft())
+        self.chains.append(chain_options)
 
     # =========================================================================
 
     def topology(self):
+        self._create_dodecane_acrylate_topology()
+        return self._topology
+
+    def _create_dodecane_acrylate_topology(self):
         if self._topology is None:
             topology = Topology()
             if self.box_vectors is not None:
                 topology.setPeriodicBoxVectors(self.box_vectors)
             for chain_option in self.chains:
-                chain_option._add_chain_to_topology(topology)
+                id_to_sequence = chain_option.add_chain_to_topology(topology)
+                self.id_to_sequence.update(id_to_sequence)
+            for _ in range(self.numDodecane):
+                dodecane_id = self._add_dodecane_to_topology(topology)
+                self.id_to_sequence[dodecane_id] = "C12"
             self._topology = topology
-        return self._topology
+
+    @staticmethod
+    def _add_dodecane_to_topology(topology):
+
+        # Carbon element
+        carbon_element = Element.getBySymbol('C')
+
+        chain = topology.addChain("{}-C12".format(topology.getNumChains() + 1))
+        residue = topology.addResidue("C12", chain)
+        prev_atom = topology.addAtom("C", carbon_element, residue)
+        for i in range(11):
+            curr_atom = topology.addAtom("C{}".format(i + 1), carbon_element, residue)
+            topology.addBond(prev_atom, curr_atom)
+            prev_atom = curr_atom
+        return chain.id
 
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
                       constraints=None, rigidWater=True, implicitSolvent=None,
                       soluteDielectric=1.0, solventDielectric=78.5,
                       ewaldErrorTolerance=0.0005, removeCMMotion=True,
                       hydrogenMass=None):
+        self._create_dodecane_acrylate_topology()
         return self.force_field.createSystem(self._topology, nonbondedMethod=nonbondedMethod,
                                              nonbondedCutoff=nonbondedCutoff,
                                              constraints=constraints, rigidWater=rigidWater,
