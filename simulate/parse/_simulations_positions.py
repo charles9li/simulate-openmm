@@ -26,11 +26,16 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
+import os
 
+from simtk.openmm.app import PDBReporter
+from simtk.unit import angstrom
 from openmmtools.testsystems import subrandom_particle_positions
+import MDAnalysis as mda
 import mdtraj as md
 
 from ._options import _Options
+import mdapackmol
 
 
 class _PositionOptions(_Options):
@@ -38,7 +43,7 @@ class _PositionOptions(_Options):
     def __init__(self):
         super(_PositionOptions, self).__init__()
 
-    def set_positions(self, simulation):
+    def set_positions(self, simulation, *args):
         pass
 
 
@@ -70,7 +75,7 @@ class FileOptions(_PositionOptions):
 
     # =========================================================================
 
-    def set_positions(self, simulation):
+    def set_positions(self, simulation, *args):
         t = md.load(self.file)
         simulation.context.setPositions(t.xyz[self.frame])
 
@@ -96,7 +101,7 @@ class SubrandomParticlePositions(_PositionOptions):
 
     # =========================================================================
 
-    def set_positions(self, simulation):
+    def set_positions(self, simulation, *args):
         topology = simulation.topology
         system = simulation.system
         num_residues = topology.getNumAtoms()
@@ -105,16 +110,72 @@ class SubrandomParticlePositions(_PositionOptions):
         simulation.context.setPositions(positions)
 
 
-class DodecaneAcrylatePositions(_PositionOptions):
+class DodecaneAcrylatePositionOptions(_PositionOptions):
 
-    _SECTION_NAME = "DodecaneAcrylatePositions"
+    _SECTION_NAME = "DodecaneAcrylatePosition"
 
     # =========================================================================
 
     def __init__(self):
-        super(DodecaneAcrylatePositions, self).__init__()
+        super(DodecaneAcrylatePositionOptions, self).__init__()
+        self.file = None
+
+    def _create_options(self):
+        super(DodecaneAcrylatePositionOptions, self)._create_options()
+        self._OPTIONS['file'] = self._parse_file
 
     # =========================================================================
 
-    def set_positions(self, simulation):
-        pass
+    def _parse_file(self, *args):
+        self.file = args[0]
+
+    # =========================================================================
+
+    def set_positions(self, simulation, *args):
+
+        # Get topology and its user options
+        topology = simulation.topology
+        topology_options = args[0]
+        id_to_sequence = topology_options.id_to_sequence
+
+        # Create PDB files
+        sequences = []
+        num = []
+        index = -1
+        prev_sequence = None
+        for chain in topology.chains():
+            sequence = id_to_sequence[chain.id]
+            if sequence != prev_sequence:
+                sequences.append(sequence)
+                num.append(1)
+                index += 1
+            else:
+                num[index] += 1
+            prev_sequence = sequence
+
+        box_vectors = simulation.context.getState().getPeriodicBoxVectors()
+        a = box_vectors[0][0].value_in_unit(angstrom)
+        b = box_vectors[1][1].value_in_unit(angstrom)
+        c = box_vectors[2][2].value_in_unit(angstrom)
+        instructions = ["inside box 0. 0. 0. {:.1f} {:.1f} {:.1f}".format(a, b, c)]
+
+        # Create mdapackmol input
+        mdapackmol_input = []
+        for i in range(len(sequences)):
+            molecule = mda.Universe(os.path.join(os.path.dirname(__file__), "data/{}.pdb".format(sequences[i])))
+            packmol_structure = mdapackmol.PackmolStructure(
+                molecule, number=num[i],
+                instructions=instructions
+            )
+            mdapackmol_input.append(packmol_structure)
+
+        # Call Packmol
+        system = mdapackmol.packmol(mdapackmol_input)
+
+        # Set positions to simulation
+        positions = system.coord.positions/10.0
+        simulation.context.setPositions(positions)
+
+        # Save to PDB file
+        if self.file is not None:
+            PDBReporter(self.file, 1).report(simulation, simulation.context.getState(getPositions=True))

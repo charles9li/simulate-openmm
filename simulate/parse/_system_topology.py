@@ -29,7 +29,7 @@ import os
 from ast import literal_eval
 
 import numpy as np
-from simtk.openmm.app import ForceField, NoCutoff, Topology
+from simtk.openmm.app import Element, ForceField, NoCutoff, Topology
 from simtk.unit import nanometer
 from parmed import gromacs
 
@@ -152,6 +152,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self.numDodecane = 0
         self.box_vectors = None
         self.chains = []
+        self.id_to_sequence = {}
 
     def _create_options(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_options()
@@ -191,8 +192,27 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             if self.box_vectors is not None:
                 topology.setPeriodicBoxVectors(self.box_vectors)
             for chain_option in self.chains:
-                chain_option.add_chain_to_topology(topology)
+                id_to_sequence = chain_option.add_chain_to_topology(topology)
+                self.id_to_sequence.update(id_to_sequence)
+            for _ in range(self.numDodecane):
+                dodecane_id = self._add_dodecane_to_topology(topology)
+                self.id_to_sequence[dodecane_id] = "C12"
             self._topology = topology
+
+    @staticmethod
+    def _add_dodecane_to_topology(topology):
+
+        # Carbon element
+        carbon_element = Element.getBySymbol('C')
+
+        chain = topology.addChain("{}-C12".format(topology.getNumChains() + 1))
+        residue = topology.addResidue("C12", chain)
+        prev_atom = topology.addAtom("C", carbon_element, residue)
+        for i in range(11):
+            curr_atom = topology.addAtom("C{}".format(i + 1), carbon_element, residue)
+            topology.addBond(prev_atom, curr_atom)
+            prev_atom = curr_atom
+        return chain.id
 
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
                       constraints=None, rigidWater=True, implicitSolvent=None,

@@ -39,20 +39,31 @@ class _IntegratorOptions(_Options):
     def __init__(self):
         super(_IntegratorOptions, self).__init__()
         self.stepSize = None
+        self.constraintTolerance = 1.0e-5
 
     def _create_options(self):
         super(_IntegratorOptions, self)._create_options()
         self._OPTIONS['stepSize'] = self._parse_step_size
+        self._OPTIONS['constraintTolerance'] = self._parse_constraint_tolerance
 
     # =========================================================================
 
     def _parse_step_size(self, *args):
         self.stepSize = literal_eval(args[0])*femtosecond
 
+    def _parse_constraint_tolerance(self, *args):
+        self.constraintTolerance = literal_eval(args[0])
+
     # =========================================================================
 
-    def createIntegrator(self):
-        pass
+    def _create_integrator(self):
+        from simtk.openmm import VerletIntegrator
+        return VerletIntegrator(self.stepSize)
+
+    def integrator(self):
+        integrator = self._create_integrator()
+        integrator.setConstraintTolerance(self.constraintTolerance)
+        return integrator
 
 
 class VerletIntegratorOptions(_IntegratorOptions):
@@ -70,12 +81,6 @@ class VerletIntegratorOptions(_IntegratorOptions):
         if self.stepSize is None:
             self._incomplete_error('stepSize')
 
-    # =========================================================================
-
-    def createIntegrator(self):
-        from simtk.openmm import VerletIntegrator
-        return VerletIntegrator(self.stepSize)
-
 
 class VelocityVerletIntegratorOptions(VerletIntegratorOptions):
 
@@ -87,7 +92,7 @@ class VelocityVerletIntegratorOptions(VerletIntegratorOptions):
 
     # =========================================================================
 
-    def createIntegrator(self):
+    def _create_integrator(self):
         from openmmtools.integrators import VelocityVerletIntegrator
         return VelocityVerletIntegrator(self.stepSize)
 
@@ -126,6 +131,6 @@ class LangevinIntegratorOptions(_IntegratorOptions):
 
     # =========================================================================
 
-    def createIntegrator(self):
+    def _create_integrator(self):
         from simtk.openmm import LangevinIntegrator
         return LangevinIntegrator(self.temperature, self.frictionCoeff, self.stepSize)
