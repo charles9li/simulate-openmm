@@ -72,15 +72,15 @@
     </Patch>
   </Patches>
   <HarmonicBondForce>
-    <Bond class1="Csp3" class2="Csp3" length="0.1540" k="376562.01196922"/>
-    <Bond class1="Csp3" class2="Csp3(ether)" length="0.1540" k="376562.01196922"/>
-    <Bond class1="Csp3" class2="Csp2" length="0.1540" k="376562.01196922"/>
-    <Bond class1="Csp2" class2="Csp2" length="0.1330" k="376562.01196922"/>
-    <Bond class1="C(carbonyl)" class2="O(carbonyl)" length="0.1200" k="376562.01196922"/>
-    <Bond class1="C(carbonyl)" class2="O(ether)" length="0.1344" k="376562.01196922"/>
-    <Bond class1="C(carbonyl)" class2="Csp3" length="0.1520" k="376562.01196922"/>
-    <Bond class1="C(carbonyl)" class2="Csp2" length="0.1520" k="376562.01196922"/>
-    <Bond class1="Csp3(ether)" class2="O(ether)" length="0.1410" k="376562.01196922"/>
+    <Bond class1="Csp3" class2="Csp3" length="0.1540" k="224262.4"/>
+    <Bond class1="Csp3" class2="Csp3(ether)" length="0.1540" k="224262.4"/>
+    <Bond class1="Csp3" class2="Csp2" length="0.1540" k="265265.600000"/>
+    <Bond class1="Csp2" class2="Csp2" length="0.1330" k="459403.2"/>
+    <Bond class1="C(carbonyl)" class2="O(carbonyl)" length="0.1200" k="476976.0"/>
+    <Bond class1="C(carbonyl)" class2="O(ether)" length="0.1344" k="179075.2"/>
+    <Bond class1="C(carbonyl)" class2="Csp3" length="0.1520" k="265265.600000"/>
+    <Bond class1="C(carbonyl)" class2="Csp2" length="0.1520" k="343088.0"/>
+    <Bond class1="Csp3(ether)" class2="O(ether)" length="0.1410" k="267776.0"/>
   </HarmonicBondForce>
   <HarmonicAngleForce>
     <Angle type1="CH3" type2="CH2" type3="CH3" angle="1.9896753472735356" k="519.653913625"/>
