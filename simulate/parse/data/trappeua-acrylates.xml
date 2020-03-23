@@ -86,8 +86,6 @@
     <Angle type1="CH3" type2="CH2" type3="CH3" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH2" type3="CH2" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
-    <Angle type1="CH2" type2="CH2" type3="CH2" angle="1.9896753472735356" k="519.653913625"/>
-    <Angle type1="CH3" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH3" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH2" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH" angle="1.9547687622336491" k="519.653913625"/>
