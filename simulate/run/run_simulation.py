@@ -62,6 +62,9 @@ class RunSimulation(object):
                     positions = simulation.context.getState(getPositions=True).getPositions()
                     PDBFile.writeFile(topology, positions, file=open(minimize_energy_options.file, 'w'))
 
+            # apply constraints
+            simulation.context.applyConstraints(simulation.integrator.getConstraintTolerance())
+
             # run simulation
             simulation = self._decide_run_type(topology, system, simulation, ensemble_options)
 
