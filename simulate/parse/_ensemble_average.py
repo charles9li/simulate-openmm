@@ -41,6 +41,11 @@ class AverageOptions(_Options):
         self.volume = False
         self.energy = False
 
+    def _create_options(self):
+        super(AverageOptions, self)._create_options()
+        self._OPTIONS['volume'] = self._parse_volume
+        self._OPTIONS['energy'] = self._parse_energy
+
     # =========================================================================
 
     def _parse_volume(self, *args):
@@ -48,6 +53,3 @@ class AverageOptions(_Options):
 
     def _parse_energy(self, *args):
         self.energy = literal_eval(args[0])
-
-    _OPTIONS = {'volume': _parse_volume,
-                'energy': _parse_energy}
