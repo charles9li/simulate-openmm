@@ -4,14 +4,14 @@
     <Type name="CH2" class="Csp3" element="C" mass="14.027"/>
     <Type name="CH" class="Csp3" element="C" mass="13.019"/>
     <Type name="C" class="Csp3" element="C" mass="12.011"/>
+    <Type name="CH(sp2)" class="Csp2" element="N" mass="13.019"/>
+    <Type name="C(sp2)" class="Csp2" element="N" mass="12.011"/>
+    <Type name="CH2(sp2)" class="Csp2" element="N" mass="14.027"/>
     <Type name="CH3(ether)" class="Csp3(ether)" element="C" mass="15.035"/>
     <Type name="CH2(ether)" class="Csp3(ether)" element="C" mass="14.027"/>
-    <Type name="CH2(sp2)" class="Csp2" element="N" mass="14.027"/>
     <Type name="O(ether)" class="O(ether)" element="O" mass="15.999"/>
     <Type name="C(carbonyl)" class="C(carbonyl)" element="C" mass="12.011"/>
     <Type name="O(carbonyl)" class="O(carbonyl)" element="O" mass="15.999"/>
-    <Type name="CH(sp2)" class="Csp2" element="N" mass="13.019"/>
-    <Type name="C(sp2)" class="Csp2" element="N" mass="12.011"/>
   </AtomTypes>
   <Residues>
     <Residue name="nC12">
@@ -120,28 +120,61 @@
     <Bond class1="Csp3(ether)" class2="O(ether)" length="0.1410" k="267776.0"/>
   </HarmonicBondForce>
   <HarmonicAngleForce>
+    <!-- CHx-CH2-CHy -->
     <Angle type1="CH3" type2="CH2" type3="CH3" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH2" type3="CH2" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH3" type2="CH2" type3="CH" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH3" type2="CH2" type3="C" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH3" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH2" type2="CH2" type3="CH2" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH2" type2="CH2" type3="CH" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH2" type2="CH2" type3="C" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH2" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="C" type2="CH2" type3="C" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="C" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
+    <!-- CHx-CH-CHy -->
     <Angle type1="CH3" type2="CH" type3="CH3" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH2" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH3" type2="CH" type3="CH" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="CH3" type2="CH" type3="C" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="CH3" type2="CH" type3="CH2(ether)" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH2" type2="CH" type3="CH2" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH2" type2="CH" type3="CH" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="CH2" type2="CH" type3="C" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="CH2" type2="CH" type3="CH2(ether)" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH" type2="CH" type3="CH" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="CH" type2="CH" type3="C" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="CH" type2="CH" type3="CH2(ether)" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="C" type2="CH" type3="C" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle type1="C" type2="CH" type3="CH2(ether)" angle="1.9547687622336491" k="519.653913625"/>
+    <!-- CHx-C-CHy -->
     <Angle type1="CH3" type2="C" type3="CH3" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH3" type2="C" type3="CH2" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH3" type2="C" type3="CH" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH3" type2="C" type3="C" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH3" type2="C" type3="CH2(ether)" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH2" type2="C" type3="CH2" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH2" type2="C" type3="CH" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH2" type2="C" type3="C" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH2" type2="C" type3="CH2(ether)" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH" type2="C" type3="CH" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH" type2="C" type3="C" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH" type2="C" type3="CH2(ether)" angle="1.9106119321581925" k="519.653913625"/>
+    <!-- C-CH(sp2)=CH2(sp2) AND C-C(sp2)-=CH2(sp2) AND CHx-C(sp2)-CHy -->
+    <Angle class1="Csp3" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
     <Angle class1="C(carbonyl)" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
     <Angle class1="Csp3" class2="Csp2" class3="Csp3" angle="2.0891591146372126" k="585.504457560"/>
-    <Angle type1="CH3" type2="C(sp2)" type3="C(carbonyl)" angle="2.0891591146372126" k="585.504457560"/>
+    <Angle class1="C(carbonyl)" class2="Csp2" class3="Csp3" angle="2.0891591146372126" k="585.504457560"/>
+    <!-- CHx-O(ether)-C(carbonyl) -->
     <Angle class1="Csp3(ether)" class2="O(ether)" class3="C(carbonyl)" angle="2.007128639793479" k="519.653913625"/>
+    <!-- O(ether)-C=O(carbonyl) -->
     <Angle type1="O(ether)" type2="C(carbonyl)" type3="O(carbonyl)" angle="2.1467549799530254" k="335.072843505"/>
+    <!-- O(ether)-CHx-CHy -->
     <Angle class1="O(ether)" class2="Csp3" class3="Csp3" angle="1.9373154697137058" k="293.500530415"/>
+    <!-- O(carbonyl)=C(carbonyl)-C(sp2) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp2" angle="2.199114857512855" k="335.072843505"/>
+    <!-- O(carbonyl)=C(carbonyl)-C(sp3) -->
+    <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.118829711921116" k="519.653913625"/>
   </HarmonicAngleForce>
   <RBTorsionForce>
     <Proper type1="CH3" type2="CH2" type3="CH2" type4="CH3" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
