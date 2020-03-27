@@ -123,7 +123,7 @@ class _EnsembleOptions(_Options):
             simulation.reporters.append(reporter)
         return simulation
 
-    def createIntegrator(self):
+    def create_integrator(self):
         return self.integrator_options.integrator()
 
 
