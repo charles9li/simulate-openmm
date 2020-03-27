@@ -74,6 +74,9 @@ class _EnsembleOptions(_Options):
         self._REPORTER_OPTIONS = {'DCDReporter': DCDReporterOptions,
                                   'PDBReporter': PDBReporterOptions,
                                   'StateDataReporter': StateDataReporterOptions,
+                                  'EnergyReporter': EnergyReporterOptions,
+                                  'PotentialEnergyReporter': PotentialEnergyReporterOptions,
+                                  'KineticEnergyReporter': KineticEnergyReporterOptions,
                                   'CheckpointReporter': CheckpointReporterOptions}
 
     # =========================================================================

@@ -138,6 +138,54 @@ class StateDataReporterOptions(_ReporterOptions):
                                  speed=True, elapsedTime=True)
 
 
+class EnergyReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "EnergyReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(EnergyReporterOptions, self).__init__()
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import EnergyReporter
+        return EnergyReporter(self.file, self.reportInterval)
+
+
+class PotentialEnergyReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "PotentialEnergyReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(PotentialEnergyReporterOptions, self).__init__()
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import PotentialEnergyReporter
+        return PotentialEnergyReporter(self.file, self.reportInterval)
+
+
+class KineticEnergyReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "KineticEnergyReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(KineticEnergyReporterOptions, self).__init__()
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import KineticEnergyReporter
+        return KineticEnergyReporter(self.file, self.reportInterval)
+
+
 class RNEMDReporterOptions(_ReporterOptions):
 
     _SECTION_NAME = "RNEMDReporter"
