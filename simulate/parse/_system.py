@@ -117,6 +117,8 @@ class SystemOptions(_Options):
         return self.topology_options.topology()
 
     def create_system(self):
+
+        # Create system
         system = self.topology_options.create_system(nonbondedMethod=self.nonbondedMethod,
                                                      nonbondedCutoff=self.nonbondedCutoff,
                                                      constraints=self.constraints,
@@ -127,7 +129,14 @@ class SystemOptions(_Options):
                                                      ewaldErrorTolerance=self.ewaldErrorTolerance,
                                                      removeCMMotion=self.removeCMMotion,
                                                      hydrogenMass=self.hydrogenMass)
+
+        # Set dispersion correction
         for force in system.getForces():
             if isinstance(force, NonbondedForce):
                 force.setUseDispersionCorrection(self.useDispersionCorrection)
+
+        # Set force groups
+        for i in range(system.getNumForces()):
+            system.getForce(i).setForceGroup(i)
+
         return system

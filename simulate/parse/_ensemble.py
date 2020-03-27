@@ -243,6 +243,7 @@ class NPTOptions(NVTOptions):
     
     def create_simulation(self, topology, system):
         system.addForce(self.barostat)
+        self.barostat.setForceGroup(system.getNumForces() - 1)
         return super(NPTOptions, self).create_simulation(topology, system)
 
 
