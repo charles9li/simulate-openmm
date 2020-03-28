@@ -34,7 +34,7 @@ class RunSimulation(object):
                 system.setDefaultPeriodicBoxVectors(*self.periodic_box_vectors)
 
             # create simulation
-            simulation = ensemble_options.createSimulation(topology, system)
+            simulation = ensemble_options.create_simulation(topology, system)
 
             # initialize positions
             if self.positions is None:
