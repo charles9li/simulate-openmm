@@ -134,9 +134,11 @@ class ChainOptions(_Options):
 
     # =========================================================================
 
+    HELIUM = Element.getBySymbol('He')
     CARBON = Element.getBySymbol('C')
     NITROGEN = Element.getBySymbol('N')
     OXYGEN = Element.getBySymbol('O')
+    NEON = Element.getBySymbol('Ne')
 
     # =========================================================================
 
@@ -212,29 +214,31 @@ class ChainOptions(_Options):
     def _add_residue_to_chain(self, topology, chain, prev_residue_atom, monomer, left_ter=False, right_ter=False):
 
         # Determine monomer type and end chain length
-        is_methyl = False
         if monomer.startswith('mA'):
             monomer_type = 'mA'
             is_methyl = True
         else:
             monomer_type = 'A'
+            is_methyl = False
         end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
 
         if left_ter:
-            residue_id = "TER0"
+            residue_id = "LEFTTER"
         elif right_ter:
-            residue_id = "TER1"
+            residue_id = "RIGHTTER"
         else:
             residue_id = None
         residue = topology.addResidue(monomer, chain, id=residue_id)
 
-        if left_ter:
+        if left_ter and right_ter:
             carbon = topology.addAtom('C', self.NITROGEN, residue)
-        else:
-            carbon = topology.addAtom('C', self.CARBON, residue)
-        if right_ter:
             carbon_1 = topology.addAtom('C1', self.NITROGEN, residue)
         else:
+            if left_ter:
+                topology.addAtom('LEFTTER', self.HELIUM, residue)
+            elif right_ter:
+                topology.addAtom('RIGHTTER', self.NEON, residue)
+            carbon = topology.addAtom('C', self.CARBON, residue)
             carbon_1 = topology.addAtom('C1', self.CARBON, residue)
         if prev_residue_atom is not None:
             topology.addBond(carbon, prev_residue_atom)
@@ -267,8 +271,8 @@ class ChainOptions(_Options):
             chain_positions = None
             initial_position = np.array([0, 0, 0])
             for residue in chain.residues():
-                residue_positions = self._create_residue_positions(residue.name, initial_position)
-                initial_position = residue_positions[1]
+                residue_positions = self._create_residue_positions(residue, initial_position)
+                initial_position = residue_positions[2]
                 if chain_positions is None:
                     chain_positions = residue_positions
                 else:
@@ -278,7 +282,9 @@ class ChainOptions(_Options):
             PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
 
     @staticmethod
-    def _create_residue_positions(monomer, initial_position):
+    def _create_residue_positions(residue, initial_position):
+
+        monomer = residue.name
 
         # Tetrahedral angle in radians
         tetra_angle = 109.5 / 2 * 2 * np.pi / 360
@@ -294,6 +300,8 @@ class ChainOptions(_Options):
 
         # Create positions
         positions = []
+        if residue.id == 'LEFTTER' or residue.id == 'RIGHTTER':
+            positions.append(initial_position)
         c0_pos = initial_position + 1.54*np.array([np.cos(np.pi/6), np.sin(np.pi/6), 0])
         positions.append(c0_pos)
         c1_pos = c0_pos + 1.54*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
