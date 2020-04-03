@@ -147,6 +147,8 @@
     <Angle type1="CH2" type2="CH2" type3="CH" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH2" type2="CH2" type3="C" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="CH2" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH" type2="CH2" type3="CH" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH" type2="CH2" type3="C" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="C" type2="CH2" type3="C" angle="1.9896753472735356" k="519.653913625"/>
     <Angle type1="C" type2="CH2" type3="CH2(ether)" angle="1.9896753472735356" k="519.653913625"/>
     <!-- CHx-CH-CHy -->
@@ -187,18 +189,21 @@
     <!-- O(ether)-C(carbonyl)=O(carbonyl) -->
     <Angle type1="O(ether)" type2="C(carbonyl)" type3="O(carbonyl)" angle="2.1467549799530254" k="335.072843505"/>
     <!-- O(ether)-CHx-CHy -->
-    <Angle class1="O(ether)" class2="Csp3" class3="Csp3" angle="1.9373154697137058" k="293.500530415"/>
+    <Angle class1="O(ether)" class2="Csp3(ether)" class3="Csp3" angle="1.9373154697137058" k="293.500530415"/>
     <!-- O(carbonyl)=C(carbonyl)-C(sp3) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.199114857512855" k="519.653913625"/>
 
     <!-- O(carbonyl)=C(carbonyl)-C(sp2) --> <!-- copying previous potential (not certain) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.199114857512855" k="519.653913625"/>
 
+    <!-- CH2-CH2-C(carbonyl) --> <!-- not certain -->
+    <Angle type1="CH2" type2="CH2" type3="C(carbonyl)" angle="1.9896753472735356" k="519.653913625"/>
+
     <!-- CHx-CH-C(carbonyl) --> <!-- not certain -->
     <Angle type1="CH3" type2="CH" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
     <Angle type1="CH2" type2="CH" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
 
-    <!-- CHx-CH-C(carbonyl) --> <!-- not certain -->
+    <!-- CHx-C-C(carbonyl) --> <!-- not certain -->
     <Angle type1="CH3" type2="C" type3="C(carbonyl)" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH2" type2="C" type3="C(carbonyl)" angle="1.9106119321581925" k="519.653913625"/>
 
@@ -261,7 +266,7 @@
     <Proper type1="CH2" type2="CH" type3="CH" type4="CH2" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
-    <!-- CHx-O(ether)-C(carbonyl)-O(carbonyl) -->
+    <!-- CHx-O(ether)-C(carbonyl)=O(carbonyl) -->
     <Proper class1="Csp3(ether)" class2="O(ether)" class3="C(carbonyl)" class4="O(carbonyl)" c0="26.55539587" c1="2.717498962" c2="-22.8338424" c3="1.004054506"	c4="0" c5="0"/>
     <!-- CHx-O(ether)-C(carbonyl)-C(sp2)-->
     <Proper class1="Csp3(ether)" class2="O(ether)" class3="C(carbonyl)" class4="Csp2" c0="26.55539587" c1="-2.717498962" c2="-22.8338424" c3="-1.004054506" c4="0" c5="0"/>
@@ -292,7 +297,7 @@
     <Proper class1="Csp3" class2="Csp3" class3="C(carbonyl)" class4="O(carbonyl)" c0="9.321593474918338" c1="9.321593474918338" c2="-0.9618170356502401" c3="9.75219949390456" c4="0" c5="0"/>
 
     <!-- CHx-CHy-C(carbonyl)-O(ether) --> <!-- from Ferrando 2012 (possibly incorrect) -->
-    <Proper class1="Csp3" class2="Csp3" class3="C(carbonyl)" class4="O(carbonyl)" c0="3.1017102796449003" c1="7.64132372444672" c2="2.2295231510167" c3="-14.44396760461578" c4="0" c5="0"/>
+    <Proper class1="Csp3" class2="Csp3" class3="C(carbonyl)" class4="O(ether)" c0="3.1017102796449003" c1="7.64132372444672" c2="2.2295231510167" c3="-14.44396760461578" c4="0" c5="0"/>
 
     <!-- CHx-O(ether)-C(carbonyl)-CHy --> <!-- from Ferrando 2012 -->
     <Proper class1="Csp3(ether)" class2="O(ether)" class3="C(carbonyl)" class4="Csp3" c0="54.4705389493034" c1="-13.0212799060498" c2="-34.887485145128004" c3="-6.561773898125601" c4="0" c5="0"/>
