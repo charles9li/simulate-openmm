@@ -42,7 +42,7 @@
       <Bond atomName1="C9" atomName2="C10"/>
       <Bond atomName1="C10" atomName2="C11"/>
     </Residue>
-    <Residue name="n4ACR">
+    <Residue name="A4">
       <AllowPatch name="ACRLEFTTER"/>
       <AllowPatch name="ACRRIGHTTER"/>
       <AllowPatch name="ACRMIDDLE"/>
@@ -64,7 +64,7 @@
       <Bond atomName1="C4" atomName2="C5"/>
       <Bond atomName1="C5" atomName2="C6"/>
     </Residue>
-    <Residue name="n12ACR">
+    <Residue name="A12">
       <AllowPatch name="ACRLEFTTER"/>
       <AllowPatch name="ACRRIGHTTER"/>
       <AllowPatch name="ACRMIDDLE"/>
@@ -102,6 +102,46 @@
       <Bond atomName1="C12" atomName2="C13"/>
       <Bond atomName1="C13" atomName2="C14"/>
     </Residue>
+    <Residue name="mA12">
+      <AllowPatch name="mACRLEFTTER"/>
+      <AllowPatch name="mACRRIGHTTER"/>
+      <AllowPatch name="mACRMIDDLE"/>
+      <Atom name="C" type="CH2(sp2)"/>
+      <Atom name="C1" type="C(sp2)"/>
+      <Atom name="Cm" type="CH3"/>
+      <Atom name="C2" type="C(carbonyl)"/>
+      <Atom name="O" type="O(carbonyl)"/>
+      <Atom name="O1" type="O(ether)"/>
+      <Atom name="C3" type="CH2(ether)"/>
+      <Atom name="C4" type="CH2"/>
+      <Atom name="C5" type="CH2"/>
+      <Atom name="C6" type="CH2"/>
+      <Atom name="C7" type="CH2"/>
+      <Atom name="C8" type="CH2"/>
+      <Atom name="C9" type="CH2"/>
+      <Atom name="C10" type="CH2"/>
+      <Atom name="C11" type="CH2"/>
+      <Atom name="C12" type="CH2"/>
+      <Atom name="C13" type="CH2"/>
+      <Atom name="C14" type="CH3"/>
+      <Bond atomName1="C" atomName2="C1"/>
+      <Bond atomName1="C1" atomName2="C2"/>
+      <Bond atomName1="C1" atomName2="Cm"/>
+      <Bond atomName1="C2" atomName2="O"/>
+      <Bond atomName1="C2" atomName2="O1"/>
+      <Bond atomName1="O1" atomName2="C3"/>
+      <Bond atomName1="C3" atomName2="C4"/>
+      <Bond atomName1="C4" atomName2="C5"/>
+      <Bond atomName1="C5" atomName2="C6"/>
+      <Bond atomName1="C6" atomName2="C7"/>
+      <Bond atomName1="C7" atomName2="C8"/>
+      <Bond atomName1="C8" atomName2="C9"/>
+      <Bond atomName1="C9" atomName2="C10"/>
+      <Bond atomName1="C10" atomName2="C11"/>
+      <Bond atomName1="C11" atomName2="C12"/>
+      <Bond atomName1="C12" atomName2="C13"/>
+      <Bond atomName1="C13" atomName2="C14"/>
+    </Residue>
   </Residues>
   <Patches>
     <Patch name="ACRLEFTTER">
@@ -121,6 +161,26 @@
     <Patch name="ACRMIDDLE">
       <ChangeAtom name="C" type="CH2"/>
       <ChangeAtom name="C1" type="CH"/>
+      <AddExternalBond atomName="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
+    <Patch name="mACRLEFTTER">
+      <ChangeAtom name="C" type="CH3"/>
+      <ChangeAtom name="C1" type="C"/>
+      <AddAtom name="LEFTTER" type="LEFTTER"/>
+      <AddVirtualSite type="average2" siteName="LEFTTER" atomName1="C" atomName2="C1" weight1="1.0" weight2="0"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
+    <Patch name="mACRRIGHTTER">
+      <ChangeAtom name="C" type="CH2"/>
+      <ChangeAtom name="C1" type="CH"/>
+      <AddAtom name="RIGHTTER" type="RIGHTTER"/>
+      <AddVirtualSite type="average2" siteName="RIGHTTER" atomName1="C" atomName2="C1" weight1="0" weight2="1.0"/>
+      <AddExternalBond atomName="C"/>
+    </Patch>
+    <Patch name="mACRMIDDLE">
+      <ChangeAtom name="C" type="CH2"/>
+      <ChangeAtom name="C1" type="C"/>
       <AddExternalBond atomName="C"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
