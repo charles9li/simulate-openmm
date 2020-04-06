@@ -235,6 +235,22 @@ class RNEMDVelocityReporterOptions(_ReporterOptions):
         return RNEMDVelocityReporter(self.file, self.reportInterval, self.numSlabs, step=True)
 
 
+class RadiusOfGyrationReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "RadiusOfGyrationReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(RadiusOfGyrationReporterOptions, self).__init__()
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import RadiusOfGyrationReporter
+        return RadiusOfGyrationReporter(self.file, self.reportInterval, step=True)
+
+
 class CheckpointReporterOptions(_ReporterOptions):
 
     _SECTION_NAME = "CheckPointReporter"
