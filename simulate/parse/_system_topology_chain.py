@@ -149,7 +149,8 @@ class ChainOptions(_Options):
         self.sequence = None
         self.create_pdb = True
         self.overwrite_pdb = False
-        self._sequence_str = None
+        self.instructions = None
+        self.sequence_str = None
 
     def _create_options(self):
         super(ChainOptions, self)._create_options()
@@ -158,6 +159,7 @@ class ChainOptions(_Options):
         self._OPTIONS['sequence'] = self._parse_sequence
         self._OPTIONS['createPDB'] = self._parse_create_pdb
         self._OPTIONS['overwritePDB'] = self._parse_overwrite_pdb
+        self._OPTIONS['instructions'] = self._parse_instructions
 
     # =========================================================================
 
@@ -178,13 +180,16 @@ class ChainOptions(_Options):
     def _parse_sequence(self, *args):
         structure_parser = _StructureParser(args[0])
         self.sequence = structure_parser.get_chain_sequence()
-        self._sequence_str = str(structure_parser)
+        self.sequence_str = str(structure_parser)
 
     def _parse_create_pdb(self, *args):
         self.create_pdb = literal_eval(args[0])
 
     def _parse_overwrite_pdb(self, *args):
         self.overwrite_pdb = literal_eval(args[0])
+
+    def _parse_instructions(self, *args):
+        self.instructions = [instruction.strip() for instruction in args[0].split('/')]
 
     # =========================================================================
 
@@ -194,8 +199,8 @@ class ChainOptions(_Options):
             if self.id is not None:
                 chain = topology.addChain("{}-{}".format(topology.getNumChains() + 1, self.id))
             else:
-                chain = topology.addChain("{}-{}".format(topology.getNumChains() + 1, self._sequence_str))
-            id_to_sequence[chain.id] = self._sequence_str
+                chain = topology.addChain("{}-{}".format(topology.getNumChains() + 1, self.sequence_str))
+            id_to_sequence[chain.id] = self.sequence_str
             prev_residue_atom = None
             for j in range(len(self.sequence)):
                 monomer = self.sequence[j]
@@ -265,7 +270,7 @@ class ChainOptions(_Options):
 
     def _create_chain_pdb(self, chain):
         dirname = os.path.dirname(__file__)
-        file_path = os.path.join(dirname, "data/{}.pdb".format(self._sequence_str))
+        file_path = os.path.join(dirname, "data/{}.pdb".format(self.sequence_str))
         if not os.path.isfile(file_path) or self.overwrite_pdb:
             self.overwrite_pdb = False
             chain_positions = None

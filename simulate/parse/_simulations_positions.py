@@ -133,39 +133,37 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
 
     def set_positions(self, simulation, *args):
 
-        # Get topology and its user options
-        topology = simulation.topology
+        # Get topology options
         topology_options = args[0]
-        id_to_sequence = topology_options.id_to_sequence
 
-        # Create PDB files
-        sequences = []
-        num = []
-        index = -1
-        prev_sequence = None
-        for chain in topology.chains():
-            sequence = id_to_sequence[chain.id]
-            if sequence != prev_sequence:
-                sequences.append(sequence)
-                num.append(1)
-                index += 1
-            else:
-                num[index] += 1
-            prev_sequence = sequence
-
+        # Create default instructions
         box_vectors = simulation.context.getState().getPeriodicBoxVectors()
         a = box_vectors[0][0].value_in_unit(angstrom)
         b = box_vectors[1][1].value_in_unit(angstrom)
         c = box_vectors[2][2].value_in_unit(angstrom)
-        instructions = ["inside box 0. 0. 0. {:.1f} {:.1f} {:.1f}".format(a, b, c)]
+        default_instructions = ["inside box 0. 0. 0. {:.1f} {:.1f} {:.1f}".format(a, b, c)]
 
-        # Create mdapackmol input
+        # Create input for packmol
         mdapackmol_input = []
-        for i in range(len(sequences)):
-            molecule = mda.Universe(os.path.join(os.path.dirname(__file__), "data/{}.pdb".format(sequences[i])))
+        for chain_options in topology_options.chains:
+            instructions = chain_options.instructions
+            if instructions is None:
+                instructions = default_instructions
+            molecule = mda.Universe(
+                os.path.join(os.path.dirname(__file__), "data/{}.pdb".format(chain_options.sequence_str))
+            )
             packmol_structure = mdapackmol.PackmolStructure(
-                molecule, number=num[i],
+                molecule, number=chain_options.num,
                 instructions=instructions
+            )
+            mdapackmol_input.append(packmol_structure)
+        if topology_options.numDodecane > 0:
+            molecule = mda.Universe(
+                os.path.join(os.path.dirname(__file__), "data/C12.pdb".format(chain_options.sequence_str))
+            )
+            packmol_structure = mdapackmol.PackmolStructure(
+                molecule, number=topology_options.numDodecane,
+                instructions=default_instructions
             )
             mdapackmol_input.append(packmol_structure)
 
