@@ -1,4 +1,5 @@
 from .energyreporter import EnergyReporter, PotentialEnergyReporter, KineticEnergyReporter
 from .radiusofgyrationreporter import RadiusOfGyrationReporter
+from .endtoenddistancereporter import EndToEndDistanceReporter
 from .rnemdreporter import RNEMDReporter
 from .rnemdvelocityreporter import RNEMDVelocityReporter

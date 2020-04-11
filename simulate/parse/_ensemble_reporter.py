@@ -251,6 +251,22 @@ class RadiusOfGyrationReporterOptions(_ReporterOptions):
         return RadiusOfGyrationReporter(self.file, self.reportInterval, step=True)
 
 
+class EndToEndDistanceReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "EndToEndDistanceReporter"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(EndToEndDistanceReporterOptions, self).__init__()
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import EndToEndDistanceReporter
+        return EndToEndDistanceReporter(self.file, self.reportInterval, step=True)
+
+
 class CheckpointReporterOptions(_ReporterOptions):
 
     _SECTION_NAME = "CheckPointReporter"
