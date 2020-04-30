@@ -150,6 +150,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         super(DodecaneAcrylateTopologyOptions, self).__init__()
         self.force_field = ForceField(self.TRAPPEUA_FF_PATH)
         self.numDodecane = 0
+        self.dodecaneInstructions = None
         self.box_vectors = None
         self.chains = []
         self.id_to_sequence = {}

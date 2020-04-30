@@ -158,12 +158,15 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
             )
             mdapackmol_input.append(packmol_structure)
         if topology_options.numDodecane > 0:
+            instructions = topology_options.dodecaneInstructions
+            if instructions is None:
+                instructions = default_instructions
             molecule = mda.Universe(
-                os.path.join(os.path.dirname(__file__), "data/C12.pdb".format(chain_options.sequence_str))
+                os.path.join(os.path.dirname(__file__), "data/C12.pdb")
             )
             packmol_structure = mdapackmol.PackmolStructure(
                 molecule, number=topology_options.numDodecane,
-                instructions=default_instructions
+                instructions=instructions
             )
             mdapackmol_input.append(packmol_structure)
 
