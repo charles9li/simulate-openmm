@@ -37,6 +37,8 @@ import mdtraj as md
 from ._options import _Options
 import mdapackmol
 
+__all__ = ['FileOptions', 'SubrandomParticlePositions', 'DodecaneAcrylatePositionOptions']
+
 
 class _PositionOptions(_Options):
 

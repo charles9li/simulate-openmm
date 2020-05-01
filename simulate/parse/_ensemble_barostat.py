@@ -31,6 +31,8 @@ from simtk.unit import bar, kelvin
 
 from ._options import _Options
 
+__all__ = ['MonteCarloBarostatOptions']
+
 
 class MonteCarloBarostatOptions(_Options):
 

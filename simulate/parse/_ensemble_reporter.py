@@ -30,6 +30,12 @@ import os
 
 from ._options import _Options
 
+__all__ = ['PDBReporterOptions', 'DCDReporterOptions', 'StateDataReporterOptions',
+           'EnergyReporterOptions', 'KineticEnergyReporterOptions', 'PotentialEnergyReporterOptions',
+           'RNEMDReporterOptions', 'RNEMDVelocityReporterOptions',
+           'RadiusOfGyrationReporterOptions', 'EndToEndDistanceReporterOptions',
+           'CheckpointReporterOptions']
+
 
 class _ReporterOptions(_Options):
 

@@ -29,6 +29,8 @@ from ast import literal_eval
 
 from ._options import _Options
 
+__all__ = ['AverageOptions']
+
 
 class AverageOptions(_Options):
 
