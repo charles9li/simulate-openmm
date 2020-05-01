@@ -158,6 +158,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
     def _create_options(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_options()
         self._OPTIONS['numDodecane'] = self._parse_num_dodecane
+        self._OPTIONS['dodecaneInstructions'] = self._parse_dodecane_instructions
         self._OPTIONS['box'] = self._parse_box
 
     def _create_sections(self):
@@ -168,6 +169,9 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
+
+    def _parse_dodecane_instructions(self, *args):
+        self.dodecaneInstructions = [instruction.strip() for instruction in args[0].split('/')]
 
     def _parse_box(self, *args):
         a, b, c = args[0].split(' ')
