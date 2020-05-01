@@ -26,6 +26,7 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
+import os
 
 from simtk.unit import kilojoule_per_mole
 
@@ -38,8 +39,9 @@ class MinimizeEnergyOptions(_Options):
 
     # =========================================================================
     
-    def __init__(self):
+    def __init__(self, ensemble_options):
         super(MinimizeEnergyOptions, self).__init__()
+        self.ensemble_options = ensemble_options
         self.tolerance = 10*kilojoule_per_mole
         self.maxIterations = 0
         self.file = None
@@ -59,4 +61,12 @@ class MinimizeEnergyOptions(_Options):
         self.maxIterations = literal_eval(args[0])
 
     def _parse_file(self, *args):
-        self.file = args[0]
+        self.file = self._create_filepath(args[0])
+
+    # =========================================================================
+
+    # Helper methods for parsing options
+
+    def _create_filepath(self, filepath):
+        directory = self.ensemble_options.simulations_options.input_options.directory
+        return os.path.join(directory, filepath)

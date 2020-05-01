@@ -40,8 +40,9 @@ class SystemOptions(_Options):
 
     # =========================================================================
 
-    def __init__(self):
+    def __init__(self, input_options):
         super(SystemOptions, self).__init__()
+        self.input_options = input_options
         self.topology_options = None
         self.nonbondedMethod = app.NoCutoff
         self.nonbondedCutoff = 0.9*nanometer
@@ -88,7 +89,7 @@ class SystemOptions(_Options):
     def _parse_topology(self, *args):
         option_value = args[0]
         line_deque = args[1]
-        topology_options = self.TOPOLOGY_OPTIONS[option_value]()
+        topology_options = self.TOPOLOGY_OPTIONS[option_value](self)
         topology_options.parse(line_deque.popleft())
         self.topology_options = topology_options
 

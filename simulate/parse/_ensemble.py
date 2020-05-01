@@ -25,6 +25,8 @@ from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
+import os
+
 from simtk.openmm.app import Simulation
 from simtk.openmm import VerletIntegrator, LangevinIntegrator
 from simtk.unit import amu, nanometer, picosecond
@@ -42,10 +44,11 @@ class _EnsembleOptions(_Options):
 
     # =========================================================================
 
-    def __init__(self):
+    def __init__(self, simulations_options):
         super(_EnsembleOptions, self).__init__()
         self._create_integrator_options()
         self._create_reporter_options()
+        self.simulations_options = simulations_options
         self.integrator_options = None
         self.integrator = None
         self.reporters = []
@@ -101,13 +104,13 @@ class _EnsembleOptions(_Options):
         line_deque = args[1].popleft()
         while len(line_deque) > 0:
             reporter_name = line_deque.popleft()
-            reporter_options = self._REPORTER_OPTIONS[reporter_name]()
+            reporter_options = self._REPORTER_OPTIONS[reporter_name](self)
             reporter_options.parse(line_deque.popleft())
             self.reporters.append(reporter_options.reporter())
 
     def _parse_minimize_energy(self, *args):
         line_deque = args[1].popleft()
-        minimize_energy_options = MinimizeEnergyOptions()
+        minimize_energy_options = MinimizeEnergyOptions(self)
         minimize_energy_options.parse(line_deque)
         self.minimize_energy_options = minimize_energy_options
 
@@ -115,10 +118,18 @@ class _EnsembleOptions(_Options):
         self.steps = literal_eval(args[0])
 
     def _parse_save_state(self, *args):
-        self.saveState = args[0]
+        self.saveState = self._create_filepath(args[0])
 
     def _parse_load_state(self, *args):
-        self.loadState = args[0]
+        self.loadState = self._create_filepath(args[0])
+
+    # =========================================================================
+
+    # Helper methods for parsing options
+
+    def _create_filepath(self, filepath):
+        directory = self.simulations_options.input_options.directory
+        return os.path.join(directory, filepath)
 
     # =========================================================================
 
@@ -138,8 +149,8 @@ class NVEOptions(_EnsembleOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(NVEOptions, self).__init__()
+    def __init__(self, simulations_options):
+        super(NVEOptions, self).__init__(simulations_options)
         self.average_options = None
 
     def _create_sections(self):
@@ -164,8 +175,8 @@ class NVTOptions(NVEOptions):
 
     _SECTION_NAME = 'NVT'
 
-    def __init__(self):
-        super(NVTOptions, self).__init__()
+    def __init__(self, simulations_options):
+        super(NVTOptions, self).__init__(simulations_options)
         self.thermostat = None
 
     def _create_options(self):
@@ -218,8 +229,8 @@ class NPTOptions(NVTOptions):
 
     _SECTION_NAME = 'NPT'
 
-    def __init__(self):
-        super(NPTOptions, self).__init__()
+    def __init__(self, simulations_options):
+        super(NPTOptions, self).__init__(simulations_options)
         self.barostat = None
 
     def _create_options(self):
@@ -256,8 +267,8 @@ class RNEMDOptions(_EnsembleOptions):
 
     _SECTION_NAME = 'RNEMD'
 
-    def __init__(self):
-        super(RNEMDOptions, self).__init__()
+    def __init__(self, simulations_options):
+        super(RNEMDOptions, self).__init__(simulations_options)
         self.thermostat = None
         self.numSlabs = None
         self.swapFrequency = None

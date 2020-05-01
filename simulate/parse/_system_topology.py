@@ -45,9 +45,18 @@ class _TopologyOptions(_Options):
 
     # =========================================================================
 
-    def __init__(self):
+    def __init__(self, system_options):
         super(_TopologyOptions, self).__init__()
+        self.system_options = system_options
         self._topology = None
+
+    # =========================================================================
+
+    # Helper functions for parsing input
+
+    def _create_filepath(self, filepath):
+        directory = self.system_options.input_options.directory
+        return os.path.join(directory, filepath)
 
     # =========================================================================
 
@@ -66,8 +75,8 @@ class AmberTopologyOptions(_TopologyOptions):
 
     _SECTION_NAME = 'AmberTopologyOptions'
 
-    def __init__(self):
-        super(AmberTopologyOptions, self).__init__()
+    def __init__(self, system_options):
+        super(AmberTopologyOptions, self).__init__(system_options)
         raise NotImplementedError("'{}' is not supported yet.".format(self._SECTION_NAME))
 
 
@@ -77,8 +86,8 @@ class GromacsTopologyOptions(_TopologyOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(GromacsTopologyOptions, self).__init__()
+    def __init__(self, system_options):
+        super(GromacsTopologyOptions, self).__init__(system_options)
         self.topFilename = None
         self.groFilename = None
         self._gromacs_topology = None
@@ -99,10 +108,10 @@ class GromacsTopologyOptions(_TopologyOptions):
     # =========================================================================
 
     def _parse_top_filename(self, *args):
-        self.topFilename = args[0]
+        self.topFilename = self._create_filepath(args[0])
 
     def _parse_gro_filename(self, *args):
-        self.groFilename = args[0]
+        self.groFilename = self._create_filepath(args[0])
 
     # =========================================================================
 
@@ -146,10 +155,11 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     # =========================================================================
     
-    def __init__(self):
-        super(DodecaneAcrylateTopologyOptions, self).__init__()
+    def __init__(self, system_options):
+        super(DodecaneAcrylateTopologyOptions, self).__init__(system_options)
         self.force_field = ForceField(self.TRAPPEUA_FF_PATH)
         self.numDodecane = 0
+        self.dodecaneInstructions = None
         self.box_vectors = None
         self.chains = []
         self.id_to_sequence = {}
@@ -157,6 +167,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
     def _create_options(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_options()
         self._OPTIONS['numDodecane'] = self._parse_num_dodecane
+        self._OPTIONS['dodecaneInstructions'] = self._parse_dodecane_instructions
         self._OPTIONS['box'] = self._parse_box
 
     def _create_sections(self):
@@ -167,6 +178,9 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
+
+    def _parse_dodecane_instructions(self, *args):
+        self.dodecaneInstructions = [instruction.strip() for instruction in args[0].split('/')]
 
     def _parse_box(self, *args):
         a, b, c = args[0].split(' ')

@@ -50,8 +50,9 @@ class InputOptions(object):
         input_filename : str
             The name of the file to be read
         """
-        self.system_options = SystemOptions()
-        self.simulation_ensembles = SimulationsOptions()
+        self.directory = None
+        self.system_options = SystemOptions(self)
+        self.simulation_ensembles = SimulationsOptions(self)
         self._read(input_filename)
 
     # =========================================================================
@@ -86,6 +87,8 @@ class InputOptions(object):
             if current_section is None:
                 current_section = parsed_lines.popleft().strip()
                 continue
+            elif current_section.startswith('directory'):
+                self.directory = current_section.split('=')[1].strip()
             elif current_section == 'system':
                 self.system_options.parse(parsed_lines.popleft())
             elif current_section == 'simulations':
