@@ -8,6 +8,7 @@ from simulate.parse import InputOptions
 from simulate.parse import RNEMDOptions
 from simulate.run.run_rnemd import run_rnemd
 from simulate.run.run_average import run_average
+from simulate.run.run_temperature_ramp import run_temperature_ramp
 
 
 class RunSimulation(object):
@@ -83,8 +84,10 @@ class RunSimulation(object):
         if isinstance(ensemble_options, RNEMDOptions):
             run_rnemd(simulation, ensemble_options)
         else:
-            if ensemble_options.average_options is None:
-                simulation.step(ensemble_options.steps)
-            else:
+            if ensemble_options.average_options is not None:
                 simulation = run_average(topology, system, simulation, ensemble_options)
+            elif ensemble_options.temperature_ramp_options is not None:
+                simulation = run_temperature_ramp(simulation, ensemble_options)
+            else:
+                simulation.step(ensemble_options.steps)
         return simulation

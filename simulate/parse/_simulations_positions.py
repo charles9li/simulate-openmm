@@ -69,7 +69,7 @@ class FileOptions(_PositionOptions):
     # =========================================================================
 
     def __init__(self):
-        super(FileOptions, self).__init__()
+        super(FileOptions, self).__init__(None)
         self.file = None
         self.frame = 0
 
