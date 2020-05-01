@@ -66,8 +66,8 @@ class FileOptions(_PositionOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(FileOptions, self).__init__()
+    def __init__(self, simulations_options):
+        super(FileOptions, self).__init__(simulations_options)
         self.file = None
         self.frame = 0
 
