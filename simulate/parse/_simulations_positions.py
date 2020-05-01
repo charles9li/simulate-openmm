@@ -40,14 +40,31 @@ import mdapackmol
 
 class _PositionOptions(_Options):
 
-    def __init__(self):
+    _SECTION_NAME = "_Position"
+
+    # =========================================================================
+
+    def __init__(self, simulations_options):
         super(_PositionOptions, self).__init__()
+        self.simulations_options = simulations_options
+
+    # =========================================================================
+
+    def _create_filepath(self, filepath):
+        directory = self.simulations_options.input_options.directory
+        return os.path.join(directory, filepath)
+
+    # =========================================================================
 
     def set_positions(self, simulation, *args):
         pass
 
 
 class FileOptions(_PositionOptions):
+
+    _SECTION_NAME = "File"
+
+    # =========================================================================
 
     def __init__(self):
         super(FileOptions, self).__init__()
@@ -68,7 +85,7 @@ class FileOptions(_PositionOptions):
     # =========================================================================
 
     def _parse_file(self, *args):
-        self.file = args[0]
+        self.file = self._create_filepath(args[0])
 
     def _parse_frame(self, *args):
         self.frame = literal_eval(args[0])
@@ -86,8 +103,8 @@ class SubrandomParticlePositions(_PositionOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(SubrandomParticlePositions, self).__init__()
+    def __init__(self, simulations_options):
+        super(SubrandomParticlePositions, self).__init__(simulations_options)
         self.method = 'sobol'
 
     def _create_options(self):
@@ -116,8 +133,8 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(DodecaneAcrylatePositionOptions, self).__init__()
+    def __init__(self, simulations_options):
+        super(DodecaneAcrylatePositionOptions, self).__init__(simulations_options)
         self.file = None
 
     def _create_options(self):
@@ -127,7 +144,7 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
     # =========================================================================
 
     def _parse_file(self, *args):
-        self.file = args[0]
+        self.file = self._create_filepath(args[0])
 
     # =========================================================================
 

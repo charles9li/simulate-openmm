@@ -100,6 +100,9 @@ class _Options(object):
 
     # Private helper methods for parsing options
 
+    def _create_filepath(self, filepath):
+        pass
+
     @staticmethod
     def _check_is_line_deque(line_deque):
         """ Throws an error if argument is not a LineDeque instance. """

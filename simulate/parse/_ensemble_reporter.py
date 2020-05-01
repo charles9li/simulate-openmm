@@ -26,6 +26,7 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
+import os
 
 from ._options import _Options
 
@@ -34,8 +35,9 @@ class _ReporterOptions(_Options):
 
     _SECTION_NAME = "_ReporterOptions"
 
-    def __init__(self):
+    def __init__(self, ensemble_options):
         super(_ReporterOptions, self).__init__()
+        self.ensemble_options = ensemble_options
         self.file = None
         self.reportInterval = None
 
@@ -55,10 +57,16 @@ class _ReporterOptions(_Options):
     # =========================================================================
 
     def _parse_file(self, *args):
-        self.file = args[0]
+        self.file = self._create_filepath(args[0])
 
     def _parse_report_interval(self, *args):
         self.reportInterval = literal_eval(args[0])
+
+    # =========================================================================
+
+    def _create_filepath(self, filepath):
+        directory = self.ensemble_options.simulations_options.input_options.directory
+        return os.path.join(directory, filepath)
 
     # =========================================================================
 
@@ -72,8 +80,8 @@ class PDBReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(PDBReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(PDBReporterOptions, self).__init__(ensemble_options)
         self.enforcePeriodicBox = None
 
     def _create_options(self):
@@ -98,8 +106,8 @@ class DCDReporterOptions(PDBReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(DCDReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(DCDReporterOptions, self).__init__(ensemble_options)
         self.append = False
 
     def _create_options(self):
@@ -125,8 +133,8 @@ class StateDataReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(StateDataReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(StateDataReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -144,8 +152,8 @@ class EnergyReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(EnergyReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(EnergyReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -160,8 +168,8 @@ class PotentialEnergyReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(PotentialEnergyReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(PotentialEnergyReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -176,8 +184,8 @@ class KineticEnergyReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(KineticEnergyReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(KineticEnergyReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -192,8 +200,8 @@ class RNEMDReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(RNEMDReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(RNEMDReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -208,8 +216,8 @@ class RNEMDVelocityReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(RNEMDVelocityReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(RNEMDVelocityReporterOptions, self).__init__(ensemble_options)
         self.numSlabs = None
 
     def _create_options(self):
@@ -241,8 +249,8 @@ class RadiusOfGyrationReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(RadiusOfGyrationReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(RadiusOfGyrationReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -257,8 +265,8 @@ class EndToEndDistanceReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(EndToEndDistanceReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(EndToEndDistanceReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 
@@ -273,8 +281,8 @@ class CheckpointReporterOptions(_ReporterOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(CheckpointReporterOptions, self).__init__()
+    def __init__(self, ensemble_options):
+        super(CheckpointReporterOptions, self).__init__(ensemble_options)
 
     # =========================================================================
 

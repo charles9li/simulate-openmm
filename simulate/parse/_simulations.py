@@ -37,8 +37,9 @@ class SimulationsOptions(_Options):
 
     # =========================================================================
 
-    def __init__(self):
+    def __init__(self, input_options):
         super(SimulationsOptions, self).__init__()
+        self.input_options = input_options
         self.position_options = None
         self.velocity_options = None
         self.ensembles = []
@@ -77,7 +78,7 @@ class SimulationsOptions(_Options):
     def _parse_initial_positions(self, *args):
         option_value = args[0]
         line_deque = args[1]
-        position_options = self.POSITION_OPTIONS[option_value]()
+        position_options = self.POSITION_OPTIONS[option_value](self)
         position_options.parse(line_deque.popleft())
         self.position_options = position_options
 
@@ -91,7 +92,7 @@ class SimulationsOptions(_Options):
     def _parse_ensemble(self, *args):
         ensemble_name = args[0]
         line_deque = args[1]
-        ensemble_options = self.ENSEMBLE_OPTIONS[ensemble_name]()
+        ensemble_options = self.ENSEMBLE_OPTIONS[ensemble_name](self)
         ensemble_options.parse(line_deque.popleft())
         self.ensembles.append(ensemble_options)
 
