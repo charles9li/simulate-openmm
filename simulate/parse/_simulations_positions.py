@@ -54,6 +54,8 @@ class _PositionOptions(_Options):
 
     def _create_filepath(self, filepath):
         directory = self.simulations_options.input_options.directory
+        if directory is None:
+            directory = ""
         return os.path.join(directory, filepath)
 
     # =========================================================================
@@ -68,8 +70,8 @@ class FileOptions(_PositionOptions):
 
     # =========================================================================
 
-    def __init__(self):
-        super(FileOptions, self).__init__(None)
+    def __init__(self, simulations_options):
+        super(FileOptions, self).__init__(simulations_options)
         self.file = None
         self.frame = 0
 

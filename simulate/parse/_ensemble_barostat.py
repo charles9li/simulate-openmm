@@ -55,7 +55,7 @@ class MonteCarloBarostatOptions(_Options):
     # =========================================================================
 
     def _check_for_incomplete_input(self):
-        if self.defaultPressure is None:
+        if self.defaultTemperature is None:
             self._incomplete_error('defaultTemperature')
         if self.defaultPressure is None:
             self._incomplete_error('defaultPressure')

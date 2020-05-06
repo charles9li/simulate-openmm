@@ -72,6 +72,8 @@ class _ReporterOptions(_Options):
 
     def _create_filepath(self, filepath):
         directory = self.ensemble_options.simulations_options.input_options.directory
+        if directory is None:
+            directory = ""
         return os.path.join(directory, filepath)
 
     # =========================================================================

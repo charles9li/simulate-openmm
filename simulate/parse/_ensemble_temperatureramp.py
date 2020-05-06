@@ -65,7 +65,7 @@ class TemperatureRampOptions(_Options):
             self._incomplete_error('stepTemperature')
         if self.stepsPerInterval is None:
             self._incomplete_error('stepsPerInterval')
-        if (self.endTemperature - self.startTemperature)*self.stepTemperature < 0.0*kelvin:
+        if (self.endTemperature - self.startTemperature)*self.stepTemperature < 0.0*kelvin**2:
             raise ValueError("Final temperature will never be reached with the temperature step.")
 
     # =========================================================================
@@ -80,4 +80,4 @@ class TemperatureRampOptions(_Options):
         self.stepTemperature = literal_eval(args[0])*kelvin
 
     def _parse_steps_per_interval(self, *args):
-        self.stepsPerInterval = literal_eval(args[0])*kelvin
+        self.stepsPerInterval = literal_eval(args[0])
