@@ -32,6 +32,8 @@ from simtk.unit import kilojoule_per_mole
 
 from ._options import _Options
 
+__all__ = ['MinimizeEnergyOptions']
+
 
 class MinimizeEnergyOptions(_Options):
 

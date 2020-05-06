@@ -25,6 +25,7 @@ from __future__ import absolute_import
 __author__ = "Charles Li"
 __version__ = "1.0"
 
+from ast import literal_eval
 import os
 
 from simtk.openmm.app import Simulation
@@ -38,9 +39,12 @@ from ._ensemble_barostat import *
 from ._ensemble_reporter import *
 from ._ensemble_minimizeenergy import *
 from ._ensemble_average import *
+from ._ensemble_temperatureramp import *
 
 
 class _EnsembleOptions(_Options):
+
+    _SECTION_NAME = "_Ensemble"
 
     # =========================================================================
 
@@ -178,10 +182,15 @@ class NVTOptions(NVEOptions):
     def __init__(self, simulations_options):
         super(NVTOptions, self).__init__(simulations_options)
         self.thermostat = None
+        self.temperature_ramp_options = None
 
     def _create_options(self):
         super(NVTOptions, self)._create_options()
         self._OPTIONS['thermostat'] = self._parse_thermostat
+
+    def _create_sections(self):
+        super(NVTOptions, self)._create_sections()
+        self._SECTIONS['temperatureRamp'] = self._parse_temperature_ramp
 
     def _create_integrator_options(self):
         super(NVTOptions, self)._create_integrator_options()
@@ -207,6 +216,8 @@ class NVTOptions(NVEOptions):
             if self.thermostat is not None:
                 raise ValueError("A thermostat does not need to be used with specified "
                                  "integrator in the {} ensemble".format(self._SECTION_NAME))
+        if self.temperature_ramp_options is not None and self.average_options is not None:
+            raise ValueError("The average section cannot be used with the temperature ramp section.")
 
     # =========================================================================
 
@@ -216,6 +227,12 @@ class NVTOptions(NVEOptions):
         thermostat_options = self._THERMOSTAT_OPTIONS[thermostat_name]()
         thermostat_options.parse(line_deque.popleft())
         self.thermostat = thermostat_options.thermostat()
+
+    def _parse_temperature_ramp(self, *args):
+        line_deque = args[1].popleft()
+        temperature_ramp_options = TemperatureRampOptions()
+        temperature_ramp_options.parse(line_deque)
+        self.temperature_ramp_options = temperature_ramp_options
 
     # =========================================================================
 
