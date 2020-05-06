@@ -37,6 +37,8 @@ import mdtraj as md
 from ._options import _Options
 import mdapackmol
 
+__all__ = ['FileOptions', 'SubrandomParticlePositions', 'DodecaneAcrylatePositionOptions']
+
 
 class _PositionOptions(_Options):
 
@@ -52,6 +54,8 @@ class _PositionOptions(_Options):
 
     def _create_filepath(self, filepath):
         directory = self.simulations_options.input_options.directory
+        if directory is None:
+            directory = ""
         return os.path.join(directory, filepath)
 
     # =========================================================================

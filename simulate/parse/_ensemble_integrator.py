@@ -31,6 +31,9 @@ from simtk.unit import femtosecond, kelvin, picosecond
 
 from ._options import _Options
 
+__all__ = ['VerletIntegratorOptions', 'VelocityVerletIntegratorOptions',
+           'LangevinIntegratorOptions']
+
 
 class _IntegratorOptions(_Options):
 
