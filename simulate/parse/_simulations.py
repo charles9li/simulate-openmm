@@ -26,7 +26,7 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ._options import _Options
-from ._simulations_positions import FileOptions, SubrandomParticlePositions, DodecaneAcrylatePositionOptions
+from ._simulations_positions import *
 from ._simulations_velocity import SetVelocitiesToTemperatureOptions
 from ._ensemble import NVEOptions, NVTOptions, NPTOptions, RNEMDOptions
 
