@@ -109,9 +109,6 @@ class VoidOptions(_Options):
             except KeyError:
                 pass
 
-        for bond in topology_new.bonds():
-            print(bond)
-
         # set box vectors for topology
         topology_new.setPeriodicBoxVectors(periodic_box_vectors)
 
