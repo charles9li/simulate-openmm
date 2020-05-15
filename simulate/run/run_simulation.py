@@ -24,11 +24,20 @@ class RunSimulation(object):
         self.periodic_box_vectors = None
 
     def run(self):
+
+        # initialize simulation
+        simulation = None
+
+        # iterate through and run ensembles
         for ensemble_options in self.ensembles:
 
-            # create system and topology
-            topology = self.system_options.topology()
-            system = self.system_options.create_system()
+            # create topology and system
+            if simulation is None:
+                topology = self.system_options.topology()
+                system = self.system_options.create_system()
+            else:
+                topology = simulation.topology
+                system = simulation.system
 
             # modify periodic box vectors if necessary
             if self.periodic_box_vectors is not None:
@@ -62,6 +71,12 @@ class RunSimulation(object):
                 if minimize_energy_options.file is not None:
                     positions = simulation.context.getState(getPositions=True).getPositions()
                     PDBFile.writeFile(topology, positions, file=open(minimize_energy_options.file, 'w'))
+
+            # create voids
+            void_options = ensemble_options.void_options
+            if void_options is not None:
+                system_options = ensemble_options.simulations_options.input_options.system_options
+                simulation = void_options.remove_molecules(simulation, system_options, ensemble_options)
 
             # apply constraints
             simulation.context.applyConstraints(simulation.integrator.getConstraintTolerance())
