@@ -73,11 +73,13 @@ class FileOptions(_PositionOptions):
     def __init__(self, simulations_options):
         super(FileOptions, self).__init__(simulations_options)
         self.file = None
+        self.top = None
         self.frame = 0
 
     def _create_options(self):
         super(FileOptions, self)._create_options()
         self._OPTIONS['file'] = self._parse_file
+        self._OPTIONS['top'] = self._parse_top
         self._OPTIONS['frame'] = self._parse_frame
 
     # =========================================================================
@@ -91,14 +93,21 @@ class FileOptions(_PositionOptions):
     def _parse_file(self, *args):
         self.file = self._create_filepath(args[0])
 
+    def _parse_top(self, *args):
+        self.top = self._create_filepath(args[0])
+
     def _parse_frame(self, *args):
         self.frame = literal_eval(args[0])
 
     # =========================================================================
 
     def set_positions(self, simulation, *args):
-        t = md.load(self.file)
-        simulation.context.setPositions(t.xyz[self.frame])
+        if self.top is None:
+            t = md.load(self.file, frame=self.frame)
+        else:
+            t = md.load(self.file, top=self.top, frame=self.frame)
+        simulation.context.setPositions(t.xyz[0])
+        simulation.context.setPeriodicBoxVectors(*t.unitcell_vectors[0])
 
 
 class SubrandomParticlePositions(_PositionOptions):

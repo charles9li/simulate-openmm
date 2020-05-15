@@ -40,6 +40,7 @@ from ._ensemble_reporter import *
 from ._ensemble_minimizeenergy import *
 from ._ensemble_average import *
 from ._ensemble_temperatureramp import *
+from ._ensemble_void import *
 
 
 class _EnsembleOptions(_Options):
@@ -57,6 +58,7 @@ class _EnsembleOptions(_Options):
         self.integrator = None
         self.reporters = []
         self.minimize_energy_options = None
+        self.void_options = None
         self.steps = 0
         self.saveState = None
         self.loadState = None
@@ -72,6 +74,7 @@ class _EnsembleOptions(_Options):
         super(_EnsembleOptions, self)._create_sections()
         self._SECTIONS['reporters'] = self._parse_reporters
         self._SECTIONS['minimizeEnergy'] = self._parse_minimize_energy
+        self._SECTIONS['void'] = self._parse_void
 
     def _create_integrator_options(self):
         self._INTEGRATOR_OPTIONS = {'VerletIntegrator': VerletIntegratorOptions,
@@ -118,6 +121,12 @@ class _EnsembleOptions(_Options):
         minimize_energy_options.parse(line_deque)
         self.minimize_energy_options = minimize_energy_options
 
+    def _parse_void(self, *args):
+        line_deque = args[1].popleft()
+        void_options = VoidOptions(self)
+        void_options.parse(line_deque)
+        self.void_options = void_options
+
     def _parse_steps(self, *args):
         self.steps = literal_eval(args[0])
 
@@ -133,6 +142,8 @@ class _EnsembleOptions(_Options):
 
     def _create_filepath(self, filepath):
         directory = self.simulations_options.input_options.directory
+        if directory is None:
+            return filepath
         return os.path.join(directory, filepath)
 
     # =========================================================================
