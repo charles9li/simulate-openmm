@@ -31,7 +31,7 @@ from simtk.unit import bar, kelvin
 
 from ._options import _Options
 
-__all__ = ['MonteCarloBarostatOptions']
+__all__ = ['MonteCarloBarostatOptions', 'MonteCarloAnisotropicBarostatOptions']
 
 
 class MonteCarloBarostatOptions(_Options):
@@ -76,3 +76,40 @@ class MonteCarloBarostatOptions(_Options):
     def barostat(self):
         from simtk.openmm import MonteCarloBarostat
         return MonteCarloBarostat(self.defaultPressure, self.defaultTemperature, self.frequency)
+    
+    
+class MonteCarloAnisotropicBarostatOptions(MonteCarloBarostatOptions):
+
+    _SECTION_NAME = "MonteCarloAnisotropicBarostat"
+
+    # =========================================================================
+    
+    def __init__(self):
+        super(MonteCarloAnisotropicBarostatOptions, self).__init__()
+        self.scaleX = True
+        self.scaleY = True
+        self.scaleZ = True
+
+    def _create_options(self):
+        super(MonteCarloAnisotropicBarostatOptions, self)._create_options()
+        self._OPTIONS['scaleX'] = self._parse_scale_x
+        self._OPTIONS['scaleY'] = self._parse_scale_y
+        self._OPTIONS['scaleZ'] = self._parse_scale_z
+
+    # =========================================================================
+
+    def _parse_scale_x(self, *args):
+        self.scaleX = literal_eval(args[0])
+
+    def _parse_scale_y(self, *args):
+        self.scaleY = literal_eval(args[0])
+
+    def _parse_scale_z(self, *args):
+        self.scaleZ = literal_eval(args[0])
+
+    # =========================================================================
+
+    def barostat(self):
+        from simtk.openmm import MonteCarloAnisotropicBarostat
+        return MonteCarloAnisotropicBarostat(self.defaultPressure, self.defaultPressure,
+                                             self.scaleX, self.scaleY, self.scaleZ, self.frequency)
