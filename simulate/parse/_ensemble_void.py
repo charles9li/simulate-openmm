@@ -121,7 +121,14 @@ class VoidOptions(_Options):
             defaultPressure = barostat_old.getDefaultPressure()
             defaultTemperature = barostat_old.getDefaultTemperature()
             frequency = barostat_old.getFrequency()
-            barostat_new = MonteCarloBarostat(defaultPressure, defaultTemperature, frequency)
+            if isinstance(barostat_old, MonteCarloAnisotropicBarostat):
+                scaleX = barostat_old.getScaleX()
+                scaleY = barostat_old.getScaleY()
+                scaleZ = barostat_old.getScaleZ()
+                barostat_new = MonteCarloAnisotropicBarostat(defaultPressure, defaultTemperature,
+                                                             scaleX, scaleY, scaleZ, frequency)
+            else:
+                barostat_new = MonteCarloBarostat(defaultPressure, defaultTemperature, frequency)
             system_new.addForce(barostat_new)
             barostat_new.setForceGroup(system_new.getNumForces() - 1)
 
