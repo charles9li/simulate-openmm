@@ -45,7 +45,14 @@ def _create_new_simulation(simulation_old, current_temperature, system_options, 
         barostat_old = _get_barostat(system_old)
         default_pressure = barostat_old.getDefaultPressure()
         frequency = barostat_old.getFrequency()
-        barostat_new = MonteCarloBarostat(default_pressure, current_temperature, frequency)
+        if isinstance(barostat_old, MonteCarloAnisotropicBarostat):
+            scaleX = barostat_old.getScaleX()
+            scaleY = barostat_old.getScaleY()
+            scaleZ = barostat_old.getScaleZ()
+            barostat_new = MonteCarloAnisotropicBarostat(default_pressure, current_temperature,
+                                                         scaleX, scaleY, scaleZ, frequency)
+        else:
+            barostat_new = MonteCarloBarostat(default_pressure, current_temperature, frequency)
         system_new.addForce(barostat_new)
         barostat_new.setForceGroup(system_new.getNumForces() - 1)
 
