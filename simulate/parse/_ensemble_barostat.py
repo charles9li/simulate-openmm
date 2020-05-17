@@ -110,6 +110,7 @@ class MonteCarloAnisotropicBarostatOptions(MonteCarloBarostatOptions):
     # =========================================================================
 
     def barostat(self):
-        from simtk.openmm import MonteCarloAnisotropicBarostat
-        return MonteCarloAnisotropicBarostat(self.defaultPressure, self.defaultPressure,
+        from simtk.openmm import MonteCarloAnisotropicBarostat, Vec3
+        pressure_vec = Vec3(self.defaultPressure, self.defaultPressure, self.defaultPressure)
+        return MonteCarloAnisotropicBarostat(pressure_vec, self.defaultPressure,
                                              self.scaleX, self.scaleY, self.scaleZ, self.frequency)
