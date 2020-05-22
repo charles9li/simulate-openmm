@@ -9,6 +9,8 @@
     <Type name="CH2(sp2)" class="Csp2" element="N" mass="14.027"/>
     <Type name="CH3(ether)" class="Csp3(ether)" element="C" mass="15.035"/>
     <Type name="CH2(ether)" class="Csp3(ether)" element="C" mass="14.027"/>
+    <Type name="CH(ether)" class="Csp3(ether)" element="C" mass="13.019"/>
+    <Type name="C(ether)" class="Csp3(ether)" element="C" mass="12.011"/>
     <Type name="O(ether)" class="O(ether)" element="O" mass="15.999"/>
     <Type name="C(carbonyl)" class="C(carbonyl)" element="C" mass="12.011"/>
     <Type name="O(carbonyl)" class="O(carbonyl)" element="O" mass="15.999"/>
@@ -252,6 +254,8 @@
     <Angle class1="O(ether)" class2="Csp3(ether)" class3="Csp3" angle="1.9373154697137058" k="293.500530415"/>
     <!-- O(carbonyl)=C(carbonyl)-C(sp3) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.199114857512855" k="519.653913625"/>
+    <!-- CHx-O(ether)-CHy -->
+    <Angle class1="Csp3(ether)" class2="O(ether)" class3="Csp3(ether)" angle="1.9547687622336491" k="502.1935421272"/>
 
     <!-- O(carbonyl)=C(carbonyl)-C(sp2) --> <!-- copying previous potential (not certain) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.199114857512855" k="519.653913625"/>
@@ -370,6 +374,8 @@
     <Atom type="C" charge="0" sigma="0.6400" epsilon="0.004157231309"/>
     <Atom type="CH3(ether)" charge="0.25" sigma="0.3750" epsilon="0.814817336564"/>
     <Atom type="CH2(ether)" charge="0.25" sigma="0.3950" epsilon="0.382465280428"/>
+    <Atom type="CH(ether)" charge="0.25" sigma="0.4330" epsilon="0.08314462618"/>
+    <Atom type="C(ether)" charge="0.25" sigma="0.5800" epsilon="0.004157231309"/>
     <Atom type="CH2(sp2)" charge="0" sigma="0.3675" epsilon="0.706729322530"/>
     <Atom type="O(ether)" charge="-0.25" sigma="0.2800" epsilon="0.457295443990"/>
     <Atom type="C(carbonyl)" charge="0.40" sigma="0.3820" epsilon="0.332578504720"/>
