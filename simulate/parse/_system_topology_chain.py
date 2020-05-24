@@ -148,7 +148,7 @@ class ChainOptions(_Options):
         self.num = None
         self.sequence = None
         self.create_pdb = True
-        self.overwrite_pdb = False
+        self.overwrite_pdb = True
         self.instructions = None
         self.sequence_str = None
 
@@ -227,12 +227,15 @@ class ChainOptions(_Options):
             is_methyl = False
         end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
 
+        # Determine residue id
         if left_ter:
             residue_id = "LEFTTER"
         elif right_ter:
             residue_id = "RIGHTTER"
         else:
             residue_id = None
+
+        # Add residue to topology
         residue = topology.addResidue(monomer, chain, id=residue_id)
 
         if left_ter and right_ter:
@@ -240,14 +243,26 @@ class ChainOptions(_Options):
             carbon_1 = topology.addAtom('C1', self.NITROGEN, residue)
         else:
             if left_ter:
-                topology.addAtom('LEFTTER', self.HELIUM, residue)
+                carbon_i = topology.addAtom('C-i4', self.CARBON, residue)
+                for i in range(3):
+                    carbon_temp = topology.addAtom('CH3-i{}'.format(i + 1), self.CARBON, residue)
+                    topology.addBond(carbon_i, carbon_temp)
+                oxygen_i = topology.addAtom('O-i', self.OXYGEN, residue)
+                topology.addBond(carbon_i, oxygen_i)
             elif right_ter:
                 topology.addAtom('RIGHTTER', self.NEON, residue)
             carbon = topology.addAtom('C', self.CARBON, residue)
             carbon_1 = topology.addAtom('C1', self.CARBON, residue)
         if prev_residue_atom is not None:
             topology.addBond(carbon, prev_residue_atom)
+        if left_ter and not right_ter:
+            topology.addBond(carbon, oxygen_i)
         topology.addBond(carbon, carbon_1)
+
+        # If methacrylate monomer
+        if is_methyl:
+            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
+            topology.addBond(carbon_1, carbon_methyl)
 
         carbon_2 = topology.addAtom('C2', self.CARBON, residue)
         topology.addBond(carbon_1, carbon_2)
@@ -262,10 +277,7 @@ class ChainOptions(_Options):
             topology.addBond(prev, curr)
             prev = curr
 
-        # If methacrylate monomer
-        if is_methyl:
-            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
-            topology.addBond(carbon_1, carbon_methyl)
+        # Return carbon_1 to add bond with another residue
         return carbon_1
 
     def _create_chain_pdb(self, chain):
@@ -303,14 +315,29 @@ class ChainOptions(_Options):
             monomer_type = 'A'
         end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
 
-        # Create positions
+        # Initialize positions
         positions = []
-        if residue.id == 'LEFTTER' or residue.id == 'RIGHTTER':
+        if residue.id == 'RIGHTTER':
             positions.append(initial_position)
         c0_pos = initial_position + 1.54*np.array([np.cos(np.pi/6), np.sin(np.pi/6), 0])
         positions.append(c0_pos)
         c1_pos = c0_pos + 1.54*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
         positions.append(c1_pos)
+
+        # Add positions for initiator
+        if residue.id == 'LEFTTER' and len(list(residue.chain.residues())) > 1:
+            oi_pos = c0_pos + 1.41*np.array([-1, 0, 0])
+            ci_pos = oi_pos + 1.41*np.array([-1, 0, 0])
+            ci1_pos = ci_pos + 1.54*np.array([0, 1, 0])
+            ci2_pos = ci_pos + 1.54*np.array([-1, 0, 0])
+            ci3_pos = ci_pos + 1.54*np.array([0, -1, 0])
+            positions = [ci_pos, ci1_pos, ci2_pos, ci3_pos, oi_pos] + positions
+
+        # If methacrylate
+        if is_methyl:
+            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
+            positions.append(cm_pos)
+
         c2_pos = c1_pos + 1.52*np.array([0, -1, 0])
         positions.append(c2_pos)
         o_pos = c2_pos + 1.20*np.array([-np.cos(np.pi/6), -np.sin(np.pi/6), 0])
@@ -327,11 +354,6 @@ class ChainOptions(_Options):
             curr_pos = prev_pos + bond_length*np.array([(-1) ** (i+1) * np.cos(tetra_angle), -np.sin(tetra_angle), 0])
             positions.append(curr_pos)
             prev_pos = curr_pos
-
-        # If methacrylate
-        if is_methyl:
-            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
-            positions.append(cm_pos)
 
         return np.array(positions)
 
