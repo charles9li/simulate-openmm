@@ -31,13 +31,16 @@ class RunSimulation(object):
         # iterate through and run ensembles
         for ensemble_options in self.ensembles:
 
-            # create topology and system
-            if simulation is None:
-                topology = self.system_options.topology()
-                system = self.system_options.create_system()
-            else:
-                topology = simulation.topology
-                system = simulation.system
+            # # create topology and system
+            # if simulation is None:
+            #     topology = self.system_options.topology()
+            #     system = self.system_options.create_system()
+            # else:
+            #     topology = simulation.topology
+            #     system = simulation.system
+
+            topology = self.system_options.topology()
+            system = self.system_options.create_system()
 
             # modify periodic box vectors if necessary
             if self.periodic_box_vectors is not None:
