@@ -283,7 +283,7 @@ class EndToEndDistanceReporterOptions(_ReporterOptions):
         return EndToEndDistanceReporter(self.file, self.reportInterval, step=True)
 
 
-class MSDReporterOptions(PDBReporterOptions):
+class MSDReporterOptions(_ReporterOptions):
 
     _SECTION_NAME = "MSDReporter"
 
@@ -296,7 +296,7 @@ class MSDReporterOptions(PDBReporterOptions):
 
     def reporter(self):
         from simulate.reporters import MSDReporter
-        return MSDReporter(self.file, self.reportInterval, step=True, enforcePeriodicBox=self.enforcePeriodicBox)
+        return MSDReporter(self.file, self.reportInterval, step=True)
 
 
 class CheckpointReporterOptions(_ReporterOptions):
