@@ -288,8 +288,8 @@ class ChainOptions(_Options):
             chain_positions = None
             initial_position = np.array([0, 0, 0])
             for residue in chain.residues():
-                residue_positions = self._create_residue_positions(residue, initial_position)
-                initial_position = residue_positions[2]
+                residue_positions, prev_atom_positions = self._create_residue_positions(residue, initial_position)
+                initial_position = prev_atom_positions
                 if chain_positions is None:
                     chain_positions = residue_positions
                 else:
@@ -355,7 +355,7 @@ class ChainOptions(_Options):
             positions.append(curr_pos)
             prev_pos = curr_pos
 
-        return np.array(positions)
+        return np.array(positions), c1_pos
 
     # def _create_chain_pdb(self, chain):
     #     dirname = os.path.dirname(__file__)

@@ -257,6 +257,7 @@
     <Angle type1="CH" type2="C" type3="CH" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH" type2="C" type3="C" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH" type2="C" type3="CH2(ether)" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH3" type2="C(ether)" type3="CH3" angle="1.9106119321581925" k="519.653913625"/>
     <!-- C-CH(sp2)=CH2(sp2) AND C-C(sp2)=CH2(sp2) AND CHx-C(sp2)-CHy -->
     <Angle class1="Csp3" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
     <Angle class1="C(carbonyl)" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
