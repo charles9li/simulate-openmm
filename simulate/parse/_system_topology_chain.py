@@ -150,6 +150,7 @@ class ChainOptions(_Options):
         self.create_pdb = True
         self.overwrite_pdb = True
         self.instructions = None
+        self.initiator = False
         self.sequence_str = None
 
     def _create_options(self):
@@ -160,6 +161,7 @@ class ChainOptions(_Options):
         self._OPTIONS['createPDB'] = self._parse_create_pdb
         self._OPTIONS['overwritePDB'] = self._parse_overwrite_pdb
         self._OPTIONS['instructions'] = self._parse_instructions
+        self._OPTIONS['initiator'] = self._parse_initiator
 
     # =========================================================================
 
@@ -190,6 +192,9 @@ class ChainOptions(_Options):
 
     def _parse_instructions(self, *args):
         self.instructions = [instruction.strip() for instruction in args[0].split('/')]
+
+    def _parse_initiator(self, *args):
+        self.initiator = literal_eval(args[0])
 
     # =========================================================================
 
@@ -238,24 +243,31 @@ class ChainOptions(_Options):
         # Add residue to topology
         residue = topology.addResidue(monomer, chain, id=residue_id)
 
+        # Add first few carbons to residue
         if left_ter and right_ter:
             carbon = topology.addAtom('C', self.NITROGEN, residue)
             carbon_1 = topology.addAtom('C1', self.NITROGEN, residue)
         else:
-            if left_ter:
+            if left_ter and self.initiator:
                 carbon_i = topology.addAtom('C-i4', self.CARBON, residue)
                 for i in range(3):
                     carbon_temp = topology.addAtom('CH3-i{}'.format(i + 1), self.CARBON, residue)
                     topology.addBond(carbon_i, carbon_temp)
                 oxygen_i = topology.addAtom('O-i', self.OXYGEN, residue)
                 topology.addBond(carbon_i, oxygen_i)
+            elif left_ter and not self.initiator:
+                topology.addAtom('LEFTTER', self.HELIUM, residue)
             elif right_ter:
                 topology.addAtom('RIGHTTER', self.NEON, residue)
             carbon = topology.addAtom('C', self.CARBON, residue)
             carbon_1 = topology.addAtom('C1', self.CARBON, residue)
+
+        # Add bond to previous residue
         if prev_residue_atom is not None:
             topology.addBond(carbon, prev_residue_atom)
-        if left_ter and not right_ter:
+
+        # If initiator is included, add bond between ether oxygen and carbon
+        if left_ter and self.initiator and not right_ter:
             topology.addBond(carbon, oxygen_i)
         topology.addBond(carbon, carbon_1)
 
@@ -298,8 +310,7 @@ class ChainOptions(_Options):
             topology._chains.append(chain)  # TODO: make this more elegant
             PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
 
-    @staticmethod
-    def _create_residue_positions(residue, initial_position):
+    def _create_residue_positions(self, residue, initial_position):
 
         monomer = residue.name
 
@@ -317,7 +328,7 @@ class ChainOptions(_Options):
 
         # Initialize positions
         positions = []
-        if residue.id == 'RIGHTTER':
+        if (residue.id == 'LEFTTER' and not self.initiator) or residue.id == 'RIGHTTER':
             positions.append(initial_position)
         c0_pos = initial_position + 1.54*np.array([np.cos(np.pi/6), np.sin(np.pi/6), 0])
         positions.append(c0_pos)
@@ -325,7 +336,7 @@ class ChainOptions(_Options):
         positions.append(c1_pos)
 
         # Add positions for initiator
-        if residue.id == 'LEFTTER' and len(list(residue.chain.residues())) > 1:
+        if residue.id == 'LEFTTER' and self.initiator and len(list(residue.chain.residues())) > 1:
             oi_pos = c0_pos + 1.41*np.array([-1, 0, 0])
             ci_pos = oi_pos + 1.41*np.array([-1, 0, 0])
             ci1_pos = ci_pos + 1.54*np.array([0, 1, 0])
