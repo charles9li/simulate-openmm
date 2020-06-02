@@ -45,6 +45,7 @@
       <Bond atomName1="C10" atomName2="C11"/>
     </Residue>
     <Residue name="A4">
+      <AllowPatch name="ACRLEFTTER+initiator"/>
       <AllowPatch name="ACRLEFTTER"/>
       <AllowPatch name="ACRRIGHTTER"/>
       <AllowPatch name="ACRMIDDLE"/>
@@ -67,6 +68,7 @@
       <Bond atomName1="C5" atomName2="C6"/>
     </Residue>
     <Residue name="A12">
+      <AllowPatch name="ACRLEFTTER+initiator"/>
       <AllowPatch name="ACRLEFTTER"/>
       <AllowPatch name="ACRRIGHTTER"/>
       <AllowPatch name="ACRMIDDLE"/>
@@ -105,6 +107,7 @@
       <Bond atomName1="C13" atomName2="C14"/>
     </Residue>
     <Residue name="mA12">
+      <AllowPatch name="mACRLEFTTER+initiator"/>
       <AllowPatch name="mACRLEFTTER"/>
       <AllowPatch name="mACRRIGHTTER"/>
       <AllowPatch name="mACRMIDDLE"/>
@@ -146,7 +149,7 @@
     </Residue>
   </Residues>
   <Patches>
-    <Patch name="ACRLEFTTER">
+    <Patch name="ACRLEFTTER+initiator">
       <AddAtom name="CH3-i1" type="CH3"/>
       <AddAtom name="CH3-i2" type="CH3"/>
       <AddAtom name="CH3-i3" type="CH3"/>
@@ -159,6 +162,13 @@
       <AddBond atomName1="CH3-i3" atomName2="C-i4"/>
       <AddBond atomName1="C-i4" atomName2="O-i"/>
       <AddBond atomName1="O-i" atomName2="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
+    <Patch name="ACRLEFTTER">
+      <ChangeAtom name="C" type="CH3"/>
+      <ChangeAtom name="C1" type="CH"/>
+      <AddAtom name="LEFTTER" type="LEFTTER"/>
+      <AddVirtualSite type="average2" siteName="LEFTTER" atomName1="C" atomName2="C1" weight1="1.0" weight2="0"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
     <Patch name="ACRRIGHTTER">
@@ -174,7 +184,7 @@
       <AddExternalBond atomName="C"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
-    <Patch name="mACRLEFTTER">
+    <Patch name="mACRLEFTTER+initiator">
       <AddAtom name="CH3-i1" type="CH3"/>
       <AddAtom name="CH3-i2" type="CH3"/>
       <AddAtom name="CH3-i3" type="CH3"/>
@@ -187,6 +197,13 @@
       <AddBond atomName1="CH3-i3" atomName2="C-i4"/>
       <AddBond atomName1="C-i4" atomName2="O-i"/>
       <AddBond atomName1="O-i" atomName2="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
+    <Patch name="mACRLEFTTER">
+      <ChangeAtom name="C" type="CH3"/>
+      <ChangeAtom name="C1" type="C"/>
+      <AddAtom name="LEFTTER" type="LEFTTER"/>
+      <AddVirtualSite type="average2" siteName="LEFTTER" atomName1="C" atomName2="C1" weight1="1.0" weight2="0"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
     <Patch name="mACRRIGHTTER">
