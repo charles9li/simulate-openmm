@@ -249,6 +249,11 @@ class ChainOptions(_Options):
             topology.addBond(carbon, prev_residue_atom)
         topology.addBond(carbon, carbon_1)
 
+        # If methacrylate monomer
+        if is_methyl:
+            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
+            topology.addBond(carbon_1, carbon_methyl)
+
         carbon_2 = topology.addAtom('C2', self.CARBON, residue)
         topology.addBond(carbon_1, carbon_2)
         oxygen_carbonyl = topology.addAtom('O', self.OXYGEN, residue)
@@ -262,10 +267,6 @@ class ChainOptions(_Options):
             topology.addBond(prev, curr)
             prev = curr
 
-        # If methacrylate monomer
-        if is_methyl:
-            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
-            topology.addBond(carbon_1, carbon_methyl)
         return carbon_1
 
     def _create_chain_pdb(self, chain):
@@ -276,8 +277,7 @@ class ChainOptions(_Options):
             chain_positions = None
             initial_position = np.array([0, 0, 0])
             for residue in chain.residues():
-                residue_positions = self._create_residue_positions(residue, initial_position)
-                initial_position = residue_positions[2]
+                residue_positions, initial_position = self._create_residue_positions(residue, initial_position)
                 if chain_positions is None:
                     chain_positions = residue_positions
                 else:
@@ -311,6 +311,12 @@ class ChainOptions(_Options):
         positions.append(c0_pos)
         c1_pos = c0_pos + 1.54*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
         positions.append(c1_pos)
+
+        # If methacrylate
+        if is_methyl:
+            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
+            positions.append(cm_pos)
+
         c2_pos = c1_pos + 1.52*np.array([0, -1, 0])
         positions.append(c2_pos)
         o_pos = c2_pos + 1.20*np.array([-np.cos(np.pi/6), -np.sin(np.pi/6), 0])
@@ -328,12 +334,7 @@ class ChainOptions(_Options):
             positions.append(curr_pos)
             prev_pos = curr_pos
 
-        # If methacrylate
-        if is_methyl:
-            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
-            positions.append(cm_pos)
-
-        return np.array(positions)
+        return np.array(positions), c1_pos
 
     # def _create_chain_pdb(self, chain):
     #     dirname = os.path.dirname(__file__)
