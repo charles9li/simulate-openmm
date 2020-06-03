@@ -56,8 +56,6 @@ class _TopologyOptions(_Options):
 
     def _create_filepath(self, filepath):
         directory = self.system_options.input_options.directory
-        if directory is None:
-            return filepath
         return os.path.join(directory, filepath)
 
     # =========================================================================
@@ -237,18 +235,6 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
                       hydrogenMass=None):
         self._create_dodecane_acrylate_topology()
         return self.force_field.createSystem(self._topology, nonbondedMethod=nonbondedMethod,
-                                             nonbondedCutoff=nonbondedCutoff,
-                                             constraints=constraints, rigidWater=rigidWater,
-                                             implicitSolvent=implicitSolvent, soluteDielectric=soluteDielectric,
-                                             solventDielectric=solventDielectric, ewaldErrorTolerance=ewaldErrorTolerance,
-                                             removeCMMotion=removeCMMotion, hydrogenMass=hydrogenMass)
-
-    def create_system_with_new_topology(self, topology, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
-                                        constraints=None, rigidWater=True, implicitSolvent=None,
-                                        soluteDielectric=1.0, solventDielectric=78.5,
-                                        ewaldErrorTolerance=0.0005, removeCMMotion=True,
-                                        hydrogenMass=None):
-        return self.force_field.createSystem(topology, nonbondedMethod=nonbondedMethod,
                                              nonbondedCutoff=nonbondedCutoff,
                                              constraints=constraints, rigidWater=rigidWater,
                                              implicitSolvent=implicitSolvent, soluteDielectric=soluteDielectric,

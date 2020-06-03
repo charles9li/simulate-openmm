@@ -3,4 +3,3 @@ from .radiusofgyrationreporter import RadiusOfGyrationReporter
 from .endtoenddistancereporter import EndToEndDistanceReporter
 from .rnemdreporter import RNEMDReporter
 from .rnemdvelocityreporter import RNEMDVelocityReporter
-from .msdreporter import MSDReporter

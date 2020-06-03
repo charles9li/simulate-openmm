@@ -150,7 +150,6 @@ class ChainOptions(_Options):
         self.create_pdb = True
         self.overwrite_pdb = True
         self.instructions = None
-        self.initiator = False
         self.sequence_str = None
 
     def _create_options(self):
@@ -161,7 +160,6 @@ class ChainOptions(_Options):
         self._OPTIONS['createPDB'] = self._parse_create_pdb
         self._OPTIONS['overwritePDB'] = self._parse_overwrite_pdb
         self._OPTIONS['instructions'] = self._parse_instructions
-        self._OPTIONS['initiator'] = self._parse_initiator
 
     # =========================================================================
 
@@ -192,9 +190,6 @@ class ChainOptions(_Options):
 
     def _parse_instructions(self, *args):
         self.instructions = [instruction.strip() for instruction in args[0].split('/')]
-
-    def _parse_initiator(self, *args):
-        self.initiator = literal_eval(args[0])
 
     # =========================================================================
 
@@ -232,49 +227,27 @@ class ChainOptions(_Options):
             is_methyl = False
         end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
 
-        # Determine residue id
         if left_ter:
             residue_id = "LEFTTER"
         elif right_ter:
             residue_id = "RIGHTTER"
         else:
             residue_id = None
-
-        # Add residue to topology
         residue = topology.addResidue(monomer, chain, id=residue_id)
 
-        # Add first few carbons to residue
         if left_ter and right_ter:
             carbon = topology.addAtom('C', self.NITROGEN, residue)
             carbon_1 = topology.addAtom('C1', self.NITROGEN, residue)
         else:
-            if left_ter and self.initiator:
-                carbon_i = topology.addAtom('C-i4', self.CARBON, residue)
-                for i in range(3):
-                    carbon_temp = topology.addAtom('CH3-i{}'.format(i + 1), self.CARBON, residue)
-                    topology.addBond(carbon_i, carbon_temp)
-                oxygen_i = topology.addAtom('O-i', self.OXYGEN, residue)
-                topology.addBond(carbon_i, oxygen_i)
-            elif left_ter and not self.initiator:
+            if left_ter:
                 topology.addAtom('LEFTTER', self.HELIUM, residue)
             elif right_ter:
                 topology.addAtom('RIGHTTER', self.NEON, residue)
             carbon = topology.addAtom('C', self.CARBON, residue)
             carbon_1 = topology.addAtom('C1', self.CARBON, residue)
-
-        # Add bond to previous residue
         if prev_residue_atom is not None:
             topology.addBond(carbon, prev_residue_atom)
-
-        # If initiator is included, add bond between ether oxygen and carbon
-        if left_ter and self.initiator and not right_ter:
-            topology.addBond(carbon, oxygen_i)
         topology.addBond(carbon, carbon_1)
-
-        # If methacrylate monomer
-        if is_methyl:
-            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
-            topology.addBond(carbon_1, carbon_methyl)
 
         carbon_2 = topology.addAtom('C2', self.CARBON, residue)
         topology.addBond(carbon_1, carbon_2)
@@ -289,7 +262,10 @@ class ChainOptions(_Options):
             topology.addBond(prev, curr)
             prev = curr
 
-        # Return carbon_1 to add bond with another residue
+        # If methacrylate monomer
+        if is_methyl:
+            carbon_methyl = topology.addAtom('Cm', self.CARBON, residue)
+            topology.addBond(carbon_1, carbon_methyl)
         return carbon_1
 
     def _create_chain_pdb(self, chain):
@@ -300,8 +276,8 @@ class ChainOptions(_Options):
             chain_positions = None
             initial_position = np.array([0, 0, 0])
             for residue in chain.residues():
-                residue_positions, prev_atom_positions = self._create_residue_positions(residue, initial_position)
-                initial_position = prev_atom_positions
+                residue_positions = self._create_residue_positions(residue, initial_position)
+                initial_position = residue_positions[2]
                 if chain_positions is None:
                     chain_positions = residue_positions
                 else:
@@ -310,7 +286,8 @@ class ChainOptions(_Options):
             topology._chains.append(chain)  # TODO: make this more elegant
             PDBFile.writeFile(topology, chain_positions, open(file_path, 'w'))
 
-    def _create_residue_positions(self, residue, initial_position):
+    @staticmethod
+    def _create_residue_positions(residue, initial_position):
 
         monomer = residue.name
 
@@ -326,29 +303,14 @@ class ChainOptions(_Options):
             monomer_type = 'A'
         end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
 
-        # Initialize positions
+        # Create positions
         positions = []
-        if (residue.id == 'LEFTTER' and not self.initiator) or residue.id == 'RIGHTTER':
+        if residue.id == 'LEFTTER' or residue.id == 'RIGHTTER':
             positions.append(initial_position)
         c0_pos = initial_position + 1.54*np.array([np.cos(np.pi/6), np.sin(np.pi/6), 0])
         positions.append(c0_pos)
         c1_pos = c0_pos + 1.54*np.array([np.cos(np.pi/6), -np.sin(np.pi/6), 0])
         positions.append(c1_pos)
-
-        # Add positions for initiator
-        if residue.id == 'LEFTTER' and self.initiator and len(list(residue.chain.residues())) > 1:
-            oi_pos = c0_pos + 1.41*np.array([-1, 0, 0])
-            ci_pos = oi_pos + 1.41*np.array([-1, 0, 0])
-            ci1_pos = ci_pos + 1.54*np.array([0, 1, 0])
-            ci2_pos = ci_pos + 1.54*np.array([-1, 0, 0])
-            ci3_pos = ci_pos + 1.54*np.array([0, -1, 0])
-            positions = [ci_pos, ci1_pos, ci2_pos, ci3_pos, oi_pos] + positions
-
-        # If methacrylate
-        if is_methyl:
-            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
-            positions.append(cm_pos)
-
         c2_pos = c1_pos + 1.52*np.array([0, -1, 0])
         positions.append(c2_pos)
         o_pos = c2_pos + 1.20*np.array([-np.cos(np.pi/6), -np.sin(np.pi/6), 0])
@@ -366,7 +328,12 @@ class ChainOptions(_Options):
             positions.append(curr_pos)
             prev_pos = curr_pos
 
-        return np.array(positions), c1_pos
+        # If methacrylate
+        if is_methyl:
+            cm_pos = c1_pos + 1.54*np.array([0, 1, 0])
+            positions.append(cm_pos)
+
+        return np.array(positions)
 
     # def _create_chain_pdb(self, chain):
     #     dirname = os.path.dirname(__file__)

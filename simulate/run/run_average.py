@@ -84,7 +84,7 @@ def _remove_barostat_from_system(system):
     for force in forces:
         if _is_barostat(force):
             barostat_index = forces.index(force)
-            return system.removeForce(barostat_index)
+            system.removeForce(barostat_index)
 
 
 def _is_barostat(force):
