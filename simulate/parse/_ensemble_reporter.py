@@ -33,7 +33,7 @@ from ._options import _Options
 __all__ = ['PDBReporterOptions', 'DCDReporterOptions', 'StateDataReporterOptions',
            'EnergyReporterOptions', 'KineticEnergyReporterOptions', 'PotentialEnergyReporterOptions',
            'RNEMDReporterOptions', 'RNEMDVelocityReporterOptions',
-           'RadiusOfGyrationReporterOptions', 'EndToEndDistanceReporterOptions',
+           'RadiusOfGyrationReporterOptions', 'EndToEndDistanceReporterOptions', 'MSDReporterOptions',
            'CheckpointReporterOptions']
 
 
@@ -281,6 +281,22 @@ class EndToEndDistanceReporterOptions(_ReporterOptions):
     def reporter(self):
         from simulate.reporters import EndToEndDistanceReporter
         return EndToEndDistanceReporter(self.file, self.reportInterval, step=True)
+
+
+class MSDReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "MSDReporter"
+
+    # =========================================================================
+
+    def __init__(self, ensemble_options):
+        super(MSDReporterOptions, self).__init__(ensemble_options)
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import MSDReporter
+        return MSDReporter(self.file, self.reportInterval, step=True)
 
 
 class CheckpointReporterOptions(_ReporterOptions):

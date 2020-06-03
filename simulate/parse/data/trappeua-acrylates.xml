@@ -9,6 +9,8 @@
     <Type name="CH2(sp2)" class="Csp2" element="N" mass="14.027"/>
     <Type name="CH3(ether)" class="Csp3(ether)" element="C" mass="15.035"/>
     <Type name="CH2(ether)" class="Csp3(ether)" element="C" mass="14.027"/>
+    <Type name="CH(ether)" class="Csp3(ether)" element="C" mass="13.019"/>
+    <Type name="C(ether)" class="Csp3(ether)" element="C" mass="12.011"/>
     <Type name="O(ether)" class="O(ether)" element="O" mass="15.999"/>
     <Type name="C(carbonyl)" class="C(carbonyl)" element="C" mass="12.011"/>
     <Type name="O(carbonyl)" class="O(carbonyl)" element="O" mass="15.999"/>
@@ -43,6 +45,7 @@
       <Bond atomName1="C10" atomName2="C11"/>
     </Residue>
     <Residue name="A4">
+      <AllowPatch name="ACRLEFTTER+initiator"/>
       <AllowPatch name="ACRLEFTTER"/>
       <AllowPatch name="ACRRIGHTTER"/>
       <AllowPatch name="ACRMIDDLE"/>
@@ -65,6 +68,7 @@
       <Bond atomName1="C5" atomName2="C6"/>
     </Residue>
     <Residue name="A12">
+      <AllowPatch name="ACRLEFTTER+initiator"/>
       <AllowPatch name="ACRLEFTTER"/>
       <AllowPatch name="ACRRIGHTTER"/>
       <AllowPatch name="ACRMIDDLE"/>
@@ -103,6 +107,7 @@
       <Bond atomName1="C13" atomName2="C14"/>
     </Residue>
     <Residue name="mA12">
+      <AllowPatch name="mACRLEFTTER+initiator"/>
       <AllowPatch name="mACRLEFTTER"/>
       <AllowPatch name="mACRRIGHTTER"/>
       <AllowPatch name="mACRMIDDLE"/>
@@ -144,6 +149,21 @@
     </Residue>
   </Residues>
   <Patches>
+    <Patch name="ACRLEFTTER+initiator">
+      <AddAtom name="CH3-i1" type="CH3"/>
+      <AddAtom name="CH3-i2" type="CH3"/>
+      <AddAtom name="CH3-i3" type="CH3"/>
+      <AddAtom name="C-i4" type="C(ether)"/>
+      <AddAtom name="O-i" type="O(ether)"/>
+      <ChangeAtom name="C" type="CH2(ether)"/>
+      <ChangeAtom name="C1" type="CH"/>
+      <AddBond atomName1="CH3-i1" atomName2="C-i4"/>
+      <AddBond atomName1="CH3-i2" atomName2="C-i4"/>
+      <AddBond atomName1="CH3-i3" atomName2="C-i4"/>
+      <AddBond atomName1="C-i4" atomName2="O-i"/>
+      <AddBond atomName1="O-i" atomName2="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
     <Patch name="ACRLEFTTER">
       <ChangeAtom name="C" type="CH3"/>
       <ChangeAtom name="C1" type="CH"/>
@@ -162,6 +182,21 @@
       <ChangeAtom name="C" type="CH2"/>
       <ChangeAtom name="C1" type="CH"/>
       <AddExternalBond atomName="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
+    <Patch name="mACRLEFTTER+initiator">
+      <AddAtom name="CH3-i1" type="CH3"/>
+      <AddAtom name="CH3-i2" type="CH3"/>
+      <AddAtom name="CH3-i3" type="CH3"/>
+      <AddAtom name="C-i4" type="C(ether)"/>
+      <AddAtom name="O-i" type="O(ether)"/>
+      <ChangeAtom name="C" type="CH2(ether)"/>
+      <ChangeAtom name="C1" type="C"/>
+      <AddBond atomName1="CH3-i1" atomName2="C-i4"/>
+      <AddBond atomName1="CH3-i2" atomName2="C-i4"/>
+      <AddBond atomName1="CH3-i3" atomName2="C-i4"/>
+      <AddBond atomName1="C-i4" atomName2="O-i"/>
+      <AddBond atomName1="O-i" atomName2="C"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
     <Patch name="mACRLEFTTER">
@@ -239,6 +274,7 @@
     <Angle type1="CH" type2="C" type3="CH" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH" type2="C" type3="C" angle="1.9106119321581925" k="519.653913625"/>
     <Angle type1="CH" type2="C" type3="CH2(ether)" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle type1="CH3" type2="C(ether)" type3="CH3" angle="1.9106119321581925" k="519.653913625"/>
     <!-- C-CH(sp2)=CH2(sp2) AND C-C(sp2)=CH2(sp2) AND CHx-C(sp2)-CHy -->
     <Angle class1="Csp3" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
     <Angle class1="C(carbonyl)" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
@@ -252,6 +288,8 @@
     <Angle class1="O(ether)" class2="Csp3(ether)" class3="Csp3" angle="1.9373154697137058" k="293.500530415"/>
     <!-- O(carbonyl)=C(carbonyl)-C(sp3) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.199114857512855" k="519.653913625"/>
+    <!-- CHx-O(ether)-CHy -->
+    <Angle class1="Csp3(ether)" class2="O(ether)" class3="Csp3(ether)" angle="1.9547687622336491" k="502.1935421272"/>
 
     <!-- O(carbonyl)=C(carbonyl)-C(sp2) --> <!-- copying previous potential (not certain) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp3" angle="2.199114857512855" k="519.653913625"/>
@@ -276,28 +314,46 @@
     <Proper type1="CH3" type2="CH2" type3="CH2" type4="CH3" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH2" type4="CH2" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH2" type4="CH" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
+    <Proper type1="CH3" type2="CH2" type3="CH2" type4="C" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH2" type4="CH2(ether)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH2" type4="C(carbonyl)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH2" type4="CH2" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH2" type4="CH" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
+    <Proper type1="CH2" type2="CH2" type3="CH2" type4="C" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH2" type4="CH2(ether)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH2" type4="C(carbonyl)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH2" type4="CH" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
+    <Proper type1="CH" type2="CH2" type3="CH2" type4="C" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH2" type4="CH2(ether)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH2" type4="C(carbonyl)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH2" type4="C" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH2" type4="CH2(ether)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH2" type4="C(carbonyl)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <!-- CHx-CH2-CH-CHy -->
     <Proper type1="CH3" type2="CH2" type3="CH" type4="CH3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH" type4="CH2" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="CH3" type2="CH2" type3="CH" type4="C" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="CH3" type2="CH2" type3="CH" type4="CH2(ether)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="CH" type4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH" type4="CH3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH" type4="CH2" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="CH2" type2="CH2" type3="CH" type4="C" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="CH2" type2="CH2" type3="CH" type4="CH2(ether)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="CH" type4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH" type4="CH3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH" type4="CH2" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="CH" type2="CH2" type3="CH" type4="C" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="CH" type2="CH2" type3="CH" type4="CH2(ether)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="CH" type4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH" type4="CH3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH" type4="CH2" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH" type4="C" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH" type4="CH2(ether)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="CH" type4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="C(carbonyl)" type2="CH2" type3="CH" type4="CH3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="C(carbonyl)" type2="CH2" type3="CH" type4="CH2" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper type1="C(carbonyl)" type2="CH2" type3="CH" type4="CH" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
@@ -306,15 +362,27 @@
     <Proper type1="CH3" type2="CH2" type3="C" type4="CH3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="C" type4="CH2" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="C" type4="CH" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="CH3" type2="CH2" type3="C" type4="C" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="CH3" type2="CH2" type3="C" type4="CH2(ether)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH3" type2="CH2" type3="C" type4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="C" type4="CH3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="C" type4="CH2" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="C" type4="CH" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="CH2" type2="CH2" type3="C" type4="C" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="CH2" type2="CH2" type3="C" type4="CH2(ether)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH2" type2="CH2" type3="C" type4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="C" type4="CH3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="C" type4="CH2" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="C" type4="CH" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="CH" type2="CH2" type3="C" type4="C" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="CH" type2="CH2" type3="C" type4="CH2(ether)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="CH" type2="CH2" type3="C" type4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="C" type4="CH3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="C" type4="CH2" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="C" type4="CH" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="C" type4="C" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="C" type4="CH2(ether)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper type1="C" type2="CH2" type3="C" type4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="C(carbonyl)" type2="CH2" type3="C" type4="CH3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="C(carbonyl)" type2="CH2" type3="C" type4="CH2" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper type1="C(carbonyl)" type2="CH2" type3="C" type4="CH" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
@@ -353,11 +421,20 @@
     <Proper type1="O(ether)" type2="CH2(ether)" type3="CH2" type4="CH3" c0="6.983067719" c1="17.73616222" c2="0.8869868721" c3="-25.60621681" c4="0" c5="0"/>
     <Proper type1="O(ether)" type2="CH2(ether)" type3="CH2" type4="CH2" c0="6.983067719" c1="17.73616222" c2="0.8869868721" c3="-25.60621681" c4="0" c5="0"/>
 
+    <!-- Possibly incorrect -->
+    <Proper class1="O(ether)" class2="Csp3(ether)" class3="Csp3" class4="Csp3" c0="6.983067719" c1="17.73616222" c2="0.8869868721" c3="-25.60621681" c4="0" c5="0"/>
+    <Proper class1="O(ether)" class2="Csp3(ether)" class3="Csp3" class4="C(carbonyl)" c0="6.983067719" c1="17.73616222" c2="0.8869868721" c3="-25.60621681" c4="0" c5="0"/>
+
+    <!-- CHx-O(ether)-CHy-CHz --> <!-- from #6 -->
+    <Proper class1="Csp3(ether)" class2="O(ether)" class3="Csp3(ether)" class4="Csp3" c0="12.59017502" c1="7.8925036401365" c2="2.7222986507395" c3="-18.5645321334704" c4="0" c5="0"/>
+
     <!-- CHx-CHy-C(carbonyl)=O(carbonyl) --> <!-- from #6 -->
     <Proper class1="Csp3" class2="Csp3" class3="C(carbonyl)" class4="O(carbonyl)" c0="9.321593474918338" c1="9.321593474918338" c2="-0.9618170356502401" c3="9.75219949390456" c4="0" c5="0"/>
+    <Proper class1="Csp3(ether)" class2="Csp3" class3="C(carbonyl)" class4="O(carbonyl)" c0="9.321593474918338" c1="9.321593474918338" c2="-0.9618170356502401" c3="9.75219949390456" c4="0" c5="0"/>
 
     <!-- CHx-CHy-C(carbonyl)-O(ether) --> <!-- from Ferrando 2012 (possibly incorrect) -->
     <Proper class1="Csp3" class2="Csp3" class3="C(carbonyl)" class4="O(ether)" c0="3.1017102796449003" c1="7.64132372444672" c2="2.2295231510167" c3="-14.44396760461578" c4="0" c5="0"/>
+    <Proper class1="Csp3(ether)" class2="Csp3" class3="C(carbonyl)" class4="O(ether)" c0="3.1017102796449003" c1="7.64132372444672" c2="2.2295231510167" c3="-14.44396760461578" c4="0" c5="0"/>
 
     <!-- CHx-O(ether)-C(carbonyl)-CHy --> <!-- from Ferrando 2012 -->
     <Proper class1="Csp3(ether)" class2="O(ether)" class3="C(carbonyl)" class4="Csp3" c0="54.4705389493034" c1="-13.0212799060498" c2="-34.887485145128004" c3="-6.561773898125601" c4="0" c5="0"/>
@@ -370,6 +447,8 @@
     <Atom type="C" charge="0" sigma="0.6400" epsilon="0.004157231309"/>
     <Atom type="CH3(ether)" charge="0.25" sigma="0.3750" epsilon="0.814817336564"/>
     <Atom type="CH2(ether)" charge="0.25" sigma="0.3950" epsilon="0.382465280428"/>
+    <Atom type="CH(ether)" charge="0.25" sigma="0.4330" epsilon="0.08314462618"/>
+    <Atom type="C(ether)" charge="0.25" sigma="0.5800" epsilon="0.004157231309"/>
     <Atom type="CH2(sp2)" charge="0" sigma="0.3675" epsilon="0.706729322530"/>
     <Atom type="O(ether)" charge="-0.25" sigma="0.2800" epsilon="0.457295443990"/>
     <Atom type="C(carbonyl)" charge="0.40" sigma="0.3820" epsilon="0.332578504720"/>
