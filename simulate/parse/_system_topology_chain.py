@@ -134,11 +134,10 @@ class ChainOptions(_Options):
 
     # =========================================================================
 
-    HELIUM = Element.getBySymbol('He')
+    BORON = Element.getBySymbol('B')
     CARBON = Element.getBySymbol('C')
     NITROGEN = Element.getBySymbol('N')
     OXYGEN = Element.getBySymbol('O')
-    NEON = Element.getBySymbol('Ne')
 
     # =========================================================================
 
@@ -293,30 +292,26 @@ class ChainOptions(_Options):
         residue_pdb = topology_pdb.addResidue(monomer, chain_pdb, id=residue_id)
 
         # Add first two carbons
-        carbon_pos = prev_res_atom_pos + 1.54*np.array([cos19*cos30, -cos19*sin30, sin19])
-        carbon_1_pos = carbon_pos + 1.54*np.array([cos19*cos30, cos19*sin30, -sin19])
         if left_ter and right_ter:
-            carbon, carbon_pdb = self._add_atom_to_topology('C', self.NITROGEN, residue, residue_pdb,
-                                                            topology, topology_pdb,
-                                                            positions, carbon_pos)
-            carbon_1, carbon_1_pdb = self._add_atom_to_topology('C1', self.NITROGEN, residue, residue_pdb,
-                                                                topology, topology_pdb,
-                                                                positions, carbon_1_pos)
+            carbon_element = self.NITROGEN
+            carbon_1_element = self.NITROGEN
+        elif left_ter:
+            carbon_element = self.BORON
+            carbon_1_element = self.CARBON
+        elif right_ter:
+            carbon_element = self.NITROGEN
+            carbon_1_element = self.CARBON
         else:
-            if left_ter:
-                self._add_atom_to_topology('LEFTTER', self.HELIUM, residue, residue_pdb,
-                                           topology, topology_pdb,
-                                           positions, prev_res_atom_pos)
-            elif right_ter:
-                self._add_atom_to_topology('RIGHTTER', self.NEON, residue, residue_pdb,
-                                           topology, topology_pdb,
-                                           positions, prev_res_atom_pos)
-            carbon, carbon_pdb = self._add_atom_to_topology('C', self.CARBON, residue, residue_pdb,
+            carbon_element = self.CARBON
+            carbon_1_element = self.CARBON
+        carbon_pos = prev_res_atom_pos + 1.54*np.array([cos19*cos30, -cos19*sin30, sin19])
+        carbon, carbon_pdb = self._add_atom_to_topology('C', carbon_element, residue, residue_pdb,
+                                                        topology, topology_pdb,
+                                                        positions, carbon_pos)
+        carbon_1_pos = carbon_pos + 1.54*np.array([cos19*cos30, cos19*sin30, -sin19])
+        carbon_1, carbon_1_pdb = self._add_atom_to_topology('C1', carbon_1_element, residue, residue_pdb,
                                                             topology, topology_pdb,
-                                                            positions, carbon_pos)
-            carbon_1, carbon_1_pdb = self._add_atom_to_topology('C1', self.CARBON, residue, residue_pdb,
-                                                                topology, topology_pdb,
-                                                                positions, carbon_1_pos)
+                                                            positions, carbon_1_pos)
 
         # Add bond to previous residue if applicable
         if prev_res_atom is not None:
