@@ -126,14 +126,18 @@ class RNEMDReporter(object):
         elapsed_ps = state.getTime().value_in_unit(unit.picosecond)
         Lx = state.getPeriodicBoxVectors()[0][0].value_in_unit(unit.nanometer)
         Ly = state.getPeriodicBoxVectors()[1][1].value_in_unit(unit.nanometer)
-        total_momentum_exchanged = simulation.context.totalMomentumExchanged.value_in_unit(unit.amu*unit.nanometer/unit.picosecond)
+        x_momentum_exchanged = simulation.context.xMomentumExchanged.value_in_unit(unit.amu*unit.nanometer/unit.picosecond)
+        y_momentum_exchanged = simulation.context.yMomentumExchanged.value_in_unit(unit.amu*unit.nanometer/unit.picosecond)
+        z_momentum_exchanged = simulation.context.zMomentumExchanged.value_in_unit(unit.amu*unit.nanometer/unit.picosecond)
 
         # Compute flux
-        momentum_flux = total_momentum_exchanged/(2*Lx*Ly*elapsed_ps)
+        momentum_flux = x_momentum_exchanged/(2*Lx*Ly*elapsed_ps)
 
         # Add values
         values.append(elapsed_ps)
-        values.append(total_momentum_exchanged)
+        values.append(x_momentum_exchanged)
+        values.append(y_momentum_exchanged)
+        values.append(z_momentum_exchanged)
         values.append(momentum_flux)
 
         return values
@@ -147,7 +151,9 @@ class RNEMDReporter(object):
         if self._step:
             headers.append('Step')
         headers.append('Time (ps)')
-        headers.append('Total Exchanged Momentum (amu*nm/ps)')
+        headers.append('x Exchanged Momentum (amu*nm/ps)')
+        headers.append('y Exchanged Momentum (amu*nm/ps)')
+        headers.append('z Exchanged Momentum (amu*nm/ps)')
         headers.append('Momentum Flux (amu/nm*ps^2)')
         return headers
 
