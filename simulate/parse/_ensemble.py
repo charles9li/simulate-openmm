@@ -32,6 +32,7 @@ from simtk.openmm.app import Simulation
 from simtk.openmm import VerletIntegrator, LangevinIntegrator
 from simtk.unit import amu, nanometer, picosecond
 from openmmtools.integrators import VelocityVerletIntegrator, NoseHooverChainVelocityVerletIntegrator
+import numpy as np
 
 from ._options import _Options
 from ._ensemble_integrator import *
@@ -331,5 +332,8 @@ class RNEMDOptions(_EnsembleOptions):
         if self.thermostat is not None:
             system.addForce(self.thermostat)
         simulation = super(RNEMDOptions, self).create_simulation(topology, system)
-        simulation.context.totalMomentumExchanged = 0.0*amu*nanometer/picosecond
+        simulation.context.totalMomentumExchanged = np.array([0.0] * 3) * amu*nanometer/picosecond
+        simulation.context.xMomentumExchanged = 0.0*amu*nanometer/picosecond
+        simulation.context.yMomentumExchanged = 0.0*amu*nanometer/picosecond
+        simulation.context.zMomentumExchanged = 0.0*amu*nanometer/picosecond
         return simulation
