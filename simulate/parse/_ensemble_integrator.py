@@ -32,7 +32,7 @@ from simtk.unit import femtosecond, kelvin, picosecond
 from ._options import _Options
 
 __all__ = ['VerletIntegratorOptions', 'VelocityVerletIntegratorOptions',
-           'LangevinIntegratorOptions']
+           'LangevinIntegratorOptions', 'NoseHooverChainVelocityVerletIntegratorOptions']
 
 
 class _IntegratorOptions(_Options):
@@ -137,3 +137,43 @@ class LangevinIntegratorOptions(_IntegratorOptions):
     def _create_integrator(self):
         from simtk.openmm import LangevinIntegrator
         return LangevinIntegrator(self.temperature, self.frictionCoeff, self.stepSize)
+
+
+class NoseHooverChainVelocityVerletIntegratorOptions(_IntegratorOptions):
+
+    def __init__(self):
+        super(NoseHooverChainVelocityVerletIntegratorOptions, self).__init__()
+        self.temperature = 298*kelvin
+        self.collision_frequency = 50/picosecond
+        self.chain_length = 5
+        self.num_mts = 5
+        self.num_yoshidasuzuki = 5
+
+    def _create_options(self):
+        super(NoseHooverChainVelocityVerletIntegratorOptions, self)._create_options()
+        self._OPTIONS['temperature'] = self._parse_temperature
+        self._OPTIONS['collision_frequency'] = self._parse_collision_frequency
+
+    # =========================================================================
+
+    def _parse_temperature(self, *args):
+        self.temperature = literal_eval(args[0])*kelvin
+
+    def _parse_collision_frequency(self, *args):
+        self.collision_frequency = literal_eval(args[0])/picosecond
+
+    def _parse_chain_length(self, *args):
+        self.chain_length = literal_eval(args[0])
+
+    def _parse_num_mts(self, *args):
+        self.num_mts = literal_eval(args[0])
+
+    def _parse_num_yoshidasuzuki(self, *args):
+        self.num_yoshidasuzuki = literal_eval(args[0])
+
+    # =========================================================================
+
+    def _create_integrator(self):
+        from openmmtools.integrators import NoseHooverChainVelocityVerletIntegrator
+        return NoseHooverChainVelocityVerletIntegrator(self.temperature, self.collision_frequency, self.stepSize,
+                                                       self.chain_length, self.num_mts, self.num_yoshidasuzuki)
