@@ -196,6 +196,7 @@ class NVTOptions(NVEOptions):
     def _create_integrator_options(self):
         super(NVTOptions, self)._create_integrator_options()
         self._INTEGRATOR_OPTIONS['LangevinIntegrator'] = LangevinIntegratorOptions
+        self._INTEGRATOR_OPTIONS['NoseHooverChainVelocityVerletIntegrator'] = NoseHooverChainVelocityVerletIntegratorOptions
 
     def _create_thermostat_options(self):
         self._THERMOSTAT_OPTIONS = {}
@@ -300,6 +301,7 @@ class RNEMDOptions(_EnsembleOptions):
     def _create_integrator_options(self):
         super(RNEMDOptions, self)._create_integrator_options()
         self._INTEGRATOR_OPTIONS['LangevinIntegrator'] = LangevinIntegratorOptions
+        self._INTEGRATOR_OPTIONS['NoseHooverChainVelocityVerletIntegrator'] = NoseHooverChainVelocityVerletIntegratorOptions
 
     def _create_reporter_options(self):
         super(RNEMDOptions, self)._create_reporter_options()
