@@ -214,7 +214,7 @@
     <!-- O(carbonyl)=C(carbonyl)-C(sp2) --> <!-- copying previous potential (not certain) -->
     <Angle class1="O(carbonyl)" class2="C(carbonyl)" class3="Csp2" angle="2.199114857512855" k="519.653913625"/>
     <!-- CH2-CH2-C(carbonyl) --> <!-- not certain -->
-    <Angle type1="CH2" type2="CH2(terminal)" type3="C(carbonyl)" angle="1.9896753472735356" k="519.653913625"/>
+    <Angle type1="CH2(terminal)" type2="CH2" type3="C(carbonyl)" angle="1.9896753472735356" k="519.653913625"/>
     <!-- CHx-CH-C(carbonyl) --> <!-- not certain -->
     <Angle class1="Csp3" type2="CH" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
     <Angle class1="Csp3" type2="CH(terminal)" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
