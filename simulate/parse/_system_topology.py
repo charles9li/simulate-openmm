@@ -149,15 +149,17 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     # Paths to forcefield files
 
-    _data_directory = os.path.join(os.path.dirname(__file__), 'data')
+    data_directory = os.path.join(os.path.dirname(__file__), 'data')
 
-    TRAPPEUA_FF_PATH = os.path.join(_data_directory, "trappeua-acrylates.xml")
+    TRAPPEUA_FF_PATH = os.path.join(data_directory, "trappeua-acrylates.xml")
+    OPLS_AA_PATH = os.path.join(data_directory, "opls_aa.xml")
 
     # =========================================================================
     
     def __init__(self, system_options):
         super(DodecaneAcrylateTopologyOptions, self).__init__(system_options)
-        self.force_field = ForceField(self.TRAPPEUA_FF_PATH)
+        self.forceField_str = "TraPPE-UA"
+        self.forceField = ForceField(self.TRAPPEUA_FF_PATH)
         self.numDodecane = 0
         self.dodecaneInstructions = None
         self.box_vectors = None
@@ -166,6 +168,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     def _create_options(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_options()
+        self._OPTIONS['forceField'] = self._parse_force_field
         self._OPTIONS['numDodecane'] = self._parse_num_dodecane
         self._OPTIONS['dodecaneInstructions'] = self._parse_dodecane_instructions
         self._OPTIONS['box'] = self._parse_box
@@ -175,6 +178,16 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self._SECTIONS['chain'] = self._parse_chain
 
     # =========================================================================
+
+    def _parse_force_field(self, *args):
+        if args[0] == 'TraPPE-UA':
+            self.forceField = ForceField(self.TRAPPEUA_FF_PATH)
+        elif args[0] == 'OPLS-AA':
+            self.forceField = ForceField(self.OPLS_AA_PATH)
+        else:
+            raise ValueError("Invalid force field.")
+        self.forceField_str = args[0]
+
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
@@ -190,7 +203,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     def _parse_chain(self, *args):
         line_deque = args[1]
-        chain_options = ChainOptions()
+        chain_options = ChainOptions(self)
         chain_options.parse(line_deque.popleft())
         self.chains.append(chain_options)
 
@@ -213,19 +226,35 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
                 self.id_to_sequence[dodecane_id] = "C12"
             self._topology = topology
 
-    @staticmethod
-    def _add_dodecane_to_topology(topology):
+    def _add_dodecane_to_topology(self, topology):
 
         # Carbon element
         carbon_element = Element.getBySymbol('C')
+        hydrogen_element = Element.getBySymbol('H')
 
         chain = topology.addChain("{}-C12".format(topology.getNumChains() + 1))
         residue = topology.addResidue("C12", chain)
         prev_atom = topology.addAtom("C", carbon_element, residue)
-        for i in range(11):
-            curr_atom = topology.addAtom("C{}".format(i + 1), carbon_element, residue)
-            topology.addBond(prev_atom, curr_atom)
-            prev_atom = curr_atom
+        if self.forceField_str == "TraPPE-UA":
+            for i in range(11):
+                curr_atom = topology.addAtom("C{}".format(i + 1), carbon_element, residue)
+                topology.addBond(prev_atom, curr_atom)
+                prev_atom = curr_atom
+        else:
+            H_counter = 0
+            for _ in range(3):
+                H = topology.addAtom("H{}".format(H_counter), hydrogen_element, residue)
+                topology.addBond(H, prev_atom)
+            for i in range(11):
+                curr_atom = topology.addAtom("C{}".format(i + 1), carbon_element, residue)
+                topology.addBond(prev_atom, curr_atom)
+                for _ in range(2):
+                    H = topology.addAtom("H{}".format(H_counter), hydrogen_element, residue)
+                    topology.addBond(H, curr_atom)
+                    prev_atom = curr_atom
+            H = topology.addAtom("H{}".format(H_counter), hydrogen_element, residue)
+            topology.addBond(H, prev_atom)
+
         return chain.id
 
     def create_system(self, nonbondedMethod=NoCutoff, nonbondedCutoff=1.0*nanometer,
@@ -234,9 +263,9 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
                       ewaldErrorTolerance=0.0005, removeCMMotion=True,
                       hydrogenMass=None):
         self._create_dodecane_acrylate_topology()
-        return self.force_field.createSystem(self._topology, nonbondedMethod=nonbondedMethod,
-                                             nonbondedCutoff=nonbondedCutoff,
-                                             constraints=constraints, rigidWater=rigidWater,
-                                             implicitSolvent=implicitSolvent, soluteDielectric=soluteDielectric,
-                                             solventDielectric=solventDielectric, ewaldErrorTolerance=ewaldErrorTolerance,
-                                             removeCMMotion=removeCMMotion, hydrogenMass=hydrogenMass)
+        return self.forceField.createSystem(self._topology, nonbondedMethod=nonbondedMethod,
+                                            nonbondedCutoff=nonbondedCutoff,
+                                            constraints=constraints, rigidWater=rigidWater,
+                                            implicitSolvent=implicitSolvent, soluteDielectric=soluteDielectric,
+                                            solventDielectric=solventDielectric, ewaldErrorTolerance=ewaldErrorTolerance,
+                                            removeCMMotion=removeCMMotion, hydrogenMass=hydrogenMass)

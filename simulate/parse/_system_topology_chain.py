@@ -29,6 +29,7 @@ __version__ = "1.0"
 from ast import literal_eval
 import os
 
+import mdtraj as md
 import numpy as np
 from simtk.openmm.app import Element, PDBFile, Topology
 
@@ -134,6 +135,7 @@ class ChainOptions(_Options):
 
     # =========================================================================
 
+    HYDROGEN = Element.getBySymbol('H')
     BORON = Element.getBySymbol('B')
     CARBON = Element.getBySymbol('C')
     NITROGEN = Element.getBySymbol('N')
@@ -141,8 +143,10 @@ class ChainOptions(_Options):
 
     # =========================================================================
 
-    def __init__(self):
+    def __init__(self, topology_options):
         super(ChainOptions, self).__init__()
+        self.topology_options = topology_options
+        self.forceField_str = topology_options.forceField_str
         self.id = None
         self.num = None
         self.sequence = None
@@ -239,14 +243,20 @@ class ChainOptions(_Options):
                     right_ter = True
 
                 # Add residue to chain
-                prev_res_atom, prev_res_atom_pdb, prev_res_atom_pos = self._add_residue_to_chain(topology, topology_pdb,
-                                                                                                 chain, chain_pdb,
-                                                                                                 prev_res_atom,
-                                                                                                 prev_res_atom_pdb,
-                                                                                                 positions,
-                                                                                                 prev_res_atom_pos,
-                                                                                                 monomer,
-                                                                                                 left_ter, right_ter)
+                if self.forceField_str == 'TraPPE-UA':
+                    add_residue_function = self._add_residue_to_chain_trappeua
+                elif self.forceField_str == 'OPLS-AA':
+                    add_residue_function = self._add_residue_to_chain_oplsaa
+                else:
+                    raise ValueError("Invalid force field.")
+                prev_res_atom, prev_res_atom_pdb, prev_res_atom_pos = add_residue_function(topology, topology_pdb,
+                                                                                           chain, chain_pdb,
+                                                                                           prev_res_atom,
+                                                                                           prev_res_atom_pdb,
+                                                                                           positions,
+                                                                                           prev_res_atom_pos,
+                                                                                           monomer,
+                                                                                           left_ter, right_ter)
 
             # Create pdb file for chain
             if self.create_pdb:
@@ -254,8 +264,115 @@ class ChainOptions(_Options):
 
         return id_to_sequence
 
-    def _add_residue_to_chain(self, topology, topology_pdb, chain, chain_pdb, prev_res_atom, prev_res_atom_pdb,
-                              positions, prev_res_atom_pos, monomer, left_ter=False, right_ter=False):
+    def _add_residue_to_chain_oplsaa(self, topology, topology_pdb, chain, chain_pdb, prev_res_atom, prev_res_atom_pdb,
+                                     positions, prev_res_atom_pos, monomer, left_ter=False, right_ter=False):
+        # Determine monomer type
+        if monomer.startswith('mA'):
+            monomer_type = 'mA'
+            is_methyl = True
+        else:
+            monomer_type = 'A'
+            is_methyl = False
+
+        # Determine chain length
+        end_chain_length = literal_eval(monomer.replace(monomer_type, ''))
+
+        # Determine residue id
+        if left_ter:
+            residue_id = "LEFTTER"
+        elif right_ter:
+            residue_id = "RIGHTTER"
+        else:
+            residue_id = None
+
+        # Add residue to topology
+        residue = topology.addResidue(monomer, chain, id=residue_id)
+        residue_pdb = topology_pdb.addResidue(monomer, chain_pdb, id=residue_id)
+
+        # Function to add atoms to topology
+        def _add_atom_to_topology_oplsaa(name, element, counter):
+            # Add atom to topology
+            name = "{}{}".format(name, counter)
+            atom = topology.addAtom(name, element, residue)
+            atom_pdb = topology_pdb.addAtom(name, element, residue_pdb)
+
+            # Return atoms and position
+            return atom, atom_pdb, counter + 1
+
+        # Import positions from pdb
+        # print(os.getcwd())
+        residue_positions = md.load(os.path.join(self.topology_options.data_directory, "mA12_aa.pdb")).xyz[0]*10. + prev_res_atom_pos
+        residue_positions = list(residue_positions)
+        if not right_ter or (left_ter and right_ter):
+            residue_positions.pop(5)
+        if (left_ter and right_ter) or (not left_ter):
+            residue_positions.pop(2)
+        positions += residue_positions
+
+        # Add first carbon and attached hydrogen atoms
+        C_counter = 0
+        H_counter = 0
+        C0, C0_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
+        if left_ter and not right_ter:
+            num_H = 3
+        else:
+            num_H = 2
+        for _ in range(num_H):
+            H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
+            self._add_bond_to_topology(H, H_pdb, C0, C0_pdb, topology, topology_pdb)
+
+        # Add bond to previous residue if applicable
+        if prev_res_atom is not None:
+            self._add_bond_to_topology(C0, C0_pdb, prev_res_atom, prev_res_atom_pdb, topology, topology_pdb)
+
+        # Add second carbon
+        # TODO: add functionality for acrylate
+        C1, C1_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
+        self._add_bond_to_topology(C1, C1_pdb, C0, C0_pdb, topology, topology_pdb)
+        if right_ter and not left_ter:
+            H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
+            self._add_bond_to_topology(H, H_pdb, C1, C1_pdb, topology, topology_pdb)
+
+        # Add methyl group
+        if is_methyl:
+            Cm, Cm_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
+            for _ in range(3):
+                H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
+                self._add_bond_to_topology(H, H_pdb, Cm, Cm_pdb, topology, topology_pdb)
+            self._add_bond_to_topology(Cm, Cm_pdb, C1, C1_pdb, topology, topology_pdb)
+
+        # Add carbonyl carbon
+        Cc, Cc_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
+        self._add_bond_to_topology(Cc, Cc_pdb, C1, C1_pdb, topology, topology_pdb)
+
+        # Add carbonyl oxygen
+        Oc, Oc_pdb, _, = _add_atom_to_topology_oplsaa("O", self.OXYGEN, 0)
+        self._add_bond_to_topology(Oc, Oc_pdb, Cc, Cc_pdb, topology, topology_pdb)
+
+        # Add ether oxygen
+        Oe, Oe_pdb, _ = _add_atom_to_topology_oplsaa("O", self.OXYGEN, 1)
+        self._add_bond_to_topology(Oe, Oe_pdb, Cc, Cc_pdb, topology, topology_pdb)
+
+        # Add alkyl chain
+        prev_atom = Oe
+        prev_atom_pdb = Oe_pdb
+        for _ in range(end_chain_length):
+            curr_atom, curr_atom_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
+            for _ in range(2):
+                H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
+                self._add_bond_to_topology(H, H_pdb, curr_atom, curr_atom_pdb, topology, topology_pdb)
+            self._add_bond_to_topology(curr_atom, curr_atom_pdb, prev_atom, prev_atom_pdb, topology, topology_pdb)
+            prev_atom = curr_atom
+            prev_atom_pdb = curr_atom_pdb
+
+        # Add hydrogen to last carbon
+        H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
+        self._add_bond_to_topology(H, H_pdb, prev_atom, prev_atom_pdb, topology, topology_pdb)
+
+        return C1, C1_pdb, prev_res_atom_pos + np.array([2.527, 0, 0])
+
+    def _add_residue_to_chain_trappeua(self, topology, topology_pdb, chain, chain_pdb, prev_res_atom, prev_res_atom_pdb,
+                                       positions, prev_res_atom_pos, monomer, left_ter=False, right_ter=False):
 
         def _deg_to_rad(ang_deg):
             return ang_deg * 2 * np.pi / 360.0
@@ -305,13 +422,13 @@ class ChainOptions(_Options):
             carbon_element = self.CARBON
             carbon_1_element = self.CARBON
         carbon_pos = prev_res_atom_pos + 1.54*np.array([cos19*cos30, -cos19*sin30, sin19])
-        carbon, carbon_pdb = self._add_atom_to_topology('C', carbon_element, residue, residue_pdb,
-                                                        topology, topology_pdb,
-                                                        positions, carbon_pos)
+        carbon, carbon_pdb = self._add_atom_to_topology_trappeua('C', carbon_element, residue, residue_pdb,
+                                                                 topology, topology_pdb,
+                                                                 positions, carbon_pos)
         carbon_1_pos = carbon_pos + 1.54*np.array([cos19*cos30, cos19*sin30, -sin19])
-        carbon_1, carbon_1_pdb = self._add_atom_to_topology('C1', carbon_1_element, residue, residue_pdb,
-                                                            topology, topology_pdb,
-                                                            positions, carbon_1_pos)
+        carbon_1, carbon_1_pdb = self._add_atom_to_topology_trappeua('C1', carbon_1_element, residue, residue_pdb,
+                                                                     topology, topology_pdb,
+                                                                     positions, carbon_1_pos)
 
         # Add bond to previous residue if applicable
         if prev_res_atom is not None:
@@ -323,27 +440,27 @@ class ChainOptions(_Options):
         # Add methyl group if methacrylate monomer
         if is_methyl:
             carbon_methyl_pos = carbon_1_pos + 1.54*np.array([0.0, 1.0, 0.0])
-            carbon_methyl, carbon_methyl_pdb = self._add_atom_to_topology('Cm', self.CARBON, residue, residue_pdb,
-                                                                          topology, topology_pdb,
-                                                                          positions, carbon_methyl_pos)
+            carbon_methyl, carbon_methyl_pdb = self._add_atom_to_topology_trappeua('Cm', self.CARBON, residue, residue_pdb,
+                                                                                   topology, topology_pdb,
+                                                                                   positions, carbon_methyl_pos)
             self._add_bond_to_topology(carbon_1, carbon_1_pdb, carbon_methyl, carbon_methyl_pdb,
                                        topology, topology_pdb)
 
         # Add ester group atoms
         carbon_2_pos = carbon_1_pos + 1.52*np.array([0.0, 0.0, -1.0])
-        carbon_2, carbon_2_pdb = self._add_atom_to_topology('C2', self.CARBON, residue, residue_pdb,
-                                                            topology, topology_pdb,
-                                                            positions, carbon_2_pos)
+        carbon_2, carbon_2_pdb = self._add_atom_to_topology_trappeua('C2', self.CARBON, residue, residue_pdb,
+                                                                     topology, topology_pdb,
+                                                                     positions, carbon_2_pos)
         self._add_bond_to_topology(carbon_1, carbon_1_pdb, carbon_2, carbon_2_pdb, topology, topology_pdb)
         oxygen_carbonyl_pos = carbon_2_pos + 1.20*np.array([0.0, cos30, -sin30])
-        oxygen_carbonyl, oxygen_carbonyl_pdb = self._add_atom_to_topology('O', self.OXYGEN, residue, residue_pdb,
-                                                                          topology, topology_pdb,
-                                                                          positions, oxygen_carbonyl_pos)
+        oxygen_carbonyl, oxygen_carbonyl_pdb = self._add_atom_to_topology_trappeua('O', self.OXYGEN, residue, residue_pdb,
+                                                                                   topology, topology_pdb,
+                                                                                   positions, oxygen_carbonyl_pos)
         self._add_bond_to_topology(carbon_2, carbon_2_pdb, oxygen_carbonyl, oxygen_carbonyl_pdb, topology, topology_pdb)
         oxygen_ether_pos = carbon_2_pos + 1.344*np.array([0.0, -cos30, -sin30])
-        oxygen_ether, oxygen_ether_pdb = self._add_atom_to_topology('O', self.OXYGEN, residue, residue_pdb,
-                                                                    topology, topology_pdb,
-                                                                    positions, oxygen_ether_pos)
+        oxygen_ether, oxygen_ether_pdb = self._add_atom_to_topology_trappeua('O', self.OXYGEN, residue, residue_pdb,
+                                                                             topology, topology_pdb,
+                                                                             positions, oxygen_ether_pos)
         self._add_bond_to_topology(carbon_2, carbon_2_pdb, oxygen_ether, oxygen_ether_pdb, topology, topology_pdb)
 
         # Add carbon chain
@@ -355,10 +472,10 @@ class ChainOptions(_Options):
                 curr_atom_pos = prev_atom_pos + 1.41*np.array([0.0, (-1)**(i+1)*cos54, -sin54])
             else:
                 curr_atom_pos = prev_atom_pos + 1.54*np.array([0.0, (-1)**(i+1)*cos54, -sin54])
-            curr_atom, curr_atom_pdb = self._add_atom_to_topology('C{}'.format(i + 3), self.CARBON,
-                                                                  residue, residue_pdb,
-                                                                  topology, topology_pdb,
-                                                                  positions, curr_atom_pos)
+            curr_atom, curr_atom_pdb = self._add_atom_to_topology_trappeua('C{}'.format(i + 3), self.CARBON,
+                                                                           residue, residue_pdb,
+                                                                           topology, topology_pdb,
+                                                                           positions, curr_atom_pos)
             self._add_bond_to_topology(prev_atom, prev_atom_pdb, curr_atom, curr_atom_pdb, topology, topology_pdb)
             prev_atom_pos = curr_atom_pos
             prev_atom = curr_atom
@@ -367,8 +484,8 @@ class ChainOptions(_Options):
         return carbon_1, carbon_1_pdb, carbon_1_pos
 
     @staticmethod
-    def _add_atom_to_topology(name, element, residue, residue_pdb, topology, topology_pdb,
-                              positions, atom_pos):
+    def _add_atom_to_topology_trappeua(name, element, residue, residue_pdb, topology, topology_pdb,
+                                       positions, atom_pos):
 
         # Add atom to topology
         atom = topology.addAtom(name, element, residue)
@@ -387,7 +504,10 @@ class ChainOptions(_Options):
 
     def _create_chain_pdb(self, topology_pdb, positions):
         dirname = os.path.dirname(__file__)
-        file_path = os.path.join(dirname, "data/{}.pdb".format(self.sequence_str))
+        filename = "{}.pdb".format(self.sequence_str)
+        if self.forceField_str == 'OPLS-AA':
+            filename = "{}_aa.pdb".format(self.sequence_str)
+        file_path = os.path.join(dirname, "data/{}".format(filename))
         if not os.path.isfile(file_path) or self.overwrite_pdb:
             self.overwrite_pdb = False
             PDBFile.writeFile(topology_pdb, positions, open(file_path, 'w'))

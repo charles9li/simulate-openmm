@@ -180,8 +180,11 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
             instructions = chain_options.instructions
             if instructions is None:
                 instructions = default_instructions
+            chain_filepath = "data/{}.pdb".format(chain_options.sequence_str)
+            if topology_options.forceField_str == 'OPLS-AA':
+                chain_filepath = "data/{}_aa.pdb".format(chain_options.sequence_str)
             molecule = mda.Universe(
-                os.path.join(os.path.dirname(__file__), "data/{}.pdb".format(chain_options.sequence_str))
+                os.path.join(os.path.dirname(__file__), chain_filepath)
             )
             packmol_structure = mdapackmol.PackmolStructure(
                 molecule, number=chain_options.num,
@@ -192,8 +195,11 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
             instructions = topology_options.dodecaneInstructions
             if instructions is None:
                 instructions = default_instructions
+            dodecane_pdb_filepath = "data/C12.pdb"
+            if topology_options.forceField_str == 'OPLS-AA':
+                dodecane_pdb_filepath = "data/C12_aa.pdb"
             molecule = mda.Universe(
-                os.path.join(os.path.dirname(__file__), "data/C12.pdb")
+                os.path.join(os.path.dirname(__file__), dodecane_pdb_filepath)
             )
             packmol_structure = mdapackmol.PackmolStructure(
                 molecule, number=topology_options.numDodecane,
