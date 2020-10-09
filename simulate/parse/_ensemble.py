@@ -31,7 +31,7 @@ import os
 from simtk.openmm.app import Simulation
 from simtk.openmm import VerletIntegrator, LangevinIntegrator
 from simtk.unit import amu, nanometer, picosecond
-from openmmtools.integrators import VelocityVerletIntegrator, NoseHooverChainVelocityVerletIntegrator
+from openmmtools.integrators import VelocityVerletIntegrator
 import numpy as np
 
 from ._options import _Options
@@ -205,8 +205,7 @@ class NVTOptions(NVEOptions):
 
     INTEGRATORS_NO_THERMOSTAT = (VerletIntegrator,
                                  VelocityVerletIntegrator)
-    INTEGRATORS_WITH_THERMOSTAT = (LangevinIntegrator,
-                                   NoseHooverChainVelocityVerletIntegrator)
+    INTEGRATORS_WITH_THERMOSTAT = (LangevinIntegrator)
     
     def _check_for_incomplete_input(self):
         super(NVTOptions, self)._check_for_incomplete_input()
