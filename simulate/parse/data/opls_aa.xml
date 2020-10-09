@@ -1,0 +1,311 @@
+<ForceField>
+  <AtomTypes>
+    <Type name="C(RCH3)" class="C(sp3)" element="C" mass="12.011000" />
+    <Type name="C(R2CH2)" class="C(sp3)" element="C" mass="12.011000" />
+    <Type name="C(R3CH)" class="C(sp3)" element="C" mass="12.011000" />
+    <Type name="C(R4C)" class="C(sp3)" element="C" mass="12.011000" />
+    <Type name="H(RH)" class="H(RH)" element="H" mass="1.008000" />
+    <Type name="C(R2C=)" class="C(sp2)" element="C" mass="12.011000" />
+    <Type name="C(RHC=)" class="C(sp2)" element="C" mass="12.011000" />
+    <Type name="C(H2C=)" class="C(sp2)" element="C" mass="12.011000" />
+    <Type name="H(HC=)" class="H(HC=)" element="H" mass="1.008000" />
+    <Type name="C(R2CO)" class="C(R2CO)" element="C" mass="12.011000" />
+    <Type name="O(R2CO)" class="O(R2CO)" element="O" mass="15.999000" />
+    <Type name="O(ROR)" class="O(ROR)" element="O" mass="15.999000" />
+    <Type name="C(RCH2OR)" class="C(RCH2OR)" element="C" mass="12.011000" />
+    <Type name="H(CHnOR)" class="H(CHnOR)" element="H" mass="1.008000" />
+  </AtomTypes>
+  <Residues>
+    <Residue name="dodecane">
+      <Atom name="C00" type="C(RCH3)"/>
+      <Atom name="C01" type="C(R2CH2)"/>
+      <Atom name="C02" type="C(R2CH2)"/>
+      <Atom name="C03" type="C(R2CH2)"/>
+      <Atom name="C04" type="C(R2CH2)"/>
+      <Atom name="C05" type="C(R2CH2)"/>
+      <Atom name="C06" type="C(R2CH2)"/>
+      <Atom name="C07" type="C(R2CH2)"/>
+      <Atom name="C08" type="C(R2CH2)"/>
+      <Atom name="C09" type="C(R2CH2)"/>
+      <Atom name="C10" type="C(R2CH2)"/>
+      <Atom name="C11" type="C(RCH3)"/>
+      <Atom name="H12" type="H(RH)"/>
+      <Atom name="H13" type="H(RH)"/>
+      <Atom name="H14" type="H(RH)"/>
+      <Atom name="H15" type="H(RH)"/>
+      <Atom name="H16" type="H(RH)"/>
+      <Atom name="H17" type="H(RH)"/>
+      <Atom name="H18" type="H(RH)"/>
+      <Atom name="H19" type="H(RH)"/>
+      <Atom name="H20" type="H(RH)"/>
+      <Atom name="H21" type="H(RH)"/>
+      <Atom name="H22" type="H(RH)"/>
+      <Atom name="H23" type="H(RH)"/>
+      <Atom name="H24" type="H(RH)"/>
+      <Atom name="H25" type="H(RH)"/>
+      <Atom name="H26" type="H(RH)"/>
+      <Atom name="H27" type="H(RH)"/>
+      <Atom name="H28" type="H(RH)"/>
+      <Atom name="H29" type="H(RH)"/>
+      <Atom name="H30" type="H(RH)"/>
+      <Atom name="H31" type="H(RH)"/>
+      <Atom name="H32" type="H(RH)"/>
+      <Atom name="H33" type="H(RH)"/>
+      <Atom name="H34" type="H(RH)"/>
+      <Atom name="H35" type="H(RH)"/>
+      <Atom name="H36" type="H(RH)"/>
+      <Atom name="H37" type="H(RH)"/>
+      <Bond from="0" to="1"/>
+      <Bond from="1" to="2"/>
+      <Bond from="2" to="3"/>
+      <Bond from="3" to="4"/>
+      <Bond from="4" to="5"/>
+      <Bond from="5" to="6"/>
+      <Bond from="6" to="7"/>
+      <Bond from="7" to="8"/>
+      <Bond from="8" to="9"/>
+      <Bond from="9" to="10"/>
+      <Bond from="10" to="11"/>
+      <Bond from="0" to="12"/>
+      <Bond from="0" to="13"/>
+      <Bond from="0" to="14"/>
+      <Bond from="1" to="15"/>
+      <Bond from="1" to="16"/>
+      <Bond from="2" to="17"/>
+      <Bond from="2" to="18"/>
+      <Bond from="3" to="19"/>
+      <Bond from="3" to="20"/>
+      <Bond from="4" to="21"/>
+      <Bond from="4" to="22"/>
+      <Bond from="5" to="23"/>
+      <Bond from="5" to="24"/>
+      <Bond from="6" to="25"/>
+      <Bond from="6" to="26"/>
+      <Bond from="7" to="27"/>
+      <Bond from="7" to="28"/>
+      <Bond from="8" to="29"/>
+      <Bond from="8" to="30"/>
+      <Bond from="9" to="31"/>
+      <Bond from="9" to="32"/>
+      <Bond from="10" to="33"/>
+      <Bond from="10" to="34"/>
+      <Bond from="11" to="35"/>
+      <Bond from="11" to="36"/>
+      <Bond from="11" to="37"/>
+    </Residue>
+    <Residue name="mA12">
+      <AllowPatch name="methacrylate-start"/>
+      <AllowPatch name="methacrylate-middle"/>
+      <AllowPatch name="methacrylate-end"/>
+      <Atom name="C00" type="C(H2C=)" />
+      <Atom name="C01" type="C(R2C=)" />
+      <Atom name="C02" type="C(RCH3)" />
+      <Atom name="C03" type="C(R2CO)" />
+      <Atom name="O04" type="O(R2CO)" />
+      <Atom name="O05" type="O(ROR)" />
+      <Atom name="C06" type="C(RCH2OR)" />
+      <Atom name="C07" type="C(R2CH2)" />
+      <Atom name="C08" type="C(R2CH2)" />
+      <Atom name="C09" type="C(R2CH2)" />
+      <Atom name="C0A" type="C(R2CH2)" />
+      <Atom name="C0B" type="C(R2CH2)" />
+      <Atom name="C0C" type="C(R2CH2)" />
+      <Atom name="C0D" type="C(R2CH2)" />
+      <Atom name="C0E" type="C(R2CH2)" />
+      <Atom name="C0F" type="C(R2CH2)" />
+      <Atom name="C0G" type="C(R2CH2)" />
+      <Atom name="C0H" type="C(RCH3)" />
+      <Atom name="H0I" type="H(HC=)" />
+      <Atom name="H0J" type="H(HC=)" />
+      <Atom name="H0K" type="H(RH)" />
+      <Atom name="H0M" type="H(RH)" />
+      <Atom name="H0N" type="H(RH)" />
+      <Atom name="H0O" type="H(CHnOR)" />
+      <Atom name="H0P" type="H(CHnOR)" />
+      <Atom name="H0Q" type="H(RH)" />
+      <Atom name="H0R" type="H(RH)" />
+      <Atom name="H0S" type="H(RH)" />
+      <Atom name="H0T" type="H(RH)" />
+      <Atom name="H0U" type="H(RH)" />
+      <Atom name="H0V" type="H(RH)" />
+      <Atom name="H0W" type="H(RH)" />
+      <Atom name="H0X" type="H(RH)" />
+      <Atom name="H0Y" type="H(RH)" />
+      <Atom name="H0Z" type="H(RH)" />
+      <Atom name="H10" type="H(RH)" />
+      <Atom name="H11" type="H(RH)" />
+      <Atom name="H12" type="H(RH)" />
+      <Atom name="H13" type="H(RH)" />
+      <Atom name="H14" type="H(RH)" />
+      <Atom name="H15" type="H(RH)" />
+      <Atom name="H16" type="H(RH)" />
+      <Atom name="H17" type="H(RH)" />
+      <Atom name="H18" type="H(RH)" />
+      <Atom name="H19" type="H(RH)" />
+      <Atom name="H1A" type="H(RH)" />
+      <Atom name="H1B" type="H(RH)" />
+      <Atom name="H1C" type="H(RH)" />
+      <Bond from="0" to="1"/>
+      <Bond from="1" to="2"/>
+      <Bond from="1" to="3"/>
+      <Bond from="3" to="4"/>
+      <Bond from="3" to="5"/>
+      <Bond from="5" to="6"/>
+      <Bond from="6" to="7"/>
+      <Bond from="7" to="8"/>
+      <Bond from="8" to="9"/>
+      <Bond from="9" to="10"/>
+      <Bond from="10" to="11"/>
+      <Bond from="11" to="12"/>
+      <Bond from="12" to="13"/>
+      <Bond from="13" to="14"/>
+      <Bond from="14" to="15"/>
+      <Bond from="15" to="16"/>
+      <Bond from="16" to="17"/>
+      <Bond from="0" to="18"/>
+      <Bond from="0" to="19"/>
+      <Bond from="2" to="20"/>
+      <Bond from="2" to="21"/>
+      <Bond from="2" to="22"/>
+      <Bond from="6" to="23"/>
+      <Bond from="6" to="24"/>
+      <Bond from="7" to="25"/>
+      <Bond from="7" to="26"/>
+      <Bond from="8" to="27"/>
+      <Bond from="8" to="28"/>
+      <Bond from="9" to="29"/>
+      <Bond from="9" to="30"/>
+      <Bond from="10" to="31"/>
+      <Bond from="10" to="32"/>
+      <Bond from="11" to="33"/>
+      <Bond from="11" to="34"/>
+      <Bond from="12" to="35"/>
+      <Bond from="12" to="36"/>
+      <Bond from="13" to="37"/>
+      <Bond from="13" to="38"/>
+      <Bond from="14" to="39"/>
+      <Bond from="14" to="40"/>
+      <Bond from="15" to="41"/>
+      <Bond from="15" to="42"/>
+      <Bond from="16" to="43"/>
+      <Bond from="16" to="44"/>
+      <Bond from="17" to="45"/>
+      <Bond from="17" to="46"/>
+      <Bond from="17" to="47"/>
+    </Residue>
+  </Residues>
+  <Patches>
+    <Patch name="methacrylate-start">
+      <ChangeAtom name="C00" type="C(RCH3)"/>
+      <ChangeAtom name="H0I" type="H(RH)"/>
+      <ChangeAtom name="H0J" type="H(RH)"/>
+      <AddAtom name="H1D" type="H(RH)"/>
+      <AddBond atomName1="H1D" atomName2="C00"/>
+      <ChangeAtom name="C01" type="C(R4C)"/>
+      <AddExternalBond atomName="C01"/>
+    </Patch>
+    <Patch name="methacrylate-middle">
+      <ChangeAtom name="C00" type="C(R2CH2)"/>
+      <ChangeAtom name="H0I" type="H(RH)"/>
+      <ChangeAtom name="H0J" type="H(RH)"/>
+      <AddExternalBond atomName="C00"/>
+      <ChangeAtom name="C01" type="C(R4C)"/>
+      <AddExternalBond atomName="C01"/>
+    </Patch>
+    <Patch name="methacrylate-end">
+      <ChangeAtom name="C00" type="C(R2CH2)"/>
+      <ChangeAtom name="H0I" type="H(RH)"/>
+      <ChangeAtom name="H0J" type="H(RH)"/>
+      <AddExternalBond atomName="C00"/>
+      <ChangeAtom name="C01" type="C(R3CH)"/>
+      <AddAtom name="H1D" type="H(RH)"/>
+      <AddBond atomName1="H1D" atomName2="C01"/>
+    </Patch>
+  </Patches>
+  <HarmonicBondForce>
+    <Bond class1="C(sp3)" class2="C(sp3)" length="0.152900" k="224262.400000"/>
+    <Bond class1="C(sp3)" class2="C(RCH2OR)" length="0.152900" k="224262.400000"/>
+    <Bond class1="C(sp3)" class2="C(R2CO)" length="0.152200" k="265265.600000"/>
+    <Bond class1="C(sp2)" class2="C(sp2)" length="0.134000" k="459403.200000"/>
+    <Bond class1="C(sp3)" class2="C(sp2)" length="0.151000" k="265265.600000"/>
+    <Bond class1="C(R2CO)" class2="C(sp2)" length="0.144400" k="343088.000000"/>
+    <Bond class1="O(R2CO)" class2="C(R2CO)" length="0.122900" k="476976.000000"/>
+    <Bond class1="O(ROR)" class2="C(R2CO)" length="0.132700" k="179075.200000"/>
+    <Bond class1="C(RCH2OR)" class2="O(ROR)" length="0.141000" k="267776.000000"/>
+    <Bond class1="H(HC=)" class2="C(sp2)" length="0.108000" k="284512.000000"/>
+    <Bond class1="H(RH)" class2="C(sp3)" length="0.109000" k="284512.000000"/>
+    <Bond class1="H(CHnOR)" class2="C(RCH2OR)" length="0.109000" k="284512.000000"/>
+  </HarmonicBondForce>
+  <HarmonicAngleForce>
+    <Angle class1="C(sp3)" class2="C(sp3)" class3="C(sp3)" angle="1.966986" k="488.272800"/>
+    <Angle class1="C(sp3)" class2="C(sp3)" class3="C(R2CO)" angle="1.939061" k="527.184000"/>
+    <Angle class1="C(RCH2OR)" class2="C(sp3)" class3="C(sp3)" angle="1.966986" k="488.272800"/>
+    <Angle class1="C(sp3)" class2="C(R2CO)" class3="O(R2CO)" angle="2.101376" k="669.440000"/>
+    <Angle class1="C(sp3)" class2="C(R2CO)" class3="O(ROR)" angle="1.944297" k="677.808000"/>
+    <Angle class1="C(sp3)" class2="C(sp2)" class3="C(R2CO)" angle="2.089159" k="585.760000"/>
+    <Angle class1="C(sp2)" class2="C(sp2)" class3="C(sp3)" angle="2.164208" k="585.760000"/>
+    <Angle class1="C(sp2)" class2="C(sp2)" class3="C(R2CO)" angle="2.106612" k="711.280000"/>
+    <Angle class1="C(sp2)" class2="C(R2CO)" class3="O(R2CO)" angle="2.186898" k="669.440000"/>
+    <Angle class1="C(sp2)" class2="C(R2CO)" class3="O(ROR)" angle="1.944297" k="677.808000"/>
+    <Angle class1="C(R2CO)" class2="O(ROR)" class3="C(RCH2OR)" angle="2.040290" k="694.544000"/>
+    <Angle class1="O(ROR)" class2="C(RCH2OR)" class3="C(sp3)" angle="1.911136" k="418.400000"/>
+    <Angle class1="C(sp3)" class2="C(sp3)" class3="H(RH)" angle="1.932079" k="313.800000"/>
+    <Angle class1="C(sp3)" class2="C(RCH2OR)" class3="H(CHnOR)" angle="1.932079" k="313.800000"/>
+    <Angle class1="C(sp2)" class2="C(sp2)" class3="H(HC=)" angle="2.094395" k="292.880000"/>
+    <Angle class1="C(sp2)" class2="C(sp3)" class3="H(RH)" angle="1.911136" k="292.880000"/>
+    <Angle class1="O(ROR)" class2="C(RCH2OR)" class3="H(CHnOR)" angle="1.911136" k="292.880000"/>
+    <Angle class1="C(RCH2OR)" class2="C(sp3)" class3="H(RH)" angle="1.932079" k="313.800000"/>
+    <Angle class1="C(R2CO)" class2="C(sp3)" class3="H(RH)" angle="1.911136" k="292.880000"/>
+    <Angle class1="O(R2CO)" class2="C(R2CO)" class3="O(ROR)" angle="2.153736" k="694.544000"/>
+    <Angle class1="H(RH)" class2="C(sp3)" class3="H(RH)" angle="1.881465" k="276.144000"/>
+    <Angle class1="H(CHnOR)" class2="C(RCH2OR)" class3="H(CHnOR)" angle="1.881465" k="276.144000"/>
+    <Angle class1="H(HC=)" class2="C(sp2)" class3="H(HC=)" angle="2.042035" k="292.880000"/>
+  </HarmonicAngleForce>
+  <PeriodicTorsionForce>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(sp3)" class4="H(RH)" k1="0.000000" k2="0.000000" k3="0.627600" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(RCH2OR)" class4="H(CHnOR)" k1="0.000000" k2="0.000000" k3="0.627600" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(sp3)" class4="C(sp3)" k1="0.000000" k2="0.000000" k3="0.627600" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(sp3)" class4="C(RCH2OR)" k1="0.000000" k2="0.000000" k3="0.627600" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(CHnOR)" class2="C(RCH2OR)" class3="C(sp3)" class4="C(sp3)" k1="0.000000" k2="0.000000" k3="0.627600" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(sp3)" class4="C(R2CO)" k1="0.000000" k2="0.000000" k3="-0.209200" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(RCH2OR)" class4="O(ROR)" k1="0.000000" k2="0.000000" k3="0.979056" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(sp2)" class4="C(sp2)" k1="0.000000" k2="0.000000" k3="-0.778224" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(sp2)" class4="C(R2CO)" k1="0.000000" k2="0.000000" k3="-0.778224" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(R2CO)" class4="O(R2CO)" k1="0.000000" k2="0.000000" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(RH)" class2="C(sp3)" class3="C(R2CO)" class4="O(ROR)" k1="0.000000" k2="0.000000" k3="0.276144" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(sp3)" class2="C(sp3)" class3="C(sp3)" class4="C(RCH2OR)" k1="2.719600" k2="-0.418400" k3="0.418400" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(sp3)" class2="C(sp3)" class3="C(sp3)" class4="C(sp3)" k1="2.719600" k2="-0.418400" k3="0.418400" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(RCH2OR)" class2="O(ROR)" class3="C(R2CO)" class4="C(sp3)" k1="9.767548" k2="10.719408" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(RCH2OR)" class2="O(ROR)" class3="C(R2CO)" class4="C(sp2)" k1="9.767548" k2="10.719408" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(RCH2OR)" class2="O(ROR)" class3="C(R2CO)" class4="O(R2CO)" k1="0.000000" k2="10.719408" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(sp3)" class2="C(RCH2OR)" class3="O(ROR)" class4="C(R2CO)" k1="-2.552240" k2="-0.263592" k3="0.882824" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(sp3)" class2="C(sp3)" class3="C(RCH2OR)" class4="O(ROR)" k1="3.579412" k2="-1.046000" k3="1.386996" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="C(sp3)" class2="C(sp3)" class3="C(sp3)" class4="C(R2CO)" k1="-4.309520" k2="-0.654796" k3="0.658980" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(HC=)" class2="C(sp2)" class3="C(sp2)" class4="C(sp3)" k1="0.000000" k2="29.288000" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(HC=)" class2="C(sp2)" class3="C(sp2)" class4="C(R2CO)" k1="0.000000" k2="29.288000" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="H(CHnOR)" class2="C(RCH2OR)" class3="O(ROR)" class4="C(R2CO)" k1="0.000000" k2="0.000000" k3="0.414216" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="O(R2CO)" class2="C(R2CO)" class3="C(sp2)" class4="C(sp2)" k1="5.230000" k2="12.552000" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="O(R2CO)" class2="C(R2CO)" class3="C(sp2)" class4="C(sp3)" k1="1.882800" k2="0.481160" k3="-1.056460" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="O(ROR)" class2="C(R2CO)" class3="C(sp2)" class4="C(sp2)" k1="6.694400" k2="-6.276000" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="O(ROR)" class2="C(R2CO)" class3="C(sp2)" class4="C(sp3)" k1="1.882800" k2="0.481160" k3="-1.056460" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Proper class1="O(ROR)" class2="C(R2CO)" class3="C(sp3)" class4="C(sp3)" k1="0.000000" k2="0.000000" k3="-1.156876" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+    <Improper class1="C(R2CO)" class2="C(sp2)" class3="O(R2CO)" class4="O(ROR)" k1="0.000000" k2="43.932000" k3="0.000000" k4="0.000000" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.00" phase2="3.141592653589793" phase3="0.00" phase4="3.141592653589793"/>
+  </PeriodicTorsionForce>
+  <NonbondedForce coulomb14scale="0.5" lj14scale="0.5">
+    <Atom type="C(RCH3)" charge="-0.180000" sigma="0.350000" epsilon="0.276144" />
+    <Atom type="C(R2CH2)" charge="-0.120000" sigma="0.350000" epsilon="0.276144" />
+    <Atom type="C(R3CH)" charge="-0.060000" sigma="0.350000" epsilon="0.276144" />
+    <Atom type="C(R4C)" charge="0.000000" sigma="0.350000" epsilon="0.276144" />
+    <Atom type="H(RH)" charge="0.060000" sigma="0.250000" epsilon="0.125520" />
+    <Atom type="C(R2C=)" charge="0.000000" sigma="0.355000" epsilon="0.317984" />
+    <Atom type="C(RHC=)" charge="-0.115000" sigma="0.355000" epsilon="0.317984" />
+    <Atom type="C(H2C=)" charge="-0.230000" sigma="0.355000" epsilon="0.317984" />
+    <Atom type="H(HC=)" charge="0.115000" sigma="0.242000" epsilon="0.125520" />
+    <!-- Ester group charges from Murzyn, K.; Bratek, M.; Pasenkiewicz-Gierula, M. J. Phys. Chem. B 2013, 117, 16388– 16396. -->
+    <Atom type="C(R2CO)" charge="0.510000" sigma="0.375000" epsilon="0.439320" />
+    <Atom type="O(R2CO)" charge="-0.430000" sigma="0.296000" epsilon="0.878640" />
+    <Atom type="O(ROR)" charge="-0.330000" sigma="0.300000" epsilon="0.711280" />
+    <Atom type="C(RCH2OR)" charge="0.190000" sigma="0.350000" epsilon="0.276144" />
+    <Atom type="H(CHnOR)" charge="0.030000" sigma="0.242000" epsilon="0.062760" />
+  </NonbondedForce>
+</ForceField>
