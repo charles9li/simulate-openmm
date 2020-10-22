@@ -106,9 +106,8 @@ class FileOptions(_PositionOptions):
             t = md.load(self.file, frame=self.frame)
         else:
             t = md.load(self.file, top=self.top, frame=self.frame)
-        topology = t.topology
         simulation.context.setPositions(t.xyz[0])
-        simulation.context.setPeriodicBoxVectors(*topology.getPeriodicBoxVectors())
+        simulation.context.setPeriodicBoxVectors(*t.unitcell_vectors[0])
 
 
 class SubrandomParticlePositions(_PositionOptions):
