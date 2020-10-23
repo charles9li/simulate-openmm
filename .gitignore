@@ -25,3 +25,6 @@ visualization
 
 # Files to send to cluster
 to_pod
+
+# Viscosity
+viscosity
