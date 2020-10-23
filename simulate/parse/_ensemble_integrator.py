@@ -153,6 +153,9 @@ class NoseHooverChainVelocityVerletIntegratorOptions(_IntegratorOptions):
         super(NoseHooverChainVelocityVerletIntegratorOptions, self)._create_options()
         self._OPTIONS['temperature'] = self._parse_temperature
         self._OPTIONS['collision_frequency'] = self._parse_collision_frequency
+        self._OPTIONS['chain_length'] = self._parse_chain_length
+        self._OPTIONS['num_mts'] = self._parse_num_mts
+        self._OPTIONS['num_yoshidasuzuki'] = self._parse_num_yoshidasuzuki
 
     # =========================================================================
 
