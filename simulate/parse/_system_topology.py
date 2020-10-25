@@ -31,7 +31,6 @@ from ast import literal_eval
 import numpy as np
 from simtk.openmm.app import Element, ForceField, NoCutoff, Topology
 from simtk.unit import nanometer
-from parmed import gromacs
 
 from ._options import _Options
 from ._system_topology_chain import ChainOptions
@@ -120,6 +119,7 @@ class GromacsTopologyOptions(_TopologyOptions):
         return self._gromacs_topology.topology
 
     def _create_gromacs_topology(self):
+        from parmed import gromacs
         if self._gromacs_topology is None:
             gro = gromacs.GromacsGroFile.parse(self.groFilename)
             self._gromacs_topology = gromacs.GromacsTopologyFile(self.topFilename)
