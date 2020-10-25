@@ -26,6 +26,7 @@ __author__ = "Charles Li"
 __version__ = "1.0"
 
 from ast import literal_eval
+import sys
 
 from simtk.unit import femtosecond, kelvin, picosecond
 
@@ -59,12 +60,12 @@ class _IntegratorOptions(_Options):
 
     # =========================================================================
 
-    def _create_integrator(self):
+    def _create_integrator(self, *args):
         from simtk.openmm import VerletIntegrator
         return VerletIntegrator(self.stepSize)
 
-    def integrator(self):
-        integrator = self._create_integrator()
+    def integrator(self, *args):
+        integrator = self._create_integrator(args)
         integrator.setConstraintTolerance(self.constraintTolerance)
         return integrator
 
@@ -95,7 +96,7 @@ class VelocityVerletIntegratorOptions(VerletIntegratorOptions):
 
     # =========================================================================
 
-    def _create_integrator(self):
+    def _create_integrator(self, *args):
         from openmmtools.integrators import VelocityVerletIntegrator
         return VelocityVerletIntegrator(self.stepSize)
 
@@ -134,7 +135,7 @@ class LangevinIntegratorOptions(_IntegratorOptions):
 
     # =========================================================================
 
-    def _create_integrator(self):
+    def _create_integrator(self, *args):
         from simtk.openmm import LangevinIntegrator
         return LangevinIntegrator(self.temperature, self.frictionCoeff, self.stepSize)
 
@@ -176,7 +177,14 @@ class NoseHooverChainVelocityVerletIntegratorOptions(_IntegratorOptions):
 
     # =========================================================================
 
-    def _create_integrator(self):
-        from openmmtools.integrators import NoseHooverChainVelocityVerletIntegrator
-        return NoseHooverChainVelocityVerletIntegrator(self.temperature, self.collision_frequency, self.stepSize,
-                                                       self.chain_length, self.num_mts, self.num_yoshidasuzuki)
+    def _create_integrator(self, *args):
+        from openmmtools.integrators import NoseHooverChainVelocityVerletIntegrator as NHCVVIntegrator
+        if sys.version_info.major < 3:
+            return NHCVVIntegrator(temperature=self.temperature, collision_frequency=self.collision_frequency,
+                                   timestep=self.stepSize, chain_length=self.chain_length, num_mts=self.num_mts,
+                                   num_yoshidasuzuki=self.num_yoshidasuzuki)
+        else:
+            return NHCVVIntegrator(system=args[0], temperature=self.temperature,
+                                   collision_frequency=self.collision_frequency, timestep=self.stepSize,
+                                   chain_length=self.chain_length, num_mts=self.num_mts,
+                                   num_yoshidasuzuki=self.num_yoshidasuzuki)

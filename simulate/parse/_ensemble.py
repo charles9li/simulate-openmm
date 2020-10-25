@@ -103,7 +103,7 @@ class _EnsembleOptions(_Options):
         integrator_options = self._INTEGRATOR_OPTIONS[integrator_name]()
         integrator_options.parse(line_deque.popleft())
         self.integrator_options = integrator_options
-        self.integrator = integrator_options.integrator()
+        self.integrator = self.integrator_options.integrator(None)
 
     def _parse_reporters(self, *args):
         line_deque = args[1].popleft()
@@ -139,13 +139,14 @@ class _EnsembleOptions(_Options):
     # =========================================================================
 
     def create_simulation(self, topology, system):
+        self.integrator = self.create_integrator(system)
         simulation = Simulation(topology, system, self.integrator)
         for reporter in self.reporters:
             simulation.reporters.append(reporter)
         return simulation
 
-    def create_integrator(self):
-        return self.integrator_options.integrator()
+    def create_integrator(self, system):
+        return self.integrator_options.integrator(system)
 
 
 class NVEOptions(_EnsembleOptions):
