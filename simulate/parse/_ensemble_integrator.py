@@ -65,7 +65,7 @@ class _IntegratorOptions(_Options):
         return VerletIntegrator(self.stepSize)
 
     def integrator(self, *args):
-        integrator = self._create_integrator(args)
+        integrator = self._create_integrator(*args)
         integrator.setConstraintTolerance(self.constraintTolerance)
         return integrator
 
