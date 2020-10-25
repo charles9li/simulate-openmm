@@ -31,11 +31,9 @@ import os
 from simtk.openmm.app import PDBReporter
 from simtk.unit import angstrom
 from openmmtools.testsystems import subrandom_particle_positions
-import MDAnalysis as mda
 import mdtraj as md
 
 from ._options import _Options
-import mdapackmol
 
 __all__ = ['FileOptions', 'SubrandomParticlePositions', 'DodecaneAcrylatePositionOptions']
 
@@ -162,6 +160,8 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
     # =========================================================================
 
     def set_positions(self, simulation, *args):
+        import MDAnalysis as mda
+        import mdapackmol
 
         # Get topology options
         topology_options = args[0]
