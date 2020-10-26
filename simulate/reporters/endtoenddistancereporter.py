@@ -90,6 +90,7 @@ class EndToEndDistanceReporter(object):
     def _getResidueMasses(system, residue_atoms):
         masses = []
         for atom_index in residue_atoms:
+            atom_index = int(atom_index)
             masses.append(system.getParticleMass(atom_index).value_in_unit(unit.amu))
         return np.array(masses)
 
