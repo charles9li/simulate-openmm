@@ -62,6 +62,7 @@ class _StructureParser(object):
             elif char == '+':
                 self._index += 1
             elif char == '(':
+                level += 1
                 self._index += 1
                 tokenized_string.append(self._parse_structure_string(1))
             elif char == ')':
@@ -121,7 +122,7 @@ class _StructureParser(object):
                 i += 1
                 if isinstance(token, int):
                     multiplier *= token
-                elif isinstance(token, str) or isinstance(token, str):
+                elif isinstance(token, str) or isinstance(token, list):
                     for _ in range(multiplier):
                         self._parse_tokenized_string(token)
                     multiplier = 1
