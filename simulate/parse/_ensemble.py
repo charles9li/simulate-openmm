@@ -36,6 +36,7 @@ import numpy as np
 
 from ._options import _Options
 from ._ensemble_integrator import *
+from ._ensemble_thermostat import *
 from ._ensemble_barostat import *
 from ._ensemble_reporter import *
 from ._ensemble_minimizeenergy import *
@@ -183,6 +184,7 @@ class NVTOptions(NVEOptions):
 
     def __init__(self, simulations_options):
         super(NVTOptions, self).__init__(simulations_options)
+        self._create_thermostat_options()
         self.thermostat = None
         self.temperature_ramp_options = None
 
@@ -201,6 +203,7 @@ class NVTOptions(NVEOptions):
 
     def _create_thermostat_options(self):
         self._THERMOSTAT_OPTIONS = {}
+        self._THERMOSTAT_OPTIONS['AndersenThermostat'] = AndersenThermostatOptions
 
     # =========================================================================
 
