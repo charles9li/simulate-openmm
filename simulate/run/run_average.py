@@ -71,7 +71,7 @@ def _remove_barostat_from_simulation(topology, system, simulation, ensemble_opti
     positions = state.getPositions(asNumpy=True)
     velocities = state.getVelocities(asNumpy=True)
     periodic_box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
-    integrator = ensemble_options.create_integrator()
+    integrator = ensemble_options.create_integrator(system)
     system.setDefaultPeriodicBoxVectors(*periodic_box_vectors)
     simulation = Simulation(topology, system, integrator)
     simulation.context.setPositions(positions)
