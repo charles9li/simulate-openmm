@@ -159,6 +159,10 @@
       <AddExternalBond atomName="C"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
+    <Patch name="ACRBRANCH">
+      <ChangeAtom name="C1" type="C"/>
+      <AddExternalBond atomName="C"/>
+    </Patch>
     <Patch name="mACRLEFTTER">
       <ChangeAtom name="C" type="CH3(terminal)"/>
       <ChangeAtom name="C1" type="C"/>
