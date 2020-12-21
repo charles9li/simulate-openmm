@@ -40,7 +40,7 @@ class _TopologyOptions(_Options):
 
     # =========================================================================
 
-    _SECTION_NAME = '_TopologyOptions'
+    _SECTION_NAME = '_Topology'
 
     # =========================================================================
 
@@ -72,7 +72,7 @@ class _TopologyOptions(_Options):
 
 class AmberTopologyOptions(_TopologyOptions):
 
-    _SECTION_NAME = 'AmberTopologyOptions'
+    _SECTION_NAME = 'AmberTopology'
 
     def __init__(self, system_options):
         super(AmberTopologyOptions, self).__init__(system_options)
@@ -81,7 +81,7 @@ class AmberTopologyOptions(_TopologyOptions):
 
 class GromacsTopologyOptions(_TopologyOptions):
 
-    _SECTION_NAME = 'GromacsTopologyOptions'
+    _SECTION_NAME = 'GromacsTopology'
 
     # =========================================================================
 
@@ -143,7 +143,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     # =========================================================================
 
-    _SECTION_NAME = "DodecaneAcrylateTopologyOptions"
+    _SECTION_NAME = "DodecaneAcrylateTopology"
 
     # =========================================================================
 
