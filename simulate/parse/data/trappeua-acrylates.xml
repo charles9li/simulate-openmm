@@ -5,7 +5,9 @@
     <Type name="CH2" class="Csp3" element="C" mass="14.027"/>
     <Type name="CH2(terminal)" class="Csp3" element="N" mass="14.027"/>
     <Type name="CH" class="Csp3" element="C" mass="13.019"/>
+    <Type name="CH(branch)" class="Csp3" element="P" mass="13.019"/>
     <Type name="C" class="Csp3" element="C" mass="12.011"/>
+    <Type name="C(branch)" class="Csp3" element="P" mass="12.011"/>
     <Type name="CH(sp2)" class="Csp2" element="N" mass="13.019"/>
     <Type name="C(sp2)" class="Csp2" element="N" mass="12.011"/>
     <Type name="CH2(sp2)" class="Csp2" element="N" mass="14.027"/>
@@ -43,8 +45,11 @@
     </Residue>
     <Residue name="A4">
       <AllowPatch name="ACRLEFTTER"/>
+      <AllowPatch name="ACRLEFTTER-BRANCH"/>
       <AllowPatch name="ACRRIGHTTER"/>
+      <AllowPatch name="ACRRIGHTTER-BRANCH"/>
       <AllowPatch name="ACRMIDDLE"/>
+      <AllowPatch name="ACRMIDDLE-BRANCH"/>
       <Atom name="C" type="CH2(sp2)"/>
       <Atom name="C1" type="CH(sp2)"/>
       <Atom name="C2" type="C(carbonyl)"/>
@@ -65,8 +70,11 @@
     </Residue>
     <Residue name="A12">
       <AllowPatch name="ACRLEFTTER"/>
+      <AllowPatch name="ACRLEFTTER-BRANCH"/>
       <AllowPatch name="ACRRIGHTTER"/>
+      <AllowPatch name="ACRRIGHTTER-BRANCH"/>
       <AllowPatch name="ACRMIDDLE"/>
+      <AllowPatch name="ACRMIDDLE-BRANCH"/>
       <Atom name="C" type="CH2(sp2)"/>
       <Atom name="C1" type="CH(sp2)"/>
       <Atom name="C2" type="C(carbonyl)"/>
@@ -148,15 +156,34 @@
       <ChangeAtom name="C1" type="CH"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
+    <Patch name="ACRLEFTTER-BRANCH">
+      <ChangeAtom name="C" type="CH3(terminal)"/>
+      <ChangeAtom name="C1" type="C(branch)"/>
+      <AddExternalBond atomName="C1"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
     <Patch name="ACRRIGHTTER">
       <ChangeAtom name="C" type="CH2(terminal)"/>
       <ChangeAtom name="C1" type="CH2"/>
       <AddExternalBond atomName="C"/>
     </Patch>
+    <Patch name="ACRRIGHTTER-BRANCH">
+      <ChangeAtom name="C" type="CH2(terminal)"/>
+      <ChangeAtom name="C1" type="CH(branch)"/>
+      <AddExternalBond atomName="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
     <Patch name="ACRMIDDLE">
       <ChangeAtom name="C" type="CH2"/>
       <ChangeAtom name="C1" type="CH"/>
       <AddExternalBond atomName="C"/>
+      <AddExternalBond atomName="C1"/>
+    </Patch>
+    <Patch name="ACRMIDDLE-BRANCH">
+      <ChangeAtom name="C" type="CH2"/>
+      <ChangeAtom name="C1" type="C(branch)"/>
+      <AddExternalBond atomName="C"/>
+      <AddExternalBond atomName="C1"/>
       <AddExternalBond atomName="C1"/>
     </Patch>
     <Patch name="mACRLEFTTER">
@@ -194,9 +221,11 @@
     <Angle class1="Csp3" type2="CH2" class3="Csp3(ether)" angle="1.9896753472735356" k="519.653913625"/>
     <!-- CHx-CH-CHy -->
     <Angle class1="Csp3" type2="CH" class3="Csp3" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle class1="Csp3" type2="CH(branch)" class3="Csp3" angle="1.9547687622336491" k="519.653913625"/>
     <Angle class1="Csp3" type2="CH" class3="Csp3(ether)" angle="1.9547687622336491" k="519.653913625"/>
     <!-- CHx-C-CHy -->
     <Angle class1="Csp3" type2="C" class3="Csp3" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle class1="Csp3" type2="C(branch)" class3="Csp3" angle="1.9106119321581925" k="519.653913625"/>
     <Angle class1="Csp3" type2="C" class3="Csp3(ether)" angle="1.9106119321581925" k="519.653913625"/>
     <!-- C-CH(sp2)=CH2(sp2) AND C-C(sp2)=CH2(sp2) AND CHx-C(sp2)-CHy -->
     <Angle class1="Csp3" class2="Csp2" class3="Csp2" angle="2.0891591146372126" k="585.504457560"/>
@@ -217,9 +246,11 @@
     <Angle type1="CH2(terminal)" type2="CH2" type3="C(carbonyl)" angle="1.9896753472735356" k="519.653913625"/>
     <!-- CHx-CH-C(carbonyl) --> <!-- not certain -->
     <Angle class1="Csp3" type2="CH" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
+    <Angle class1="Csp3" type2="CH(branch)" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
     <Angle class1="Csp3" type2="CH(terminal)" type3="C(carbonyl)" angle="1.9547687622336491" k="519.653913625"/>
     <!-- CHx-C-C(carbonyl) --> <!-- not certain -->
     <Angle class1="Csp3" type2="C" type3="C(carbonyl)" angle="1.9106119321581925" k="519.653913625"/>
+    <Angle class1="Csp3" type2="C(branch)" type3="C(carbonyl)" angle="1.9106119321581925" k="519.653913625"/>
     <!-- O(ether)-C(carbonyl)-C(sp3) --> <!-- Kamath, 2006 (not certain) -->
     <Angle class1="O(ether)" class2="C(carbonyl)" class3="Csp3" angle="1.9373154697137058" k="587.0010608307999"/>
   </HarmonicAngleForce>
@@ -231,16 +262,24 @@
     <Proper class1="Csp3" type2="CH2(terminal)" type3="CH2" class4="C(carbonyl)" c0="8.231068558" c1="16.95260727"	c2="1.133926412" c3="-26.31760224" c4="0" c5="0"/>
     <!-- CHx-CH2-CH-CHy -->
     <Proper class1="Csp3" type2="CH2" type3="CH" class4="Csp3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2" type3="CH(branch)" class4="Csp3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper class1="Csp3" type2="CH2(terminal)" type3="CH" class4="Csp3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2(terminal)" type3="CH(branch)" class4="Csp3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper class1="Csp3" type2="CH2" type3="CH" class4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2" type3="CH(branch)" class4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <Proper class1="Csp3" type2="CH2(terminal)" type3="CH" class4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2(terminal)" type3="CH(branch)" class4="C(carbonyl)" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <!-- CHx-CH2-C-CHy -->
     <Proper class1="Csp3" type2="CH2" type3="C" class4="Csp3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2" type3="C(branch)" class4="Csp3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper class1="Csp3" type2="CH2(terminal)" type3="C" class4="Csp3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2(terminal)" type3="C(branch)" class4="Csp3" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper class1="Csp3" type2="CH2" type3="C" class4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH2" type3="C(branch)" class4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <Proper class1="Csp3" type2="CH2(terminal)" type3="C" class4="C(carbonyl)" c0="3.83537846105722"	c1="11.5061353831717"	c2="0" c3="-15.3415138442289" c4="0" c5="0"/>
     <!-- CHx-CH-CH-CHy -->
     <Proper class1="Csp3" type2="CH" type3="CH" class4="Csp3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
+    <Proper class1="Csp3" type2="CH" type3="CH(branch)" class4="Csp3" c0="6.95513112458318" c1="7.44210920011944" c2="1.8599452876466" c3="-14.6756916777794" c4="0" c5="0"/>
     <!-- CHx-O(ether)-C(carbonyl)=O(carbonyl) -->
     <Proper class1="Csp3(ether)" class2="O(ether)" class3="C(carbonyl)" class4="O(carbonyl)" c0="26.55539587" c1="2.717498962" c2="-22.8338424" c3="1.004054506"	c4="0" c5="0"/>
     <!-- CHx-O(ether)-C(carbonyl)-C(sp2)-->
@@ -283,7 +322,9 @@
     <Atom type="CH2" charge="0" sigma="0.3950" epsilon="0.382465280428"/>
     <Atom type="CH2(terminal)" charge="0" sigma="0.3950" epsilon="0.382465280428"/>
     <Atom type="CH" charge="0" sigma="0.4680" epsilon="0.08314462618"/>
+    <Atom type="CH(branch)" charge="0" sigma="0.4680" epsilon="0.08314462618"/>
     <Atom type="C" charge="0" sigma="0.6400" epsilon="0.004157231309"/>
+    <Atom type="C(branch)" charge="0" sigma="0.6400" epsilon="0.004157231309"/>
     <Atom type="CH3(ether)" charge="0.25" sigma="0.3750" epsilon="0.814817336564"/>
     <Atom type="CH2(ether)" charge="0.25" sigma="0.3950" epsilon="0.382465280428"/>
     <Atom type="CH2(sp2)" charge="0" sigma="0.3675" epsilon="0.706729322530"/>

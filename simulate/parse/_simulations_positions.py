@@ -190,6 +190,18 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
                 instructions=instructions
             )
             mdapackmol_input.append(packmol_structure)
+        for branched_chain_options in topology_options.branched_chains:
+            instructions = branched_chain_options.instructions
+            if instructions is None:
+                instructions = default_instructions
+            molecule = mda.Universe(
+                branched_chain_options.pdb
+            )
+            packmol_structure = mdapackmol.PackmolStructure(
+                molecule, number=branched_chain_options.num,
+                instructions=instructions
+            )
+            mdapackmol_input.append(packmol_structure)
         if topology_options.numDodecane > 0:
             instructions = topology_options.dodecaneInstructions
             if instructions is None:
