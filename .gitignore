@@ -28,3 +28,6 @@ to_pod
 
 # Viscosity
 viscosity
+
+# branched chain pdbs
+simulate/parse/data/branched_chain*
