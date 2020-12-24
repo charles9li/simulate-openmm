@@ -33,7 +33,7 @@ from simtk.openmm.app import Element, ForceField, NoCutoff, Topology
 from simtk.unit import nanometer
 
 from ._options import _Options
-from ._system_topology_chain import ChainOptions
+from ._system_topology_chain import ChainOptions, BranchedChainOptions
 
 
 class _TopologyOptions(_Options):
@@ -164,6 +164,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self.dodecaneInstructions = None
         self.box_vectors = None
         self.chains = []
+        self.branched_chains = []
         self.id_to_sequence = {}
 
     def _create_options(self):
@@ -176,6 +177,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
     def _create_sections(self):
         super(DodecaneAcrylateTopologyOptions, self)._create_sections()
         self._SECTIONS['chain'] = self._parse_chain
+        self._SECTIONS['BranchedChain'] = self._parse_branched_chain
 
     # =========================================================================
 
@@ -187,7 +189,6 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         else:
             raise ValueError("Invalid force field.")
         self.forceField_str = args[0]
-
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
@@ -207,6 +208,12 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         chain_options.parse(line_deque.popleft())
         self.chains.append(chain_options)
 
+    def _parse_branched_chain(self, *args):
+        line_deque = args[1]
+        branched_chain_options = BranchedChainOptions(self)
+        branched_chain_options.parse(line_deque.popleft())
+        self.branched_chains.append(branched_chain_options)
+
     # =========================================================================
 
     def topology(self):
@@ -221,6 +228,8 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             for chain_option in self.chains:
                 id_to_sequence = chain_option.add_chain_to_topology(topology)
                 self.id_to_sequence.update(id_to_sequence)
+            for branched_chain_option in self.branched_chains:
+                branched_chain_option.add_chain_to_topology(topology)
             for _ in range(self.numDodecane):
                 dodecane_id = self._add_dodecane_to_topology(topology)
                 self.id_to_sequence[dodecane_id] = "C12"
