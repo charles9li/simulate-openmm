@@ -514,7 +514,7 @@ class ChainOptions(_Options):
 
 _OPERATOR_PRECEDENCE = {'+': 2,
                         '*': 3}
-_OPERATORS = _OPERATOR_PRECEDENCE.keys()
+_OPERATORS = list(_OPERATOR_PRECEDENCE.keys())
 _DELIMITERS = ['(', ')']
 
 
