@@ -93,6 +93,52 @@
       <Bond from="11" to="36"/>
       <Bond from="11" to="37"/>
     </Residue>
+    <Residue name="A4">
+      <AllowPatch name="acrylate-start"/>
+      <AllowPatch name="acrylate-middle"/>
+      <AllowPatch name="acrylate-end"/>
+      <Atom name="C00" type="C(H2C=)" />
+      <Atom name="C01" type="C(RHC=)" />
+      <Atom name="C02" type="C(R2CO)" />
+      <Atom name="O03" type="O(R2CO)" />
+      <Atom name="O04" type="O(ROR)" />
+      <Atom name="C05" type="C(RCH2OR)" />
+      <Atom name="C06" type="C(R2CH2)" />
+      <Atom name="C07" type="C(R2CH2)" />
+      <Atom name="C08" type="C(R2CH2)" />
+      <Atom name="H00" type="H(HC=)" />
+      <Atom name="H01" type="H(HC=)" />
+      <Atom name="H02" type="H(HC=)" />
+      <Atom name="H03" type="H(CHnOR)" />
+      <Atom name="H04" type="H(CHnOR)" />
+      <Atom name="H05" type="H(RH)" />
+      <Atom name="H06" type="H(RH)" />
+      <Atom name="H07" type="H(RH)" />
+      <Atom name="H08" type="H(RH)" />
+      <Atom name="H09" type="H(RH)" />
+      <Atom name="H0A" type="H(RH)" />
+      <Atom name="H0B" type="H(RH)" />
+      <Bond from="0" to="1"/>
+      <Bond from="1" to="2"/>
+      <Bond from="2" to="3"/>
+      <Bond from="2" to="4"/>
+      <Bond from="4" to="5"/>
+      <Bond from="5" to="6"/>
+      <Bond from="6" to="7"/>
+      <Bond from="7" to="8"/>
+      <Bond from="0" to="9"/>
+      <Bond from="0" to="10"/>
+      <Bond from="1" to="11"/>
+      <Bond from="5" to="12"/>
+      <Bond from="5" to="13"/>
+      <Bond from="6" to="14"/>
+      <Bond from="6" to="15"/>
+      <Bond from="7" to="16"/>
+      <Bond from="7" to="17"/>
+      <Bond from="8" to="18"/>
+      <Bond from="8" to="19"/>
+      <Bond from="8" to="20"/>
+    </Residue>
     <Residue name="mA12">
       <AllowPatch name="methacrylate-start"/>
       <AllowPatch name="methacrylate-middle"/>
@@ -195,6 +241,35 @@
     </Residue>
   </Residues>
   <Patches>
+    <Patch name="acrylate-start">
+      <ChangeAtom name="C00" type="C(RCH3)"/>
+      <ChangeAtom name="C01" type="C(R3CH)"/>
+      <ChangeAtom name="H00" type="H(RH)"/>
+      <ChangeAtom name="H01" type="H(RH)"/>
+      <ChangeAtom name="H02" type="H(RH)"/>
+      <AddAtom name="Hstart" type="H(RH)"/>
+      <AddBond atomName1="C00" atomName2="Hstart"/>
+      <AddExternalBond atomName="C01"/>
+    </Patch>
+    <Patch name="acrylate-middle">
+      <ChangeAtom name="C00" type="C(R2CH2)"/>
+      <ChangeAtom name="H00" type="H(RH)"/>
+      <ChangeAtom name="H01" type="H(RH)"/>
+      <ChangeAtom name="H02" type="H(RH)"/>
+      <AddExternalBond atomName="C00"/>
+      <ChangeAtom name="C01" type="C(R3CH)"/>
+      <AddExternalBond atomName="C01"/>
+    </Patch>
+    <Patch name="acrylate-end">
+      <ChangeAtom name="C00" type="C(R2CH2)"/>
+      <ChangeAtom name="H00" type="H(RH)"/>
+      <ChangeAtom name="H01" type="H(RH)"/>
+      <ChangeAtom name="H02" type="H(RH)"/>
+      <AddExternalBond atomName="C00"/>
+      <ChangeAtom name="C01" type="C(R2CH2)"/>
+      <AddAtom name="Hend" type="H(RH)"/>
+      <AddBond atomName1="Hend" atomName2="C01"/>
+    </Patch>
     <Patch name="methacrylate-start">
       <ChangeAtom name="C00" type="C(RCH3)"/>
       <ChangeAtom name="H0I" type="H(RH)"/>

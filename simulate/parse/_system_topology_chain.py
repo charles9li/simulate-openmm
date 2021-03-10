@@ -299,9 +299,14 @@ class ChainOptions(_Options):
             return atom, atom_pdb, counter + 1
 
         # Import positions from pdb
-        # print(os.getcwd())
         residue_positions = md.load(os.path.join(self.topology_options.data_directory, "mA12_aa.pdb")).xyz[0]*10. + prev_res_atom_pos
         residue_positions = list(residue_positions)
+        if end_chain_length < 12:
+            residue_positions = residue_positions[:-(12-end_chain_length)*3]
+        if not is_methyl:
+            residue_positions.pop(9)
+            residue_positions.pop(8)
+            residue_positions.pop(7)
         if not right_ter or (left_ter and right_ter):
             residue_positions.pop(5)
         if (left_ter and right_ter) or (not left_ter):
@@ -325,20 +330,22 @@ class ChainOptions(_Options):
             self._add_bond_to_topology(C0, C0_pdb, prev_res_atom, prev_res_atom_pdb, topology, topology_pdb)
 
         # Add second carbon
-        # TODO: add functionality for acrylate
         C1, C1_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
         self._add_bond_to_topology(C1, C1_pdb, C0, C0_pdb, topology, topology_pdb)
         if right_ter and not left_ter:
             H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
             self._add_bond_to_topology(H, H_pdb, C1, C1_pdb, topology, topology_pdb)
 
-        # Add methyl group
+        # Add methyl group or hydrogen if not methyl
         if is_methyl:
             Cm, Cm_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
             for _ in range(3):
                 H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
                 self._add_bond_to_topology(H, H_pdb, Cm, Cm_pdb, topology, topology_pdb)
             self._add_bond_to_topology(Cm, Cm_pdb, C1, C1_pdb, topology, topology_pdb)
+        else:
+            H, H_pdb, H_counter = _add_atom_to_topology_oplsaa("H", self.HYDROGEN, H_counter)
+            self._add_bond_to_topology(H, H_pdb, C1, C1_pdb, topology, topology_pdb)
 
         # Add carbonyl carbon
         Cc, Cc_pdb, C_counter = _add_atom_to_topology_oplsaa("C", self.CARBON, C_counter)
