@@ -29,7 +29,7 @@ from ast import literal_eval
 import os
 
 from simtk.openmm.app import Simulation
-from simtk.openmm import VerletIntegrator, LangevinIntegrator
+from simtk.openmm import VerletIntegrator, LangevinIntegrator, Platform
 from simtk.unit import amu, nanometer, picosecond
 from openmmtools.integrators import VelocityVerletIntegrator
 import numpy as np
@@ -62,6 +62,7 @@ class _EnsembleOptions(_Options):
         self.steps = 0
         self.saveState = None
         self.loadState = None
+        self.platform = None
 
     def _create_options(self):
         super(_EnsembleOptions, self)._create_options()
@@ -69,6 +70,7 @@ class _EnsembleOptions(_Options):
         self._OPTIONS['steps'] = self._parse_steps
         self._OPTIONS['saveState'] = self._parse_save_state
         self._OPTIONS['loadState'] = self._parse_load_state
+        self._OPTIONS['platform'] = self._parse_platform
 
     def _create_sections(self):
         super(_EnsembleOptions, self)._create_sections()
@@ -95,8 +97,13 @@ class _EnsembleOptions(_Options):
     def _check_for_incomplete_input(self):
         if self.integrator is None:
             self._incomplete_error('integrator')
+        if self.platform is not None:
+            if self.platform not in self._PLATFORMS:
+                self._incomplete_error('platform')
 
     # =========================================================================
+
+    _PLATFORMS = ['Reference', 'CPU', 'CUDA', 'OpenCL']
 
     def _parse_integrator(self, *args):
         integrator_name = args[0]
@@ -129,6 +136,9 @@ class _EnsembleOptions(_Options):
     def _parse_load_state(self, *args):
         self.loadState = self._create_filepath(args[0])
 
+    def _parse_platform(self, *args):
+        self.platform = args[0]
+
     # =========================================================================
 
     # Helper methods for parsing options
@@ -141,7 +151,11 @@ class _EnsembleOptions(_Options):
 
     def create_simulation(self, topology, system):
         self.integrator = self.create_integrator(system)
-        simulation = Simulation(topology, system, self.integrator)
+        if self.platform is None:
+            simulation = Simulation(topology, system, self.integrator)
+        else:
+            platform = Platform.getPlatformByName(self.platform)
+            simulation = Simulation(topology, system, self.integrator, platform)
         for reporter in self.reporters:
             simulation.reporters.append(reporter)
         return simulation
