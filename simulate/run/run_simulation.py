@@ -53,6 +53,10 @@ class RunSimulation(object):
             if ensemble_options.loadState is not None:
                 simulation.loadState(ensemble_options.loadState)
 
+            # load checkpoint if specified
+            if ensemble_options.loadCheckpoint is not None:
+                simulation.loadCheckpoint(ensemble_options.loadCheckpoint)
+
             # minimize energy
             minimize_energy_options = ensemble_options.minimize_energy_options
             if minimize_energy_options is not None:
