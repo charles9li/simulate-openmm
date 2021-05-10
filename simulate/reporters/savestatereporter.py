@@ -22,4 +22,4 @@ class SaveStateReporter(object):
             os.rename(self._file, tempFilename2)
         os.rename(tempFilename1, self._file)
         if exists:
-            os.rename(tempFilename2)
+            os.remove(tempFilename2)
