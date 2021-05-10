@@ -62,6 +62,7 @@ class _EnsembleOptions(_Options):
         self.steps = 0
         self.saveState = None
         self.loadState = None
+        self.loadCheckpoint = None
         self.platform = None
 
     def _create_options(self):
@@ -70,6 +71,7 @@ class _EnsembleOptions(_Options):
         self._OPTIONS['steps'] = self._parse_steps
         self._OPTIONS['saveState'] = self._parse_save_state
         self._OPTIONS['loadState'] = self._parse_load_state
+        self._OPTIONS['loadCheckpoint'] = self._parse_load_checkpoint
         self._OPTIONS['platform'] = self._parse_platform
 
     def _create_sections(self):
@@ -90,7 +92,8 @@ class _EnsembleOptions(_Options):
                                   'KineticEnergyReporter': KineticEnergyReporterOptions,
                                   'RadiusOfGyrationReporter': RadiusOfGyrationReporterOptions,
                                   'EndToEndDistanceReporter': EndToEndDistanceReporterOptions,
-                                  'CheckpointReporter': CheckpointReporterOptions}
+                                  'CheckpointReporter': CheckpointReporterOptions,
+                                  'SaveStateReporter': SaveStateReporterOptions,}
 
     # =========================================================================
 
@@ -135,6 +138,9 @@ class _EnsembleOptions(_Options):
 
     def _parse_load_state(self, *args):
         self.loadState = self._create_filepath(args[0])
+
+    def _parse_load_checkpoint(self, *args):
+        self.loadCheckpoint = self._create_filepath(args[0])
 
     def _parse_platform(self, *args):
         self.platform = args[0]
