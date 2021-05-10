@@ -92,7 +92,8 @@ class _EnsembleOptions(_Options):
                                   'KineticEnergyReporter': KineticEnergyReporterOptions,
                                   'RadiusOfGyrationReporter': RadiusOfGyrationReporterOptions,
                                   'EndToEndDistanceReporter': EndToEndDistanceReporterOptions,
-                                  'CheckpointReporter': CheckpointReporterOptions}
+                                  'CheckpointReporter': CheckpointReporterOptions,
+                                  'SaveStateReporter': SaveStateReporterOptions,}
 
     # =========================================================================
 

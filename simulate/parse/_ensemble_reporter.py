@@ -34,7 +34,7 @@ __all__ = ['PDBReporterOptions', 'DCDReporterOptions', 'StateDataReporterOptions
            'EnergyReporterOptions', 'KineticEnergyReporterOptions', 'PotentialEnergyReporterOptions',
            'RNEMDReporterOptions', 'RNEMDVelocityReporterOptions',
            'RadiusOfGyrationReporterOptions', 'EndToEndDistanceReporterOptions',
-           'CheckpointReporterOptions']
+           'CheckpointReporterOptions', 'SaveStateReporterOptions']
 
 
 class _ReporterOptions(_Options):
@@ -297,3 +297,19 @@ class CheckpointReporterOptions(_ReporterOptions):
     def reporter(self):
         from simtk.openmm.app import CheckpointReporter
         return CheckpointReporter(self.file, self.reportInterval)
+
+
+class SaveStateReporterOptions(_ReporterOptions):
+
+    _SECTION_NAME = "SaveStateReporter"
+
+    # =========================================================================
+
+    def __init__(self, ensemble_options):
+        super(SaveStateReporterOptions, self).__init__(ensemble_options)
+
+    # =========================================================================
+
+    def reporter(self):
+        from simulate.reporters import SaveStateReporter
+        return SaveStateReporter(self.file, self.reportInterval)
