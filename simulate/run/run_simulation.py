@@ -34,6 +34,10 @@ class RunSimulation(object):
             if self.periodic_box_vectors is not None:
                 system.setDefaultPeriodicBoxVectors(*self.periodic_box_vectors)
 
+            # add external potentials
+            for potential_options in ensemble_options.external_potential_options:
+                potential_options.add_potential_to_system(topology, system)
+
             # create simulation
             simulation = ensemble_options.create_simulation(topology, system)
 
