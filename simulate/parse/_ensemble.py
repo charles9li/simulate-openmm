@@ -35,6 +35,7 @@ from openmmtools.integrators import VelocityVerletIntegrator
 import numpy as np
 
 from ._options import _Options
+from ._ensemble_external_potential import *
 from ._ensemble_integrator import *
 from ._ensemble_thermostat import *
 from ._ensemble_barostat import *
@@ -54,10 +55,12 @@ class _EnsembleOptions(_Options):
         super(_EnsembleOptions, self).__init__()
         self._create_integrator_options()
         self._create_reporter_options()
+        self._create_external_potential_options()
         self.simulations_options = simulations_options
         self.integrator_options = None
         self.integrator = None
         self.reporters = []
+        self.external_potential_options = []
         self.minimize_energy_options = None
         self.steps = 0
         self.saveState = None
@@ -78,6 +81,7 @@ class _EnsembleOptions(_Options):
         super(_EnsembleOptions, self)._create_sections()
         self._SECTIONS['reporters'] = self._parse_reporters
         self._SECTIONS['minimizeEnergy'] = self._parse_minimize_energy
+        self._SECTIONS['externalPotentials'] = self._parse_external_potentials
 
     def _create_integrator_options(self):
         self._INTEGRATOR_OPTIONS = {'VerletIntegrator': VerletIntegratorOptions,
@@ -93,7 +97,10 @@ class _EnsembleOptions(_Options):
                                   'RadiusOfGyrationReporter': RadiusOfGyrationReporterOptions,
                                   'EndToEndDistanceReporter': EndToEndDistanceReporterOptions,
                                   'CheckpointReporter': CheckpointReporterOptions,
-                                  'SaveStateReporter': SaveStateReporterOptions,}
+                                  'SaveStateReporter': SaveStateReporterOptions}
+
+    def _create_external_potential_options(self):
+        self._EXTERNAL_POTENTIAL_OPTIONS = {'Sinusoidal': SinusoidalOptions}
 
     # =========================================================================
 
@@ -129,6 +136,14 @@ class _EnsembleOptions(_Options):
         minimize_energy_options = MinimizeEnergyOptions(self)
         minimize_energy_options.parse(line_deque)
         self.minimize_energy_options = minimize_energy_options
+
+    def _parse_external_potentials(self, *args):
+        line_deque = args[1].popleft()
+        while len(line_deque) > 0:
+            potential_name = line_deque.popleft()
+            potential_options = self._EXTERNAL_POTENTIAL_OPTIONS[potential_name]()
+            potential_options.parse(line_deque.popleft())
+            self.external_potential_options.append(potential_options)
 
     def _parse_steps(self, *args):
         self.steps = literal_eval(args[0])
