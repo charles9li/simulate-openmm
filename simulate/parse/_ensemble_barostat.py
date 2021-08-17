@@ -140,10 +140,10 @@ class MonteCarloMembraneBarostatOptions(MonteCarloBarostatOptions):
         self.defaultSurfaceTension = literal_eval(args[0]) * bar * nanometer
 
     def _parse_xy_isotropic(self, *args):
-        self.scaleX = literal_eval(args[0])
+        self.XYIsotropic = literal_eval(args[0])
 
     def _parse_z_free(self, *args):
-        self.scaleY = literal_eval(args[0])
+        self.ZFree = literal_eval(args[0])
 
     # =========================================================================
 
