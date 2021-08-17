@@ -27,11 +27,11 @@ __version__ = "1.0"
 
 from ast import literal_eval
 
-from simtk.unit import bar, kelvin
+from simtk.unit import bar, kelvin, nanometer
 
 from ._options import _Options
 
-__all__ = ['MonteCarloBarostatOptions', 'MonteCarloAnisotropicBarostatOptions']
+__all__ = ['MonteCarloBarostatOptions', 'MonteCarloAnisotropicBarostatOptions', 'MonteCarloMembraneBarostatOptions']
 
 
 class MonteCarloBarostatOptions(_Options):
@@ -114,3 +114,53 @@ class MonteCarloAnisotropicBarostatOptions(MonteCarloBarostatOptions):
         pressure_vec = Vec3(self.defaultPressure, self.defaultPressure, self.defaultPressure)
         return MonteCarloAnisotropicBarostat(pressure_vec, self.defaultTemperature,
                                              self.scaleX, self.scaleY, self.scaleZ, self.frequency)
+
+
+class MonteCarloMembraneBarostatOptions(MonteCarloBarostatOptions):
+
+    _SECTION_NAME = "MonteCarloMembraneBarostat"
+
+    # =========================================================================
+
+    def __init__(self):
+        super(MonteCarloMembraneBarostatOptions, self).__init__()
+        self.defaultSurfaceTension = 0.0 * bar * nanometer
+        self.XYIsotropic = True
+        self.ZFree = True
+
+    def _create_options(self):
+        super(MonteCarloMembraneBarostatOptions, self)._create_options()
+        self._OPTIONS['defaultSurfaceTension'] = self._parse_default_surface_tension
+        self._OPTIONS['XYIsotropic'] = self._parse_xy_isotropic
+        self._OPTIONS['ZFree'] = self._parse_z_free
+
+    # =========================================================================
+
+    def _parse_default_surface_tension(self, *args):
+        self.defaultSurfaceTension = literal_eval(args[0]) * bar * nanometer
+
+    def _parse_xy_isotropic(self, *args):
+        self.scaleX = literal_eval(args[0])
+
+    def _parse_z_free(self, *args):
+        self.scaleY = literal_eval(args[0])
+
+    # =========================================================================
+
+    def barostat(self):
+        from simtk.openmm import MonteCarloMembraneBarostat
+
+        # determine xy mode
+        if self.XYIsotropic:
+            XYMode = MonteCarloMembraneBarostat.XYIsotropic
+        else:
+            XYMode = MonteCarloMembraneBarostat.XYAnisotropic
+
+        # determine z mode
+        if self.ZFree:
+            ZMode = MonteCarloMembraneBarostat.ZFree
+        else:
+            ZMode = MonteCarloMembraneBarostat.ZFixed
+
+        return MonteCarloMembraneBarostat(self.defaultPressure, self.defaultTemperature, self.defaultSurfaceTension,
+                                          XYMode, ZMode, self.frequency)

@@ -45,6 +45,7 @@ class SinusoidalOptions(_Options):
         self.num_period = 1
         self.period = None
         self.amplitude = 1.0
+        self.axis = 'x'
         self.residue = None
         self.indices = None
 
@@ -53,6 +54,7 @@ class SinusoidalOptions(_Options):
         self._OPTIONS['numPeriod'] = self._parse_num_period
         self._OPTIONS['period'] = self._parse_period
         self._OPTIONS['amplitude'] = self._parse_amplitude
+        self._OPTIONS['axis'] = self._parse_axis
         self._OPTIONS['residue'] = self._parse_residue
         self._OPTIONS['indices'] = self._parse_indices
 
@@ -73,6 +75,9 @@ class SinusoidalOptions(_Options):
     def _parse_amplitude(self, *args):
         self.amplitude = literal_eval(args[0])
 
+    def _parse_axis(self, *args):
+        self.axis = args[0]
+
     def _parse_residue(self, *args):
         self.residue = args[0]
 
@@ -84,13 +89,15 @@ class SinusoidalOptions(_Options):
     def add_potential_to_system(self, topology, system):
         if self.period is None:
             a, _, _ = system.getDefaultPeriodicBoxVectors()
-            period = a[0].value_in_unit(nanometer)
+            axis_index_map = {'x': 0, 'y': 1, 'z': 2}
+            period = a[axis_index_map[self.axis]].value_in_unit(nanometer)
         else:
             period = self.period
-        energy_function = "{amp}*sin(2*{pi}*{nperiod}*x1/{L})".format(amp=self.amplitude,
-                                                                      pi=np.pi,
-                                                                      nperiod=self.num_period,
-                                                                      L=period)
+        energy_function = "{amp}*sin(2*{pi}*{nperiod}*{axis}1/{L})".format(amp=self.amplitude,
+                                                                           pi=np.pi,
+                                                                           nperiod=self.num_period,
+                                                                           axis=self.axis,
+                                                                           L=period)
         force = CustomCentroidBondForce(1, energy_function)
         for residue in topology.residues():
             if residue.name == self.residue:
