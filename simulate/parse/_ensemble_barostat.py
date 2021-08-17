@@ -162,5 +162,5 @@ class MonteCarloMembraneBarostatOptions(MonteCarloBarostatOptions):
         else:
             ZMode = MonteCarloMembraneBarostat.ZFixed
 
-        return MonteCarloMembraneBarostat(self.defaultPressure, self.defaultTemperature, self.defaultSurfaceTension,
+        return MonteCarloMembraneBarostat(self.defaultPressure, self.defaultSurfaceTension, self.defaultTemperature,
                                           XYMode, ZMode, self.frequency)
