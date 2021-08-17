@@ -88,9 +88,9 @@ class SinusoidalOptions(_Options):
 
     def add_potential_to_system(self, topology, system):
         if self.period is None:
-            a, _, _ = system.getDefaultPeriodicBoxVectors()
+            a = system.getDefaultPeriodicBoxVectors()
             axis_index_map = {'x': 0, 'y': 1, 'z': 2}
-            period = a[axis_index_map[self.axis]].value_in_unit(nanometer)
+            period = a[axis_index_map[self.axis]][axis_index_map[self.axis]].value_in_unit(nanometer)
         else:
             period = self.period
         energy_function = "{amp}*sin(2*{pi}*{nperiod}*{axis}1/{L})".format(amp=self.amplitude,
