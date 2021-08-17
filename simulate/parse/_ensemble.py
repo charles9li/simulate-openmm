@@ -304,7 +304,8 @@ class NPTOptions(NVTOptions):
     # =========================================================================
 
     BAROSTAT_OPTIONS = {'MonteCarloBarostat': MonteCarloBarostatOptions,
-                        'MonteCarloAnisotropicBarostat': MonteCarloAnisotropicBarostatOptions}
+                        'MonteCarloAnisotropicBarostat': MonteCarloAnisotropicBarostatOptions,
+                        'MonteCarloMembraneBarostat': MonteCarloMembraneBarostatOptions}
 
     def _parse_barostat(self, *args):
         barostat_name = args[0]
