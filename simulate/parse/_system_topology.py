@@ -161,6 +161,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         self.forceField_str = "TraPPE-UA"
         self.forceField = ForceField(self.TRAPPEUA_FF_PATH)
         self.numDodecane = 0
+        self.numSqualane = 0
         self.dodecaneInstructions = None
         self.box_vectors = None
         self.chains = []
@@ -171,6 +172,7 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
         super(DodecaneAcrylateTopologyOptions, self)._create_options()
         self._OPTIONS['forceField'] = self._parse_force_field
         self._OPTIONS['numDodecane'] = self._parse_num_dodecane
+        self._OPTIONS['numSqualane'] = self._parse_num_squalane
         self._OPTIONS['dodecaneInstructions'] = self._parse_dodecane_instructions
         self._OPTIONS['box'] = self._parse_box
 
@@ -192,6 +194,9 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
 
     def _parse_num_dodecane(self, *args):
         self.numDodecane = literal_eval(args[0])
+
+    def _parse_num_squalane(self, *args):
+        self.numSqualane = literal_eval(args[0])
 
     def _parse_dodecane_instructions(self, *args):
         self.dodecaneInstructions = [instruction.strip() for instruction in args[0].split('/')]
@@ -233,6 +238,9 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
             for _ in range(self.numDodecane):
                 dodecane_id = self._add_dodecane_to_topology(topology)
                 self.id_to_sequence[dodecane_id] = "C12"
+            for _ in range(self.numSqualane):
+                squalane_id = self._add_squalane_to_topology(topology)
+                self.id_to_sequence[squalane_id] = "squalane"
             self._topology = topology
 
     def _add_dodecane_to_topology(self, topology):
@@ -263,6 +271,57 @@ class DodecaneAcrylateTopologyOptions(_TopologyOptions):
                     prev_atom = curr_atom
             H = topology.addAtom("H{}".format(H_counter), hydrogen_element, residue)
             topology.addBond(H, prev_atom)
+
+        return chain.id
+
+    def _add_squalane_to_topology(self, topology):
+
+        # Carbon element
+        carbon_element = Element.getBySymbol('C')
+        hydrogen_element = Element.getBySymbol('H')
+
+        chain = topology.addChain("{}-squalane".format(topology.getNumChains() + 1))
+        residue = topology.addResidue("squalane", chain)
+        prev_atom = None
+        if self.forceField_str == "TraPPE-UA":
+            atom_index = 0
+            for _ in range(3):
+                C1 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                if prev_atom is not None:
+                    topology.addBond(prev_atom, C1)
+                C2 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C1, C2)
+                C3 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C2, C3)
+                C4 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C2, C4)
+                C5 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C4, C5)
+                prev_atom = C5
+            for _ in range(3):
+                C1 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(prev_atom, C1)
+                C2 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C1, C2)
+                C3 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C2, C3)
+                C4 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C3, C4)
+                C5 = topology.addAtom("C{}".format(atom_index), carbon_element, residue)
+                atom_index += 1
+                topology.addBond(C3, C5)
+                prev_atom = C5
+        else:
+            raise NotImplementedError("OPLS-AA not implemented for squalane")
 
         return chain.id
 
