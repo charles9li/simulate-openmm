@@ -217,6 +217,20 @@ class DodecaneAcrylatePositionOptions(_PositionOptions):
                 instructions=instructions
             )
             mdapackmol_input.append(packmol_structure)
+        if topology_options.numSqualane > 0:
+            instructions = default_instructions
+            if topology_options.forceField_str == 'TraPPE-UA':
+                squalane_pdb_filepath = "data/squalane_ua.pdb"
+            else:
+                raise NotImplementedError("force field not implemented for squalane")
+            molecule = mda.Universe(
+                os.path.join(os.path.dirname(__file__), squalane_pdb_filepath)
+            )
+            packmol_structure = mdapackmol.PackmolStructure(
+                molecule, number=topology_options.numSqualane,
+                instructions=instructions
+            )
+            mdapackmol_input.append(packmol_structure)
 
         # Call Packmol
         system = mdapackmol.packmol(mdapackmol_input)
